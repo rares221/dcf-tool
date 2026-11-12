@@ -20,6 +20,7 @@ CASH = ("Cash Cash Equivalents And Short Term Investments", "Cash And Cash Equiv
 DEBT = ("Total Debt",)
 INTEREST = ("Interest Expense",)
 TAX_RATE = ("Tax Rate For Calcs",)  # a fraction in the feed
+SHARE_COUNT = ("Diluted Average Shares", "Basic Average Shares")
 
 
 def _frame_to_dict(df) -> dict:
@@ -75,6 +76,17 @@ def _latest(row: dict[str, float]) -> float | None:
     return row[max(row)] if row else None
 
 
+def _share_growth(income: dict) -> float | None:
+    series = _row(income, SHARE_COUNT)
+    if len(series) < 2:
+        return None
+    first, last = min(series), max(series)
+    span = int(last) - int(first)
+    if span <= 0 or series[first] <= 0 or series[last] <= 0:
+        return None
+    return ((series[last] / series[first]) ** (1 / span) - 1) * 100
+
+
 def parse_company(raw: dict) -> CompanyData:
     info, income, cashflow, balance = raw["info"], raw.get("income", {}), raw.get("cashflow", {}), raw.get("balance", {})
     price_raw = next((info[k] for k in ("currentPrice", "regularMarketPrice", "previousClose")
@@ -110,7 +122,7 @@ def parse_company(raw: dict) -> CompanyData:
         cash=_latest(_row(balance, CASH)) or 0.0, debt=_latest(_row(balance, DEBT)) or 0.0,
         interest_expense=abs(interest) if interest is not None else None,
         tax_rate=tax * 100 if tax is not None else None,
-        years=years,
+        years=years, share_growth=_share_growth(income),
     )
 
 

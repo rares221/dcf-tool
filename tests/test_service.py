@@ -69,6 +69,12 @@ def test_normal_company():
     assert_finite(out)
 
 
+def test_share_growth_is_passed_through():
+    assert analyze("ACME", world(companies={"ACME": make_company(share_growth=1.3)}))["share_growth"] == 1.3
+    assert analyze("ACME", world())["share_growth"] is None
+    assert analyze("NOPE", world())["share_growth"] is None
+
+
 def test_suggestions_are_rounded_to_slider_steps():
     s = analyze("ACME", world())["suggested"]
     assert (s["growth"] * 2) == round(s["growth"] * 2)

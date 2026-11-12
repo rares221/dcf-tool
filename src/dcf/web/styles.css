@@ -111,3 +111,7 @@
 .scen .scen-card { border:1px solid var(--line); border-radius:8px; padding:10px; }
 .scen .scen-card.base { border-color:var(--accent); }
 .visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+.chip button { border:0; background:none; color:var(--muted); cursor:pointer; padding:0 0 0 4px; font:inherit; }
+.chip.add { cursor:pointer; background:none; font:inherit; font-size:12px; color:var(--muted); }
+.peer-input { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:6px 10px; margin-bottom:8px; }

@@ -50,3 +50,4 @@ class CompanyData:
     years: tuple[YearFigures, ...]  # oldest first, in statement_currency
     data_age_seconds: float = 0.0
     stale: bool = False
+    share_growth: float | None = None  # average yearly change in diluted share count, percent

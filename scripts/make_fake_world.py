@@ -15,13 +15,13 @@ def years(revs, fcfs, sbcs, start=2022):
 
 def company(name, price, mcap, shares, ys, *, currency="USD", statement=None, beta=1.0, pe=28.0,
             industry="Software - Application", sector="Technology", cash=30.0, debt=20.0, interest=1.0,
-            tax=21.0, stale=False, age=0.0):
+            tax=21.0, stale=False, age=0.0, share_growth=None):
     return {
         "name": name, "sector": sector, "industry": industry, "trading_currency": currency,
         "statement_currency": statement or currency, "price": price, "market_cap": mcap * B,
         "shares": shares * B, "beta": beta, "forward_pe": pe, "cash": cash * B, "debt": debt * B,
         "interest_expense": None if interest is None else interest * B, "tax_rate": tax, "years": ys,
-        "data_age_seconds": age, "stale": stale,
+        "data_age_seconds": age, "stale": stale, "share_growth": share_growth,
     }
 
 
@@ -36,7 +36,7 @@ def peer(name, cap, g, m, fy, pe, beta):
 acme_years = years((82, 88, 94, 100), (13.94, 16.72, 16.92, 20.0), (1.97, 2.38, 2.73, 3.0))
 world = {
     "companies": {
-        "ACME": company("ACME Corp", 168.0, 453.6, 2.7, acme_years),
+        "ACME": company("ACME Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
         "NOVA": peer("Nova Systems", 380, 10, 24, 3.9, 31, 1.2),
         "ORBT": peer("Orbit Labs", 520, 12, 18, 3.1, 36, 1.3),
         "KSTL": peer("Kestrel Soft", 210, 6, 22, 5.6, 22, 0.9),

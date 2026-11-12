@@ -1,4 +1,5 @@
 import { b, el, fill } from './dom.js';
+import { hydrate } from './glossary.js';
 import { freshness, money, pct } from './format.js';
 
 const $ = (id) => document.getElementById(id);
@@ -11,6 +12,8 @@ const state = {
   a: null,          // current assumptions {growth, fcf_margin, wacc, terminal_growth}
   loadSeq: 0,       // newest analyze request
   seq: 0,           // newest model request; older responses are dropped
+  peerSeq: 0,       // newest peer reload
+  peers: [],        // peer tickers currently compared (excluding the company itself)
 };
 
 const KEY_LABEL = { wacc: 'discount rate', growth: 'revenue growth', margin: 'FCF margin', terminal_growth: 'long-term growth' };
@@ -23,6 +26,7 @@ const POSITION = {
 };
 const SLIDERS = [['g', 'growth'], ['m', 'fcf_margin'], ['w', 'wacc'], ['t', 'terminal_growth']];
 const USABLE = new Set(['ok', 'partial']);
+const term = (key, label) => el('span', { 'data-g': key }, label);
 const GAP = 1; // discount rate must stay at least this far above long-term growth (matches the API)
 
 // ---------- data loading ----------
@@ -57,6 +61,8 @@ async function load(raw) {
   if (mine !== state.loadSeq) return;
   state.analysis = analysis;
   state.model = null;
+  state.peers = analysis.peers.rows.slice(1).map((r) => r.ticker);
+  fill($('peerMsg'), '');
   if (analysis.suggested) {
     state.a = suggestedAssumptions(analysis.suggested);
     state.countSbc = true;
@@ -101,6 +107,10 @@ function render() {
   renderImplied(a, m);
   renderTornado(a, m);
   renderWacc(a, m);
+  renderPeers(a);
+  renderHistory(a);
+  renderFlags(a, m);
+  hydrate();
 }
 
 function renderCompany(a) {
@@ -253,7 +263,7 @@ function renderWacc(a, m) {
   ];
   fill($('waccCalc'),
     row('Risk-free rate', rfNote, pct(w.risk_free)),
-    row('+ Beta × equity risk premium', 'how jumpy the stock is × extra return investors want for owning stocks', `${w.beta.toFixed(1)} × ${pct(w.erp)}`),
+    row(['+ ', term('beta', 'Beta'), ' × ', term('erp', 'equity risk premium')], 'how jumpy the stock is × extra return investors want for owning stocks', `${w.beta.toFixed(1)} × ${pct(w.erp)}`),
     row('= Cost of equity', '', pct(w.cost_of_equity), true),
     row('Cost of debt after tax', `${pct(w.cost_of_debt_pre_tax)} interest × (1 − ${w.tax_rate.toFixed(0)}% tax)`, `${w.cost_of_debt_after_tax.toFixed(2)}%`),
     row('Mix', `market cap ${money(a.company.market_cap, cur, { compact: true })} vs debt ${money(a.base.debt, cur, { compact: true })}`,
@@ -268,6 +278,98 @@ function renderWacc(a, m) {
       ` (${down}%). Lowering it by 1 point raises it by `, b(money(bar.high - base, cur)),
       ` (+${up}%). A small change in a number nobody can pin down exactly moves the answer a lot, which is why we show a range.`);
   } else fill($('waccSens'), '');
+}
+
+
+const PEER_METRICS = [
+  { k: 'market_cap', name: 'Market cap', hint: 'size', fmt: (v, cur) => money(v, cur, { compact: true }) },
+  { k: 'growth', name: 'Revenue growth', hint: 'last year', fmt: (v) => pct(v) },
+  { k: 'fcf_margin', name: 'FCF margin', hint: 'cash kept per 100 of sales', fmt: (v) => pct(v) },
+  { k: 'fcf_yield', name: 'FCF yield', hint: 'cash earned ÷ price, higher = cheaper', fmt: (v) => pct(v) },
+  { k: 'forward_pe', name: 'Forward P/E', hint: 'price ÷ earnings, higher = pricier', fmt: (v) => `${v.toFixed(1)}x` },
+  { k: 'beta', name: 'Beta', hint: '1 = moves with market', fmt: (v) => v.toFixed(1) },
+];
+
+function renderPeers(a) {
+  const cur = a.company.currency, subject = a.company.ticker;
+  const rows = a.peers.rows;
+  fill($('chips'),
+    el('span', { class: 'chip' }, `${subject} (you)`),
+    state.peers.map((t) => el('span', { class: 'chip' }, t, el('button', { type: 'button', 'aria-label': `Remove ${t}` }, '×'))),
+    el('button', { type: 'button', class: 'chip add', id: 'addPeerBtn' }, '+ add ticker'));
+
+  const cell = (v, m) => (v == null ? el('span', { class: 'muted' }, 'n/a') : m.fmt(v, cur));
+  const head = el('tr', {}, el('th', {}, 'Metric'),
+    rows.map((r, i) => el('th', { class: i === 0 ? 'me' : '' }, r.ticker)),
+    el('th', {}, 'Peer median'), el('th', {}, `${subject} vs peers`));
+  const body = PEER_METRICS.map((m) => {
+    const reading = a.peers.readings[m.k];
+    const text = reading.label === '' ? '–' : reading.diff_pct == null || reading.label === 'in line' ? reading.label
+      : `${reading.label} (${reading.diff_pct > 0 ? '+' : ''}${Math.round(reading.diff_pct)}%)`;
+    return el('tr', {},
+      el('td', {}, m.name, el('span', { class: 'hint' }, m.hint)),
+      rows.map((r, i) => el('td', { class: i === 0 ? 'me' : '' }, cell(r[m.k], m))),
+      el('td', {}, cell(a.peers.medians[m.k], m)),
+      el('td', {}, text));
+  });
+  fill($('peers'), head, body);
+
+  const medG = a.peers.medians.growth, medM = a.peers.medians.fcf_margin;
+  if (rows.length < 2 || medG == null) {
+    fill($('peerNote'), 'No peers loaded. Add tickers above to compare.');
+  } else {
+    const verdict = state.a.growth > medG * 1.15 ? 'You are assuming faster growth than most peers, so be ready to explain why.'
+      : state.a.growth < medG * 0.85 ? 'You are assuming slower growth than most peers, which is cautious.' : 'That is in line with peers.';
+    fill($('peerNote'), 'Your base growth assumption is ', b(`${state.a.growth}%`), ' against a peer median of ', b(pct(medG)),
+      medM == null ? '. ' : [', and your margin assumption is ', b(`${state.a.fcf_margin}%`), ' against ', b(pct(medM)), '. '], verdict);
+  }
+}
+
+function renderHistory(a) {
+  const cur = a.company.currency;
+  $('histTitle').textContent = `Track record (last ${a.history.length} years)`;
+  const maxRev = Math.max(...a.history.map((h) => h.revenue));
+  fill($('hist'), a.history.map((h) => el('div', { class: 'col' },
+    el('div', { class: 'plot' }, el('i', { style: `height:${(h.revenue / maxRev) * 86}px` })),
+    el('div', { class: 'lab' }, String(h.year), el('b', {}, money(h.revenue, cur, { compact: true })),
+      `${pct(h.fcf_margin, 0)} FCF margin`, el('br'), `${pct(h.fcf_margin_after_sbc, 0)} after stock pay`))));
+}
+
+function renderFlags(a, m) {
+  const cur = a.company.currency;
+  const items = [];
+  const li = (cls, ...children) => items.push(el('li', { class: cls }, ...children));
+  if (m) {
+    const share = Math.round(m.terminal_share * 100);
+    li(share > 65 ? 'mid-c' : 'ok', term('tv', 'Terminal value'), ' is ', b(`${share}%`),
+      ' of the base estimate. ', share > 65 ? 'Most of the answer depends on what happens after the forecast period.' : 'The answer does not lean too heavily on the far future.');
+  }
+  const negative = a.history.filter((h) => h.fcf_margin != null && h.fcf_margin < 0).length;
+  if (negative === 0) li('ok', term('fcf', 'Free cash flow'), ` was positive in all ${a.history.length} years, so a DCF is a reasonable tool here.`);
+  else li('mid-c', term('fcf', 'Free cash flow'), ` was negative in ${negative} of the last ${a.history.length} years, so treat the result with extra caution.`);
+  if (m) {
+    const pctRev = pct(a.base.sbc_pct);
+    if (state.countSbc) {
+      li('ok', term('sbc', 'Stock-based pay'), ` (about ${pctRev} of revenue) is counted as a cost. Ignoring it would raise the base estimate by about ${money(m.sbc_effect, cur)} a share.`);
+    } else {
+      li('mid-c', term('sbc', 'Stock-based pay'), ` (about ${pctRev} of revenue) is `, b('not counted'), ', which flatters the estimate by about ', b(money(m.sbc_effect, cur)), ' a share.');
+    }
+  }
+  const sg = a.share_growth;
+  if (sg != null) {
+    const n = a.history.length - 1;
+    if (sg > 0.5) {
+      li('mid-c', `Share count grew about ${pct(sg)} a year over the last ${n} years (`, term('dilution', 'dilution'), "), so each share's slice is shrinking. ",
+        state.countSbc ? 'Counting stock pay as a cost is how the model accounts for this.' : 'Counting stock pay as a cost would account for this.');
+    } else if (sg < -0.5) {
+      li('ok', `Share count fell about ${pct(Math.abs(sg))} a year over the last ${n} years (buybacks), so each share's slice is growing.`);
+    } else {
+      li('ok', 'Share count has been roughly stable, so there is little ', term('dilution', 'dilution'), '.');
+    }
+  }
+  li('mid-c', 'Analyst growth estimates are not available on free sources, so growth here is history-based.');
+  li('muted', 'Banks, insurers and companies with negative cash flow show a "DCF is a poor fit" message instead of a number.');
+  fill($('flags'), items);
 }
 
 // ---------- events ----------
@@ -326,6 +428,38 @@ $('setImp').addEventListener('click', () => {
   syncSliders();
   render();
   scheduleRecalc();
+});
+
+async function reloadPeers(tickers) {
+  const mine = ++state.peerSeq;
+  const requested = tickers.map((t) => t.trim().toUpperCase()).filter(Boolean);
+  const url = `/api/analyze?ticker=${encodeURIComponent(state.analysis.company.ticker)}&peers=${encodeURIComponent(requested.join(','))}`;
+  const result = await getJson(url);
+  if (mine !== state.peerSeq || !result.peers) return;
+  state.analysis.peers = result.peers;
+  state.peers = result.peers.rows.slice(1).map((r) => r.ticker);
+  const missing = requested.filter((t) => !state.peers.includes(t));
+  fill($('peerMsg'), missing.length ? `Couldn't load ${missing.join(', ')}, so it was not added.` : '');
+  render();
+}
+
+$('chips').addEventListener('click', (e) => {
+  if (e.target.id === 'addPeerBtn') {
+    $('addPeerRow').hidden = false;
+    $('addPeer').focus();
+    return;
+  }
+  const btn = e.target.closest('button[aria-label^="Remove "]');
+  if (btn) reloadPeers(state.peers.filter((t) => t !== btn.getAttribute('aria-label').slice(7)));
+});
+
+$('addPeer').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const t = $('addPeer').value.trim().toUpperCase();
+  $('addPeer').value = '';
+  $('addPeerRow').hidden = true;
+  if (t && !state.peers.includes(t)) reloadPeers([...state.peers, t]);
 });
 
 window.addEventListener('hashchange', () => {

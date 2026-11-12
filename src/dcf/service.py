@@ -177,6 +177,7 @@ def _empty_payload(status: str) -> dict:
         "status": status, "notes": [], "suggestions": [], "company": None, "history": [], "history_cagr": None,
         "suggested": None, "limits": {k: list(v) for k, v in SLIDER_LIMITS.items()}, "base": None,
         "peers": {"rows": [], "medians": {}, "readings": {}}, "data_age_seconds": 0.0, "fx": None,
+        "share_growth": None,
     }
 
 
@@ -196,6 +197,7 @@ def analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | N
     }
     out["data_age_seconds"] = company.data_age_seconds
     out["fx"] = prepared.fx
+    out["share_growth"] = company.share_growth
     if prepared.status == "no_fx":
         return out
 

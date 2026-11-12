@@ -59,6 +59,19 @@ def test_loss_maker_has_negative_fcf_and_no_forward_pe():
     assert c.forward_pe is None  # negative forward P/E is meaningless
 
 
+def test_share_count_growth_from_diluted_average_shares():
+    assert parse_company(load("us")).share_growth == pytest.approx(-2.35, abs=0.1)   # buybacks
+    assert parse_company(load("lossmaker")).share_growth > 5                          # heavy dilution
+    assert parse_company(load("adr")).share_growth == pytest.approx(0.0, abs=0.01)
+
+
+def test_share_growth_is_none_without_share_rows():
+    raw = copy.deepcopy(load("us"))
+    del raw["income"]["Diluted Average Shares"]
+    del raw["income"]["Basic Average Shares"]
+    assert parse_company(raw).share_growth is None
+
+
 def test_missing_rows_become_defaults_not_errors():
     raw = copy.deepcopy(load("us"))
     del raw["cashflow"]["Stock Based Compensation"]

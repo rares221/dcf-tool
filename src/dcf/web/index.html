@@ -95,6 +95,51 @@
         </div>
       </div>
     </div>
+
+    <div class="card" id="peersCard">
+      <h2>Compared with peers</h2>
+      <div class="chips" id="chips"></div>
+      <div id="addPeerRow" hidden>
+        <label class="visually-hidden" for="addPeer">Peer ticker to add</label>
+        <input id="addPeer" class="peer-input" placeholder="Ticker, then Enter" autocomplete="off" spellcheck="false" maxlength="16">
+      </div>
+      <p class="small muted" id="peerMsg" role="status" style="margin:0 0 8px"></p>
+      <div class="scroll"><table class="peer" id="peers"></table></div>
+      <div class="verdict" id="peerNote"></div>
+      <p class="small muted" style="margin:10px 0 0">Peers are suggested by sector and company size, and you can add or remove tickers. Different peers can tell different stories, so the list is shown openly and not hidden.</p>
+    </div>
+
+    <div class="row">
+      <div class="card" id="histCard">
+        <h2 id="histTitle">Track record</h2>
+        <div class="small muted">Revenue, FCF margin, and margin after counting stock pay</div>
+        <div class="hist" id="hist"></div>
+        <p class="small muted" style="margin:10px 0 0">This lets you judge whether the growth and margin assumptions are realistic compared to what the company has actually done.</p>
+      </div>
+      <div class="card" id="flagsCard">
+        <h2>Heads-up flags</h2>
+        <ul class="flags small" id="flags"></ul>
+      </div>
+    </div>
+
+    <div class="card" id="sources">
+      <h2>Where the data comes from</h2>
+      <table>
+        <tr><th>Input</th><th>Source</th><th>Reliability</th></tr>
+        <tr><td>Price, market cap, shares, beta</td><td>Yahoo Finance</td><td><span class="ok">Good</span> · unofficial source, can break or rate-limit</td></tr>
+        <tr><td>Revenue, FCF, cash, debt (up to 4 years)</td><td>Yahoo Finance statements</td><td><span class="ok">Good</span> for large companies, <span class="mid-c">patchy</span> for small or foreign ones</td></tr>
+        <tr><td>Stock-based pay, share count history</td><td>Yahoo Finance cash-flow statement and share data</td><td><span class="ok">Good</span> for most companies · field names vary</td></tr>
+        <tr><td>Risk-free rate</td><td>FRED (US 10-year Treasury) when available, otherwise a labelled default per currency</td><td><span class="ok">Excellent</span> from FRED, <span class="mid-c">assumption</span> otherwise</td></tr>
+        <tr><td>Equity risk premium</td><td>Fixed default (about 4.5%)</td><td><span class="mid-c">Assumption</span> · not a data feed</td></tr>
+        <tr><td>Analyst growth estimates</td><td>Not available on free sources</td><td><span class="mid-c">Partial</span> · growth here is history-based</td></tr>
+        <tr><td>Bear / base / bull spreads</td><td>Our rules (±4 points growth, ±3 margin, discount rate +1 / −0.5)</td><td><span class="mid-c">Assumption</span></td></tr>
+        <tr><td>Peer list</td><td>Finnhub peers when a key is configured, otherwise you add tickers</td><td><span class="mid-c">Partial</span></td></tr>
+        <tr><td>Peer growth, margin, P/E, FCF yield, beta</td><td>Yahoo Finance, one fetch per peer</td><td><span class="ok">Good</span></td></tr>
+        <tr><td>Cost of debt, tax rate</td><td>Yahoo Finance interest expense and tax lines, with defaults</td><td><span class="mid-c">Approximate</span></td></tr>
+        <tr><td>Forecasts beyond the horizon</td><td>Computed: growth fades toward long-term growth</td><td><span class="mid-c">Model choice</span></td></tr>
+      </table>
+      <p class="small muted" style="margin:10px 0 0">This page is an educational estimate, not financial advice.</p>
+    </div>
   </div>
 
 </div>
