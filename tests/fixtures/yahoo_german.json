@@ -1,0 +1,1337 @@
+{
+ "balance": {
+  "Accounts Payable": {
+   "2022": 2146000000.0,
+   "2023": 1783000000.0,
+   "2024": 1988000000.0,
+   "2025": 2431000000.0
+  },
+  "Accounts Receivable": {
+   "2022": 5782000000.0,
+   "2023": 5892000000.0,
+   "2024": 6231000000.0,
+   "2025": 5790000000.0
+  },
+  "Additional Paid In Capital": {
+   "2022": 3081000000.0,
+   "2023": 1845000000.0,
+   "2024": 2564000000.0,
+   "2025": 2564000000.0
+  },
+  "Available For Sale Securities": {
+   "2022": 5143000000.0,
+   "2023": 5114000000.0,
+   "2024": 6404000000.0,
+   "2025": 6580000000.0
+  },
+  "Capital Lease Obligations": {
+   "2022": 2140000000.0,
+   "2023": 1621000000.0,
+   "2024": 1715000000.0,
+   "2025": 1684000000.0
+  },
+  "Capital Stock": {
+   "2022": 1229000000.0,
+   "2023": 1229000000.0,
+   "2024": 1229000000.0,
+   "2025": 1229000000.0
+  },
+  "Cash And Cash Equivalents": {
+   "2022": 9008000000.0,
+   "2023": 8124000000.0,
+   "2024": 9609000000.0,
+   "2025": 8220000000.0
+  },
+  "Cash Cash Equivalents And Short Term Investments": {
+   "2022": 9861000000.0,
+   "2023": 11468000000.0,
+   "2024": 11238000000.0,
+   "2025": 9772000000.0
+  },
+  "Cash Equivalents": {
+   "2022": 5831000000.0,
+   "2023": 4755000000.0,
+   "2024": 5647000000.0,
+   "2025": 4310000000.0
+  },
+  "Cash Financial": {
+   "2022": 3176000000.0,
+   "2023": 3369000000.0,
+   "2024": 3962000000.0,
+   "2025": 3910000000.0
+  },
+  "Commercial Paper": {
+   "2022": 928000000.0,
+   "2023": 0.0,
+   "2024": 498000000.0,
+   "2025": 498000000.0
+  },
+  "Common Stock": {
+   "2022": 1229000000.0,
+   "2023": 1229000000.0,
+   "2024": 1229000000.0,
+   "2025": 1229000000.0
+  },
+  "Common Stock Equity": {
+   "2022": 40186000000.0,
+   "2023": 43157000000.0,
+   "2024": 45438000000.0,
+   "2025": 44586000000.0
+  },
+  "Construction In Progress": {
+   "2022": 142000000.0,
+   "2023": 162000000.0,
+   "2024": 156000000.0,
+   "2025": 195000000.0
+  },
+  "Current Assets": {
+   "2022": 18522000000.0,
+   "2023": 20571000000.0,
+   "2024": 21401000000.0,
+   "2025": 20256000000.0
+  },
+  "Current Capital Lease Obligation": {
+   "2022": 349000000.0,
+   "2023": 294000000.0,
+   "2024": 295000000.0,
+   "2025": 254000000.0
+  },
+  "Current Debt": {
+   "2022": 3984000000.0,
+   "2023": 1143000000.0,
+   "2024": 3636000000.0,
+   "2025": 1598000000.0
+  },
+  "Current Debt And Capital Lease Obligation": {
+   "2022": 4333000000.0,
+   "2023": 1437000000.0,
+   "2024": 3931000000.0,
+   "2025": 1852000000.0
+  },
+  "Current Deferred Assets": {
+   "2022": 1036000000.0,
+   "2023": 1246000000.0,
+   "2024": 1350000000.0,
+   "2025": 1412000000.0
+  },
+  "Current Deferred Liabilities": {
+   "2022": 5309000000.0,
+   "2023": 4975000000.0,
+   "2024": 5978000000.0,
+   "2025": 6581000000.0
+  },
+  "Current Deferred Revenue": {
+   "2022": 5309000000.0,
+   "2023": 4975000000.0,
+   "2024": 5978000000.0,
+   "2025": 6581000000.0
+  },
+  "Current Liabilities": {
+   "2022": 17453000000.0,
+   "2023": 14641000000.0,
+   "2024": 19082000000.0,
+   "2025": 17416000000.0
+  },
+  "Current Provisions": {
+   "2022": 90000000.0,
+   "2023": 235000000.0,
+   "2024": 716000000.0,
+   "2025": 537000000.0
+  },
+  "Derivative Product Liabilities": {
+   "2021": 0.0,
+   "2022": 0.0,
+   "2023": 0.0
+  },
+  "Employee Benefits": {
+   "2022": 705000000.0,
+   "2023": 698000000.0,
+   "2024": 749000000.0,
+   "2025": 524000000.0
+  },
+  "Financial Assets": {
+   "2022": 332000000.0,
+   "2023": 294000000.0,
+   "2024": 593000000.0,
+   "2025": 547000000.0
+  },
+  "Goodwill": {
+   "2022": 33077000000.0,
+   "2023": 29081000000.0,
+   "2024": 31264000000.0,
+   "2025": 29014000000.0
+  },
+  "Goodwill And Other Intangible Assets": {
+   "2022": 36912000000.0,
+   "2023": 31586000000.0,
+   "2024": 33970000000.0,
+   "2025": 31296000000.0
+  },
+  "Gross PPE": {
+   "2022": 4934000000.0,
+   "2023": 4276000000.0,
+   "2024": 4493000000.0,
+   "2025": 4497000000.0
+  },
+  "Invested Capital": {
+   "2022": 51131000000.0,
+   "2023": 50327000000.0,
+   "2024": 54374000000.0,
+   "2025": 50378000000.0
+  },
+  "Investmentin Financial Assets": {
+   "2022": 5143000000.0,
+   "2023": 5114000000.0,
+   "2024": 6404000000.0,
+   "2025": 6580000000.0
+  },
+  "Investments And Advances": {
+   "2022": 5294000000.0,
+   "2023": 5249000000.0,
+   "2024": 6548000000.0,
+   "2025": 6722000000.0
+  },
+  "Investmentsin Associatesat Cost": {
+   "2022": 151000000.0,
+   "2023": 135000000.0,
+   "2024": 144000000.0,
+   "2025": 142000000.0
+  },
+  "Land And Improvements": {
+   "2022": 1585000000.0,
+   "2023": 1430000000.0,
+   "2024": 1501000000.0,
+   "2025": 1497000000.0
+  },
+  "Leases": {
+   "2022": 1758000000.0,
+   "2023": 1320000000.0,
+   "2024": 1391000000.0,
+   "2025": 1370000000.0
+  },
+  "Long Term Capital Lease Obligation": {
+   "2022": 1791000000.0,
+   "2023": 1327000000.0,
+   "2024": 1420000000.0,
+   "2025": 1430000000.0
+  },
+  "Long Term Debt": {
+   "2022": 6961000000.0,
+   "2023": 6027000000.0,
+   "2024": 5300000000.0,
+   "2025": 4194000000.0
+  },
+  "Long Term Debt And Capital Lease Obligation": {
+   "2022": 8752000000.0,
+   "2023": 7354000000.0,
+   "2024": 6720000000.0,
+   "2025": 5624000000.0
+  },
+  "Long Term Equity Investment": {
+   "2022": 151000000.0,
+   "2023": 135000000.0,
+   "2024": 144000000.0,
+   "2025": 142000000.0
+  },
+  "Long Term Provisions": {
+   "2022": 359000000.0,
+   "2023": 432000000.0,
+   "2024": 494000000.0,
+   "2025": 550000000.0
+  },
+  "Machinery Furniture Equipment": {
+   "2022": 1406000000.0,
+   "2023": 1309000000.0,
+   "2024": 1379000000.0,
+   "2025": 1328000000.0
+  },
+  "Minority Interest": {
+   "2022": 2662000000.0,
+   "2023": 249000000.0,
+   "2024": 368000000.0,
+   "2025": 488000000.0
+  },
+  "Net Debt": {
+   "2021": 4102000000.0,
+   "2022": 1937000000.0
+  },
+  "Net PPE": {
+   "2022": 4934000000.0,
+   "2023": 4276000000.0,
+   "2024": 4493000000.0,
+   "2025": 4497000000.0
+  },
+  "Net Tangible Assets": {
+   "2022": 3274000000.0,
+   "2023": 11571000000.0,
+   "2024": 11468000000.0,
+   "2025": 13290000000.0
+  },
+  "Non Current Accounts Receivable": {
+   "2022": 541000000.0,
+   "2023": 618000000.0,
+   "2024": 635000000.0,
+   "2025": 573000000.0
+  },
+  "Non Current Deferred Assets": {
+   "2022": 5114000000.0,
+   "2023": 5351000000.0,
+   "2024": 6166000000.0,
+   "2025": 5845000000.0
+  },
+  "Non Current Deferred Liabilities": {
+   "2022": 274000000.0,
+   "2023": 300000000.0,
+   "2024": 414000000.0,
+   "2025": 216000000.0
+  },
+  "Non Current Deferred Revenue": {
+   "2022": 33000000.0,
+   "2023": 33000000.0,
+   "2024": 88000000.0,
+   "2025": 144000000.0
+  },
+  "Non Current Deferred Taxes Assets": {
+   "2022": 2095000000.0,
+   "2023": 2197000000.0,
+   "2024": 2674000000.0,
+   "2025": 2163000000.0
+  },
+  "Non Current Deferred Taxes Liabilities": {
+   "2022": 241000000.0,
+   "2023": 267000000.0,
+   "2024": 326000000.0,
+   "2025": 72000000.0
+  },
+  "Non Current Prepaid Assets": {
+   "2022": 512000000.0,
+   "2023": 386000000.0,
+   "2024": 430000000.0,
+   "2025": 626000000.0
+  },
+  "Ordinary Shares Number": {
+   "2022": 1167117547.0,
+   "2023": 1167229056.0,
+   "2024": 1166589461.0,
+   "2025": 1167559048.0
+  },
+  "Other Current Assets": {
+   "2022": 30000000.0,
+   "2023": 44000000.0,
+   "2024": 88000000.0,
+   "2025": 265000000.0
+  },
+  "Other Current Borrowings": {
+   "2022": 3056000000.0,
+   "2023": 1143000000.0,
+   "2024": 3138000000.0,
+   "2025": 1100000000.0
+  },
+  "Other Current Liabilities": {
+   "2022": 474000000.0,
+   "2023": 315000000.0,
+   "2024": 1373000000.0,
+   "2025": 1132000000.0
+  },
+  "Other Equity Interest": {
+   "2022": 3799000000.0,
+   "2023": 2367000000.0,
+   "2024": 4692000000.0,
+   "2025": 396000000.0
+  },
+  "Other Intangible Assets": {
+   "2022": 3835000000.0,
+   "2023": 2505000000.0,
+   "2024": 2706000000.0,
+   "2025": 2282000000.0
+  },
+  "Other Non Current Assets": {
+   "2021": 2347000000.0,
+   "2022": -1000000.0,
+   "2023": 1000000.0,
+   "2024": 1000000.0
+  },
+  "Other Non Current Liabilities": {
+   "2022": 796000000.0,
+   "2023": 587000000.0,
+   "2024": 450000000.0,
+   "2025": 394000000.0
+  },
+  "Other Properties": {
+   "2022": 43000000.0,
+   "2023": 55000000.0,
+   "2024": 66000000.0,
+   "2025": 107000000.0
+  },
+  "Other Receivables": {
+   "2022": 454000000.0,
+   "2023": 429000000.0,
+   "2024": 543000000.0,
+   "2025": 885000000.0
+  },
+  "Other Short Term Investments": {
+   "2022": 853000000.0,
+   "2023": 3344000000.0,
+   "2024": 1629000000.0,
+   "2025": 1552000000.0
+  },
+  "Payables": {
+   "2022": 3091000000.0,
+   "2023": 2919000000.0,
+   "2024": 2573000000.0,
+   "2025": 3399000000.0
+  },
+  "Payables And Accrued Expenses": {
+   "2022": 3091000000.0,
+   "2023": 2919000000.0,
+   "2024": 2573000000.0,
+   "2025": 3399000000.0
+  },
+  "Pensionand Other Post Retirement Benefit Plans Current": {
+   "2022": 4156000000.0,
+   "2023": 4760000000.0,
+   "2024": 4511000000.0,
+   "2025": 3915000000.0
+  },
+  "Prepaid Assets": {
+   "2022": 828000000.0,
+   "2023": 844000000.0,
+   "2024": 988000000.0,
+   "2025": 1256000000.0
+  },
+  "Properties": {
+   "2022": 0.0,
+   "2023": 0.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "Receivables": {
+   "2022": 6767000000.0,
+   "2023": 6969000000.0,
+   "2024": 7737000000.0,
+   "2025": 7551000000.0
+  },
+  "Retained Earnings": {
+   "2022": 36418000000.0,
+   "2023": 42457000000.0,
+   "2024": 42907000000.0,
+   "2025": 47345000000.0
+  },
+  "Share Issued": {
+   "2022": 1228504232.0,
+   "2023": 1228504232.0,
+   "2024": 1228504232.0,
+   "2025": 1228504232.0
+  },
+  "Stockholders Equity": {
+   "2022": 40186000000.0,
+   "2023": 43157000000.0,
+   "2024": 45438000000.0,
+   "2025": 44586000000.0
+  },
+  "Tangible Book Value": {
+   "2022": 3274000000.0,
+   "2023": 11571000000.0,
+   "2024": 11468000000.0,
+   "2025": 13290000000.0
+  },
+  "Taxes Receivable": {
+   "2022": 531000000.0,
+   "2023": 648000000.0,
+   "2024": 963000000.0,
+   "2025": 876000000.0
+  },
+  "Total Assets": {
+   "2022": 72159000000.0,
+   "2023": 68331000000.0,
+   "2024": 74237000000.0,
+   "2025": 70362000000.0
+  },
+  "Total Capitalization": {
+   "2022": 47147000000.0,
+   "2023": 49184000000.0,
+   "2024": 50738000000.0,
+   "2025": 48780000000.0
+  },
+  "Total Debt": {
+   "2022": 13085000000.0,
+   "2023": 8791000000.0,
+   "2024": 10651000000.0,
+   "2025": 7476000000.0
+  },
+  "Total Equity Gross Minority Interest": {
+   "2022": 42848000000.0,
+   "2023": 43406000000.0,
+   "2024": 45806000000.0,
+   "2025": 45074000000.0
+  },
+  "Total Liabilities Net Minority Interest": {
+   "2022": 29311000000.0,
+   "2023": 24925000000.0,
+   "2024": 28431000000.0,
+   "2025": 25288000000.0
+  },
+  "Total Non Current Assets": {
+   "2022": 53638000000.0,
+   "2023": 47760000000.0,
+   "2024": 52836000000.0,
+   "2025": 50106000000.0
+  },
+  "Total Non Current Liabilities Net Minority Interest": {
+   "2022": 11858000000.0,
+   "2023": 10284000000.0,
+   "2024": 9349000000.0,
+   "2025": 7872000000.0
+  },
+  "Total Tax Payable": {
+   "2022": 945000000.0,
+   "2023": 1136000000.0,
+   "2024": 585000000.0,
+   "2025": 968000000.0
+  },
+  "Tradeand Other Payables Non Current": {
+   "2022": 972000000.0,
+   "2023": 913000000.0,
+   "2024": 522000000.0,
+   "2025": 564000000.0
+  },
+  "Treasury Shares Number": {
+   "2022": 61386685.0,
+   "2023": 61275176.0,
+   "2024": 61914771.0,
+   "2025": 60945184.0
+  },
+  "Treasury Stock": {
+   "2022": 4341000000.0,
+   "2023": 4741000000.0,
+   "2024": 5954000000.0,
+   "2025": 6948000000.0
+  },
+  "Working Capital": {
+   "2022": 1069000000.0,
+   "2023": 5930000000.0,
+   "2024": 2319000000.0,
+   "2025": 2840000000.0
+  }
+ },
+ "cashflow": {
+  "Beginning Cash Position": {
+   "2022": 8898000000.0,
+   "2023": 9008000000.0,
+   "2024": 8124000000.0,
+   "2025": 9609000000.0
+  },
+  "Capital Expenditure": {
+   "2022": -877000000.0,
+   "2023": -785000000.0,
+   "2024": -797000000.0,
+   "2025": -739000000.0
+  },
+  "Cash Dividends Paid": {
+   "2022": -2865000000.0,
+   "2023": -2395000000.0,
+   "2024": -2565000000.0,
+   "2025": -2743000000.0
+  },
+  "Cash Flow From Continuing Financing Activities": {
+   "2022": -6074000000.0,
+   "2023": -8150000000.0,
+   "2024": -3961000000.0,
+   "2025": -8744000000.0
+  },
+  "Cash Flow From Continuing Investing Activities": {
+   "2022": 698000000.0,
+   "2023": -4135000000.0,
+   "2024": -94000000.0,
+   "2025": -966000000.0
+  },
+  "Cash Flow From Continuing Operating Activities": {
+   "2022": 5674000000.0,
+   "2023": 6135000000.0,
+   "2024": 5205000000.0,
+   "2025": 9157000000.0
+  },
+  "Cash From Discontinued Financing Activities": {
+   "2022": -263000000.0,
+   "2023": 20000000.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "Cash From Discontinued Investing Activities": {
+   "2022": -32000000.0,
+   "2023": 5523000000.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "Cash From Discontinued Operating Activities": {
+   "2022": -29000000.0,
+   "2023": 113000000.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "Change In Account Payable": {
+   "2022": 154000000.0,
+   "2023": 633000000.0,
+   "2024": 603000000.0,
+   "2025": -308000000.0
+  },
+  "Change In Other Current Assets": {
+   "2022": -1213000000.0,
+   "2023": -700000000.0,
+   "2024": -632000000.0,
+   "2025": -1315000000.0
+  },
+  "Change In Other Working Capital": {
+   "2022": 720000000.0,
+   "2023": 433000000.0,
+   "2024": 899000000.0,
+   "2025": 1347000000.0
+  },
+  "Change In Payable": {
+   "2022": 154000000.0,
+   "2023": 633000000.0,
+   "2024": 603000000.0,
+   "2025": -308000000.0
+  },
+  "Change In Payables And Accrued Expense": {
+   "2022": 154000000.0,
+   "2023": 633000000.0,
+   "2024": 603000000.0,
+   "2025": -308000000.0
+  },
+  "Change In Receivables": {
+   "2022": 196000000.0,
+   "2023": -393000000.0,
+   "2024": -247000000.0,
+   "2025": -388000000.0
+  },
+  "Change In Working Capital": {
+   "2022": -143000000.0,
+   "2023": -27000000.0,
+   "2024": 623000000.0,
+   "2025": -664000000.0
+  },
+  "Changes In Cash": {
+   "2022": -24000000.0,
+   "2023": -496000000.0,
+   "2024": 1152000000.0,
+   "2025": -553000000.0
+  },
+  "Common Stock Dividend Paid": {
+   "2022": -2865000000.0,
+   "2023": -2395000000.0,
+   "2024": -2565000000.0,
+   "2025": -2743000000.0
+  },
+  "Common Stock Payments": {
+   "2022": -1500000000.0,
+   "2023": -949000000.0,
+   "2024": -2106000000.0,
+   "2025": -1937000000.0
+  },
+  "Deferred Income Tax": {
+   "2022": 1446000000.0,
+   "2023": 1741000000.0,
+   "2024": 1614000000.0,
+   "2025": 2944000000.0
+  },
+  "Deferred Tax": {
+   "2022": 1446000000.0,
+   "2023": 1741000000.0,
+   "2024": 1614000000.0,
+   "2025": 2944000000.0
+  },
+  "Depreciation Amortization Depletion": {
+   "2022": 1569000000.0,
+   "2023": 1373000000.0,
+   "2024": 1280000000.0,
+   "2025": 1311000000.0
+  },
+  "Depreciation And Amortization": {
+   "2022": 1569000000.0,
+   "2023": 1373000000.0,
+   "2024": 1280000000.0,
+   "2025": 1311000000.0
+  },
+  "Effect Of Exchange Rate Changes": {
+   "2022": 134000000.0,
+   "2023": -388000000.0,
+   "2024": 333000000.0,
+   "2025": -836000000.0
+  },
+  "End Cash Position": {
+   "2022": 9008000000.0,
+   "2023": 8124000000.0,
+   "2024": 9609000000.0,
+   "2025": 8220000000.0
+  },
+  "Financing Cash Flow": {
+   "2022": -6337000000.0,
+   "2023": -8131000000.0,
+   "2024": -3961000000.0,
+   "2025": -8745000000.0
+  },
+  "Free Cash Flow": {
+   "2022": 4770000000.0,
+   "2023": 5461000000.0,
+   "2024": 4410000000.0,
+   "2025": 8417000000.0
+  },
+  "Interest Paid Cff": {
+   "2023": -393000000.0,
+   "2024": -550000000.0,
+   "2025": -574000000.0
+  },
+  "Interest Paid Cfo": {
+   "2021": -198000000.0,
+   "2022": -244000000.0,
+   "2023": -393000000.0,
+   "2024": -550000000.0
+  },
+  "Interest Received Cfi": {
+   "2023": 469000000.0,
+   "2024": 563000000.0,
+   "2025": 420000000.0
+  },
+  "Interest Received Cfo": {
+   "2021": 56000000.0,
+   "2022": 156000000.0,
+   "2023": 469000000.0,
+   "2024": 563000000.0
+  },
+  "Investing Cash Flow": {
+   "2022": 667000000.0,
+   "2023": 1389000000.0,
+   "2024": -93000000.0,
+   "2025": -965000000.0
+  },
+  "Issuance Of Debt": {
+   "2022": 158000000.0,
+   "2023": 13000000.0,
+   "2024": 2767000000.0,
+   "2025": 2000000.0
+  },
+  "Long Term Debt Issuance": {
+   "2022": 158000000.0,
+   "2023": 13000000.0,
+   "2024": 2767000000.0,
+   "2025": 2000000.0
+  },
+  "Long Term Debt Payments": {
+   "2022": -1855000000.0,
+   "2023": -4413000000.0,
+   "2024": -1495000000.0,
+   "2025": -3490000000.0
+  },
+  "Net Business Purchase And Sale": {
+   "2022": -390000000.0,
+   "2023": -1259000000.0,
+   "2024": -1114000000.0,
+   "2025": -702000000.0
+  },
+  "Net Common Stock Issuance": {
+   "2022": -1500000000.0,
+   "2023": -949000000.0,
+   "2024": -2106000000.0,
+   "2025": -1937000000.0
+  },
+  "Net Income From Continuing Operations": {
+   "2022": 3067000000.0,
+   "2023": 3601000000.0,
+   "2024": 3150000000.0,
+   "2025": 7326000000.0
+  },
+  "Net Intangibles Purchase And Sale": {
+   "2022": -782000000.0,
+   "2023": -686000000.0,
+   "2024": -675000000.0,
+   "2025": -618000000.0
+  },
+  "Net Investment Purchase And Sale": {
+   "2022": 1870000000.0,
+   "2023": -2659000000.0,
+   "2024": 1132000000.0,
+   "2025": -66000000.0
+  },
+  "Net Issuance Payments Of Debt": {
+   "2022": -1697000000.0,
+   "2023": -4400000000.0,
+   "2024": 1272000000.0,
+   "2025": -3488000000.0
+  },
+  "Net Long Term Debt Issuance": {
+   "2022": -1697000000.0,
+   "2023": -4400000000.0,
+   "2024": 1272000000.0,
+   "2025": -3488000000.0
+  },
+  "Net Other Financing Charges": {
+   "2022": -12000000.0,
+   "2023": -14000000.0,
+   "2024": -12000000.0,
+   "2025": -3000000.0
+  },
+  "Net Other Investing Changes": {
+   "2022": 1000000.0,
+   "2023": 1000000.0,
+   "2024": 1000000.0,
+   "2025": 1000000.0
+  },
+  "Operating Cash Flow": {
+   "2022": 5647000000.0,
+   "2023": 6246000000.0,
+   "2024": 5207000000.0,
+   "2025": 9156000000.0
+  },
+  "Other Non Cash Items": {
+   "2022": 36000000.0,
+   "2023": -614000000.0,
+   "2024": -1568000000.0,
+   "2025": -1258000000.0
+  },
+  "Purchase Of Business": {
+   "2022": -679000000.0,
+   "2023": -1259000000.0,
+   "2024": -1114000000.0,
+   "2025": -702000000.0
+  },
+  "Purchase Of Intangibles": {
+   "2022": -877000000.0,
+   "2023": -785000000.0,
+   "2024": -797000000.0,
+   "2025": -739000000.0
+  },
+  "Purchase Of Investment": {
+   "2022": -2320000000.0,
+   "2023": -3566000000.0,
+   "2024": -6401000000.0,
+   "2025": -5845000000.0
+  },
+  "Repayment Of Debt": {
+   "2022": -1855000000.0,
+   "2023": -4413000000.0,
+   "2024": -1495000000.0,
+   "2025": -3490000000.0
+  },
+  "Repurchase Of Capital Stock": {
+   "2022": -1500000000.0,
+   "2023": -949000000.0,
+   "2024": -2106000000.0,
+   "2025": -1937000000.0
+  },
+  "Sale Of Business": {
+   "2022": 289000000.0,
+   "2023": 0.0,
+   "2024": 0.0
+  },
+  "Sale Of Intangibles": {
+   "2022": 95000000.0,
+   "2023": 99000000.0,
+   "2024": 122000000.0,
+   "2025": 121000000.0
+  },
+  "Sale Of Investment": {
+   "2022": 4190000000.0,
+   "2023": 907000000.0,
+   "2024": 7533000000.0,
+   "2025": 5779000000.0
+  },
+  "Stock Based Compensation": {
+   "2022": 1431000000.0,
+   "2023": 2220000000.0,
+   "2024": 2385000000.0,
+   "2025": 1695000000.0
+  },
+  "Taxes Refund Paid": {
+   "2022": -1642000000.0,
+   "2023": -2161000000.0,
+   "2024": -2277000000.0,
+   "2025": -2198000000.0
+  }
+ },
+ "income": {
+  "Basic Average Shares": {
+   "2022": 1170000000.0,
+   "2023": 1167000000.0,
+   "2024": 1166000000.0,
+   "2025": 1166000000.0
+  },
+  "Basic EPS": {
+   "2022": 1.96,
+   "2023": 5.23,
+   "2024": 2.68,
+   "2025": 6.14
+  },
+  "Cost Of Revenue": {
+   "2022": 8038000000.0,
+   "2023": 8674000000.0,
+   "2024": 9243000000.0,
+   "2025": 9986000000.0
+  },
+  "Diluted Average Shares": {
+   "2022": 1175000000.0,
+   "2023": 1180000000.0,
+   "2024": 1180000000.0,
+   "2025": 1175000000.0
+  },
+  "Diluted EPS": {
+   "2022": 1.95,
+   "2023": 5.17,
+   "2024": 2.65,
+   "2025": 6.1
+  },
+  "Diluted NI Availto Com Stockholders": {
+   "2022": 2284000000.0,
+   "2023": 6139000000.0,
+   "2024": 3124000000.0,
+   "2025": 7161000000.0
+  },
+  "EBIT": {
+   "2022": 4911000000.0,
+   "2023": 5980000000.0,
+   "2024": 5309000000.0,
+   "2025": 10762000000.0
+  },
+  "EBITDA": {
+   "2022": 6480000000.0,
+   "2023": 7353000000.0,
+   "2024": 6589000000.0,
+   "2025": 12073000000.0
+  },
+  "Gain On Sale Of Business": {
+   "2022": 176000000.0,
+   "2023": -12000000.0,
+   "2024": -18000000.0
+  },
+  "Gain On Sale Of Security": {
+   "2022": -1338000000.0,
+   "2023": -98000000.0,
+   "2024": 216000000.0,
+   "2025": 905000000.0
+  },
+  "General And Administrative Expense": {
+   "2022": 1289000000.0,
+   "2023": 1364000000.0,
+   "2024": 1435000000.0,
+   "2025": 1633000000.0
+  },
+  "Gross Profit": {
+   "2022": 21482000000.0,
+   "2023": 22534000000.0,
+   "2024": 24932000000.0,
+   "2025": 26814000000.0
+  },
+  "Interest Expense": {
+   "2022": 398000000.0,
+   "2023": 639000000.0,
+   "2024": 545000000.0,
+   "2025": 492000000.0
+  },
+  "Interest Expense Non Operating": {
+   "2022": 398000000.0,
+   "2023": 639000000.0,
+   "2024": 545000000.0,
+   "2025": 492000000.0
+  },
+  "Interest Income": {
+   "2022": 203000000.0,
+   "2023": 486000000.0,
+   "2024": 631000000.0,
+   "2025": 428000000.0
+  },
+  "Interest Income Non Operating": {
+   "2022": 203000000.0,
+   "2023": 486000000.0,
+   "2024": 631000000.0,
+   "2025": 428000000.0
+  },
+  "Minority Interests": {
+   "2022": 576000000.0,
+   "2023": 175000000.0,
+   "2024": -26000000.0,
+   "2025": -165000000.0
+  },
+  "Net Income": {
+   "2022": 2284000000.0,
+   "2023": 6139000000.0,
+   "2024": 3124000000.0,
+   "2025": 7161000000.0
+  },
+  "Net Income Common Stockholders": {
+   "2022": 2284000000.0,
+   "2023": 6139000000.0,
+   "2024": 3124000000.0,
+   "2025": 7161000000.0
+  },
+  "Net Income Continuous Operations": {
+   "2022": 3068000000.0,
+   "2023": 3600000000.0,
+   "2024": 3150000000.0,
+   "2025": 7326000000.0
+  },
+  "Net Income Discontinuous Operations": {
+   "2022": -1359000000.0,
+   "2023": 2363000000.0,
+   "2024": 0.0,
+   "2025": 0.0
+  },
+  "Net Income From Continuing And Discontinued Operation": {
+   "2022": 2284000000.0,
+   "2023": 6139000000.0,
+   "2024": 3124000000.0,
+   "2025": 7161000000.0
+  },
+  "Net Income From Continuing Operation Net Minority Interest": {
+   "2022": 3643000000.0,
+   "2023": 3776000000.0,
+   "2024": 3124000000.0,
+   "2025": 7161000000.0
+  },
+  "Net Income Including Noncontrolling Interests": {
+   "2022": 1709000000.0,
+   "2023": 5963000000.0,
+   "2024": 3150000000.0,
+   "2025": 7326000000.0
+  },
+  "Net Interest Income": {
+   "2022": -195000000.0,
+   "2023": -311000000.0,
+   "2024": -64000000.0,
+   "2025": -230000000.0
+  },
+  "Net Non Operating Interest Income Expense": {
+   "2022": -195000000.0,
+   "2023": -311000000.0,
+   "2024": -64000000.0,
+   "2025": -230000000.0
+  },
+  "Normalized EBITDA": {
+   "2022": 7780000000.0,
+   "2023": 7666000000.0,
+   "2024": 9517000000.0,
+   "2025": 11171000000.0
+  },
+  "Normalized Income": {
+   "2022": 4526469975.625969,
+   "2023": 3986971728.140798,
+   "2024": 5059408000.0,
+   "2025": 6517874000.0
+  },
+  "Operating Expense": {
+   "2022": 15431000000.0,
+   "2023": 16520000000.0,
+   "2024": 17124000000.0,
+   "2025": 17194000000.0
+  },
+  "Operating Income": {
+   "2022": 6051000000.0,
+   "2023": 6014000000.0,
+   "2024": 7808000000.0,
+   "2025": 9620000000.0
+  },
+  "Operating Revenue": {
+   "2022": 29519000000.0,
+   "2023": 31207000000.0,
+   "2024": 34176000000.0,
+   "2025": 36800000000.0
+  },
+  "Other Gand A": {
+   "2022": 1289000000.0,
+   "2023": 1364000000.0,
+   "2024": 1435000000.0,
+   "2025": 1633000000.0
+  },
+  "Other Income Expense": {
+   "2022": -1343000000.0,
+   "2023": -361000000.0,
+   "2024": -2980000000.0,
+   "2025": 879000000.0
+  },
+  "Other Non Operating Income Expenses": {
+   "2022": -43000000.0,
+   "2023": -48000000.0,
+   "2024": -52000000.0,
+   "2025": -23000000.0
+  },
+  "Other Operating Expenses": {
+   "2022": 116000000.0,
+   "2023": 4000000.0,
+   "2024": 85000000.0,
+   "2025": 49000000.0
+  },
+  "Pretax Income": {
+   "2022": 4513000000.0,
+   "2023": 5341000000.0,
+   "2024": 4764000000.0,
+   "2025": 10270000000.0
+  },
+  "Reconciled Cost Of Revenue": {
+   "2022": 8038000000.0,
+   "2023": 8674000000.0,
+   "2024": 9243000000.0,
+   "2025": 9986000000.0
+  },
+  "Reconciled Depreciation": {
+   "2022": 1569000000.0,
+   "2023": 1373000000.0,
+   "2024": 1280000000.0,
+   "2025": 1311000000.0
+  },
+  "Research And Development": {
+   "2022": 6080000000.0,
+   "2023": 6324000000.0,
+   "2024": 6514000000.0,
+   "2025": 6633000000.0
+  },
+  "Restructuring And Mergern Acquisition": {
+   "2022": 138000000.0,
+   "2023": 215000000.0,
+   "2024": 3144000000.0,
+   "2025": 3000000.0
+  },
+  "Selling And Marketing Expense": {
+   "2022": 7946000000.0,
+   "2023": 8828000000.0,
+   "2024": 9090000000.0,
+   "2025": 8879000000.0
+  },
+  "Selling General And Administration": {
+   "2022": 9235000000.0,
+   "2023": 10192000000.0,
+   "2024": 10525000000.0,
+   "2025": 10512000000.0
+  },
+  "Special Income Charges": {
+   "2022": 38000000.0,
+   "2023": -215000000.0,
+   "2024": -3144000000.0,
+   "2025": -3000000.0
+  },
+  "Tax Effect Of Unusual Items": {
+   "2022": -416530024.374031,
+   "2023": -102028271.859202,
+   "2024": -992592000.0,
+   "2025": 258874000.0
+  },
+  "Tax Provision": {
+   "2022": 1446000000.0,
+   "2023": 1741000000.0,
+   "2024": 1614000000.0,
+   "2025": 2944000000.0
+  },
+  "Tax Rate For Calcs": {
+   "2022": 0.320408,
+   "2023": 0.325969,
+   "2024": 0.339,
+   "2025": 0.287
+  },
+  "Total Expenses": {
+   "2022": 23469000000.0,
+   "2023": 25194000000.0,
+   "2024": 26367000000.0,
+   "2025": 27180000000.0
+  },
+  "Total Operating Income As Reported": {
+   "2022": 5914000000.0,
+   "2023": 5799000000.0,
+   "2024": 4665000000.0,
+   "2025": 9617000000.0
+  },
+  "Total Other Finance Cost": {
+   "2022": 143000000.0,
+   "2023": 158000000.0,
+   "2024": 150000000.0,
+   "2025": 166000000.0
+  },
+  "Total Revenue": {
+   "2022": 29519000000.0,
+   "2023": 31207000000.0,
+   "2024": 34176000000.0,
+   "2025": 36800000000.0
+  },
+  "Total Unusual Items": {
+   "2022": -1300000000.0,
+   "2023": -313000000.0,
+   "2024": -2928000000.0,
+   "2025": 902000000.0
+  },
+  "Total Unusual Items Excluding Goodwill": {
+   "2022": -1300000000.0,
+   "2023": -313000000.0,
+   "2024": -2928000000.0,
+   "2025": 902000000.0
+  }
+ },
+ "info": {
+  "52WeekChange": -0.038690448,
+  "SandP52WeekChange": 0.097798586,
+  "address1": "Dietmar-Hopp-Allee 16",
+  "allTimeHigh": 283.5,
+  "allTimeLow": 9.95,
+  "ask": 210.85,
+  "askSize": 565,
+  "auditRisk": 10,
+  "averageAnalystRating": "1.6 - Buy",
+  "averageDailyVolume10Day": 2066903,
+  "averageDailyVolume3Month": 2168061,
+  "averageVolume": 2168061,
+  "averageVolume10days": 2066903,
+  "beta": 0.702,
+  "bid": 210.75,
+  "bidSize": 767,
+  "boardRisk": 2,
+  "bookValue": 39.955,
+  "city": "Walldorf",
+  "compensationAsOfEpochDate": 1767139200,
+  "compensationRisk": 1,
+  "country": "Germany",
+  "cryptoTradeable": false,
+  "currency": "EUR",
+  "currentPrice": 210.75,
+  "currentRatio": 1.157,
+  "customPriceAlertConfidence": "LOW",
+  "dayHigh": 213.0,
+  "dayLow": 210.65,
+  "debtToEquity": 22.789,
+  "dividendRate": 2.5,
+  "dividendYield": 1.19,
+  "earningsCallTimestampEnd": 1792616400,
+  "earningsCallTimestampStart": 1792616400,
+  "earningsGrowth": 0.134,
+  "earningsQuarterlyGrowth": 0.122,
+  "earningsTimestamp": 1792596600,
+  "earningsTimestampEnd": 1792596600,
+  "earningsTimestampStart": 1792596600,
+  "ebitda": 12254000128,
+  "ebitdaMargins": 0.31112,
+  "enterpriseToEbitda": 19.805,
+  "enterpriseToRevenue": 6.162,
+  "enterpriseValue": 242696503296,
+  "epsCurrentYear": 7.16315,
+  "epsForward": 8.48605,
+  "epsTrailingTwelveMonths": 6.91,
+  "esgPopulated": false,
+  "exDividendDate": 1778025600,
+  "exchange": "GER",
+  "exchangeDataDelayedBy": 15,
+  "exchangeTimezoneName": "Europe/Berlin",
+  "exchangeTimezoneShortName": "CET",
+  "fax": "49 6227 7 57575",
+  "fiftyDayAverage": 194.7228,
+  "fiftyDayAverageChange": 16.027206,
+  "fiftyDayAverageChangePercent": 0.08230781,
+  "fiftyTwoWeekChangePercent": -3.8690448,
+  "fiftyTwoWeekHigh": 220.4,
+  "fiftyTwoWeekHighChange": -9.649994,
+  "fiftyTwoWeekHighChangePercent": -0.043784004,
+  "fiftyTwoWeekLow": 127.5,
+  "fiftyTwoWeekLowChange": 83.25,
+  "fiftyTwoWeekLowChangePercent": 0.65294117,
+  "fiftyTwoWeekRange": "127.5 - 220.4",
+  "financialCurrency": "EUR",
+  "firstTradeDateMilliseconds": 892105200000,
+  "fiveYearAvgDividendYield": 1.34,
+  "floatShares": 1088118500,
+  "forwardEps": 8.48605,
+  "forwardPE": 24.834877,
+  "freeCashflow": 10038750208,
+  "fullExchangeName": "XETRA",
+  "fullTimeEmployees": 113076,
+  "fulldayChange": -0.19999695,
+  "fulldayChangePercent": -0.09480775,
+  "fulldayPrice": 210.75,
+  "gmtOffSetMilliseconds": 3600000,
+  "governanceEpochDate": 1793491200,
+  "grossMargins": 0.73583,
+  "grossProfits": 28981999616,
+  "hasPrePostMarketData": false,
+  "heldPercentInsiders": 0.15586,
+  "heldPercentInstitutions": 0.36703,
+  "impliedSharesOutstanding": 1154204232,
+  "industry": "Software - Application",
+  "industryDisp": "Software - Application",
+  "industryKey": "software-application",
+  "isEarningsDateEstimate": false,
+  "language": "en-US",
+  "lastDividendDate": 1778025600,
+  "lastDividendValue": 2.5,
+  "lastFiscalYearEnd": 1767139200,
+  "lastSplitDate": 961977600,
+  "lastSplitFactor": "3:1",
+  "longBusinessSummary": "SAP SE, together with its subsidiaries, provides enterprise application and business solutions worldwide. It offers SAP Business AI; SAP S/4HANA that provides software capabilities for finance, risk and project management, procurement, manufacturing, supply chain and asset management, and research and development; SAP SuccessFactors solutions for human resources, including HR, time, payroll, talent and employee experience management, and analytics and planning; and spend management solutions that covers direct and indirect spend, travel and expense, and external workforce management. The company also provides SAP customer experience solutions; SAP Business Technology platform that enables customers and partners to build, integrate, and automate applications; and SAP Business Network, a business-to-business collaboration platform that helps digitalize key business processes across the supply chain and enables communication between trading partners. In addition, it offers SAP Signavio to help customers to discover, analyze, and understand business process operations; industry solutions that provide customers and partners with industry-specific solutions; and SAP LeanIX to visualize enterprise architecture, assess interdependencies and the potential impact of IT modernization, and manage the transition toward the target landscape. Further, the company provides WalkMe to execute workflows; SAP Enable Now, which offers e-learning content embedded in SAP workflows; Taulia solutions for working capital management; and sustainability solutions and services. Additionally, it provides services and support solutions. The company has a strategic collaboration with Fresenius SE & Co. KGaA and Avelios Medical GmbH for the development of a cloud-native, hospital information system that enables digitalization of clinical and administrative processes with AI integration. SAP SE was founded in 1972 and is headquartered in Walldorf, Germany.",
+  "longName": "SAP SE",
+  "market": "de_market",
+  "marketCap": 243248545792,
+  "marketState": "REGULAR",
+  "maxAge": 86400,
+  "messageBoardId": "finmb_126475",
+  "mostRecentQuarter": 1790726400,
+  "netIncomeToCommon": 8040000000,
+  "nextFiscalYearEnd": 1798675200,
+  "nonDilutedMarketCap": 242325178508,
+  "numberOfAnalystOpinions": 27,
+  "open": 212.3,
+  "operatingCashflow": 9882999808,
+  "operatingMargins": 0.29121,
+  "overallRisk": 2,
+  "payoutRatio": 0.36180001,
+  "pegRatio": 1.82,
+  "phone": "49 6227 7 47474",
+  "previousClose": 210.95,
+  "priceEpsCurrentYear": 29.421415,
+  "priceHint": 2,
+  "priceToBook": 5.274684,
+  "priceToSalesTrailing12Months": 6.1758585,
+  "profitMargins": 0.20413,
+  "quickRatio": 0.983,
+  "quoteSourceName": "Delayed Quote",
+  "quoteType": "EQUITY",
+  "recommendationKey": "buy",
+  "recommendationMean": 1.55172,
+  "region": "US",
+  "regularMarketChange": -0.19999695,
+  "regularMarketChangePercent": -0.09480775,
+  "regularMarketDayHigh": 213.0,
+  "regularMarketDayLow": 210.65,
+  "regularMarketDayRange": "210.65 - 213.0",
+  "regularMarketOpen": 212.3,
+  "regularMarketPreviousClose": 210.95,
+  "regularMarketPrice": 210.75,
+  "regularMarketTime": 1794478465,
+  "regularMarketVolume": 237020,
+  "returnOnAssets": 0.09906,
+  "returnOnEquity": 0.18178,
+  "revenueGrowth": 0.132,
+  "revenuePerShare": 34.02,
+  "sector": "Technology",
+  "sectorDisp": "Technology",
+  "sectorKey": "technology",
+  "shareHolderRightsRisk": 1,
+  "sharesOutstanding": 1154204232,
+  "shortName": "SAP SE                        I",
+  "sourceInterval": 15,
+  "symbol": "SAP.DE",
+  "targetHighPrice": 290.0,
+  "targetLowPrice": 198.84,
+  "targetMeanPrice": 243.35704,
+  "targetMedianPrice": 240.0,
+  "totalCash": 10997000192,
+  "totalCashPerShare": 9.563,
+  "totalDebt": 10588000256,
+  "totalRevenue": 39387000832,
+  "tradeable": false,
+  "trailingAnnualDividendRate": 2.5,
+  "trailingAnnualDividendYield": 0.01185115,
+  "trailingEps": 6.91,
+  "trailingPE": 30.499277,
+  "trailingPegRatio": 1.8183,
+  "triggerable": false,
+  "twoHundredDayAverage": 165.6182,
+  "twoHundredDayAverageChange": 45.131805,
+  "twoHundredDayAverageChangePercent": 0.2725051,
+  "typeDisp": "Equity",
+  "volume": 237020,
+  "website": "https://www.sap.com",
+  "zip": "69190"
+ }
+}
