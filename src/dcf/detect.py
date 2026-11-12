@@ -17,12 +17,19 @@ def _is_bank_or_insurer(company: CompanyData) -> bool:
     return "bank" in industry or "insurance" in industry
 
 
+def _shares_available(company: CompanyData) -> bool:
+    """A per-share value needs a share count, reported or derivable as market cap / price."""
+    return (company.shares or 0) > 0 or (company.market_cap > 0 and company.price > 0)
+
+
 def assess(company: CompanyData) -> Assessment:
     if _is_bank_or_insurer(company):
         return Assessment("bank")
     years = company.years
     if len(years) < 2:
         return Assessment("insufficient_data", ("years_missing",))
+    if not _shares_available(company):
+        return Assessment("insufficient_data", ("shares_missing",))
     recent = years[-4:]
     if recent[-1].fcf <= 0 or sum(1 for y in recent if y.fcf < 0) >= 2:
         return Assessment("loss_making")
@@ -32,9 +39,6 @@ def assess(company: CompanyData) -> Assessment:
         reasons.append("years_missing")
     if company.beta is None:
         reasons.append("beta_missing")
-    shares_ok = (company.shares or 0) > 0 or (company.market_cap > 0 and company.price > 0)
-    if not shares_ok:
-        reasons.append("shares_missing")
     if company.tax_rate is None:
         reasons.append("tax_missing")
     if company.interest_expense is None:

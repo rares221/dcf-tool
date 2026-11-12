@@ -136,6 +136,14 @@ def test_shares_derived_from_market_cap():
     assert out["status"] == "ok" and out["base"]["shares"] == pytest.approx(454 / 168)
 
 
+def test_no_share_count_and_no_market_cap_is_a_designed_state_not_an_error():
+    c = make_company(ticker="NOSH", shares=None, market_cap=0.0)
+    out = analyze("NOSH", world(companies={"NOSH": c}))
+    assert out["status"] == "insufficient_data" and "shares_missing" in out["notes"]
+    assert out["suggested"] is None and len(out["history"]) == 4
+    assert model_inputs("NOSH", world(companies={"NOSH": c}))[1] is None
+
+
 def test_bank_returns_history_but_no_suggestions():
     bank = make_company(ticker="BANK", industry="Banks - Regional")
     out = analyze("BANK", world(companies={"BANK": bank}))

@@ -198,8 +198,11 @@ function declinedPanel(a) {
       'Banks and insurers earn money by lending and investing other people\'s money, so "free cash flow" does not mean what it does for other companies. Valuing them properly needs a different method (dividends or excess returns) that this tool does not support yet.'],
     loss_making: [`${name}: a DCF would be misleading here`,
       'It had negative free cash flow in the latest year or in several of the last years. A standard DCF built on negative or tiny cash flow gives meaningless or extreme values, and a precise-looking number would be worse than none.'],
-    insufficient_data: [`${name}: not enough history for a DCF`,
-      'We found fewer than 2 years of financial statements, which is not enough to project a company\'s cash flow with any confidence.'],
+    insufficient_data: a.notes.includes('shares_missing')
+      ? [`${name}: no share count available`,
+        'We could not find a share count or a market cap for this company, so a value per share cannot be calculated.']
+      : [`${name}: not enough history for a DCF`,
+        'We found fewer than 2 years of financial statements, which is not enough to project a company\'s cash flow with any confidence.'],
   }[a.status];
   return el('div', { class: 'card state' }, el('h1', {}, copy[0]), el('p', { class: 'muted', style: 'margin:0 0 10px' }, copy[1]),
     el('h2', {}, 'What you can still see'),

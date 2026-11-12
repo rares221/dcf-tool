@@ -62,6 +62,6 @@ def test_shares_derivable_from_market_cap_and_price():
     assert assess(make_company(shares=None)).status == "ok"
 
 
-def test_shares_not_derivable_is_partial():
+def test_shares_not_derivable_means_no_per_share_value_is_possible():
     a = assess(make_company(shares=None, market_cap=0))
-    assert a.status == "partial" and "shares_missing" in a.reasons
+    assert a.status == "insufficient_data" and "shares_missing" in a.reasons

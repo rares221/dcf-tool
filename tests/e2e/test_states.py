@@ -28,7 +28,7 @@ def test_invalid_ticker_is_treated_as_not_found(page):
 
 
 @pytest.mark.parametrize("ticker,phrase", [("BANK", "different model"), ("LOSS", "negative free cash flow"),
-                                           ("THIN", "not enough")])
+                                           ("THIN", "not enough"), ("NOSH", "share count")])
 def test_declined_companies_explain_why_but_keep_track_record_and_peers(page, ticker, phrase):
     search(page, ticker)
     page.wait_for_selector("#statePanel .card")

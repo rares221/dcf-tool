@@ -19,7 +19,7 @@ def company(name, price, mcap, shares, ys, *, currency="USD", statement=None, be
     return {
         "name": name, "sector": sector, "industry": industry, "trading_currency": currency,
         "statement_currency": statement or currency, "price": price, "market_cap": mcap * B,
-        "shares": shares * B, "beta": beta, "forward_pe": pe, "cash": cash * B, "debt": debt * B,
+        "shares": None if shares is None else shares * B, "beta": beta, "forward_pe": pe, "cash": cash * B, "debt": debt * B,
         "interest_expense": None if interest is None else interest * B, "tax_rate": tax, "years": ys,
         "data_age_seconds": age, "stale": stale, "share_growth": share_growth,
     }
@@ -65,6 +65,7 @@ world = {
                            years((200, 260, 300, 340), (-30, -25, -20, -15), (2, 2, 2, 2)),
                            currency="USD", statement="TWD"),
         "WILD": company("Rocket Growth Inc", 50.0, 100.0, 2.0, years((10, 20, 50, 100), (7, 14, 35, 70), (1, 1, 1, 1))),
+        "NOSH": company("Float Unknown Ltd", 10.0, 0.0, None, acme_years),
         "THIN": company("Fresh IPO Ltd", 20.0, 40.0, 2.0, years((100,), (10,), (1,))),
         "STALE": company("Stale Data Co", 168.0, 453.6, 2.7, acme_years, stale=True, age=200000.0),
         "PART": company("Partial Data Co", 168.0, 453.6, 2.7, acme_years[1:], beta=None, tax=None,
