@@ -44,6 +44,9 @@ def test_non_us_banner_names_the_currency(page):
     search(page, "SAP.DE")
     page.wait_for_selector("#banners .banner")
     assert "EUR" in page.inner_text("#banners")
+    banner = page.inner_text("#banners").lower()
+    assert "discount rate slider" in banner  # the only editable control that these defaults feed
+    assert "you can edit" not in banner      # the risk-free rate and risk premium themselves are not editable
     assert DISCLAIMER in page.inner_text("body").lower()
     assert page.is_visible("#scenCard")
 
@@ -154,3 +157,13 @@ def test_phone_peer_table_scrolls_inside_container_with_first_column_pinned(phon
     first = phone.locator("#peers tr:nth-child(2) td:first-child").bounding_box()
     assert first["x"] >= container["x"] - 1 and first["x"] <= container["x"] + 20
     assert phone.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
+
+
+def test_value_of_zero_per_share_is_explained(page):
+    search(page, "DEBT")
+    page.wait_for_selector("#scen .scen-card")
+    values = page.locator("#scen .scen-card b").all_inner_texts()
+    assert all(v == "$0.00" for v in values)
+    note = page.inner_text("#verdict").lower()
+    assert "zero" in note and "debt" in note
+    assert "-100" not in page.inner_text("#verdict")

@@ -585,6 +585,51 @@
    "stale": false,
    "share_growth": null
   },
+  "DEBT": {
+   "name": "Overleveraged Corp",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 5.0,
+   "market_cap": 5000000000.0,
+   "shares": 1000000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 0.0,
+   "debt": 500000000000.0,
+   "interest_expense": 25000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 10000000000.0,
+     "fcf": 1000000000.0,
+     "sbc": 100000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 11000000000.0,
+     "fcf": 1100000000.0,
+     "sbc": 100000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 12000000000.0,
+     "fcf": 1200000000.0,
+     "sbc": 100000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 13000000000.0,
+     "fcf": 1300000000.0,
+     "sbc": 100000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false,
+   "share_growth": null
+  },
   "NOSH": {
    "name": "Float Unknown Ltd",
    "sector": "Technology",

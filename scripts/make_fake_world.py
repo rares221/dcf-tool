@@ -65,6 +65,8 @@ world = {
                            years((200, 260, 300, 340), (-30, -25, -20, -15), (2, 2, 2, 2)),
                            currency="USD", statement="TWD"),
         "WILD": company("Rocket Growth Inc", 50.0, 100.0, 2.0, years((10, 20, 50, 100), (7, 14, 35, 70), (1, 1, 1, 1))),
+        "DEBT": company("Overleveraged Corp", 5.0, 5.0, 1.0, years((10, 11, 12, 13), (1.0, 1.1, 1.2, 1.3), (0.1, 0.1, 0.1, 0.1)),
+                        cash=0.0, debt=500.0, interest=25.0),
         "NOSH": company("Float Unknown Ltd", 10.0, 0.0, None, acme_years),
         "THIN": company("Fresh IPO Ltd", 20.0, 40.0, 2.0, years((100,), (10,), (1,))),
         "STALE": company("Stale Data Co", 168.0, 453.6, 2.7, acme_years, stale=True, age=200000.0),

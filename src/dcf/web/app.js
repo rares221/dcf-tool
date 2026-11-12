@@ -232,7 +232,7 @@ function bannersFor(a) {
     banner(b('Some data is missing:'), ` ${missing.join('; ')}. Treat the range as rougher than usual. `, retryButton());
   }
   if (notes.includes('non_us')) {
-    banner(b(`${c.ticker} trades in ${c.currency}.`), ` Prices and fair values are shown in ${c.currency}, the currency this stock trades in. Defaults for the risk-free rate and risk premium are assumptions for this currency that you can edit.`);
+    banner(b(`${c.ticker} trades in ${c.currency}.`), ` Prices and fair values are shown in ${c.currency}, the currency this stock trades in. The discount rate starts from assumed defaults for this currency (risk-free rate and risk premium); move the discount rate slider if you disagree.`);
   }
   if (notes.includes('fx_converted') && a.fx) {
     banner(b('Currency conversion:'), ` the company reports in ${a.fx.from}. Reported figures were converted to ${a.fx.to} at ${Number(a.fx.rate.toPrecision(4))} (the current exchange rate), because the stock trades in ${a.fx.to}.`);
@@ -329,6 +329,11 @@ function renderScenarios(a, m, failed) {
   $('sMax').textContent = money(hi, cur);
   $('sRange').textContent = `Range ${money(s.bear, cur)} to ${money(s.bull, cur)} (base ${money(s.base, cur)})`;
 
+  if (s.bull <= 0) { // every case floors at zero: the debt outweighs the projected cash
+    fill($('verdict'), "These assumptions give a value of zero per share: the company's debt is larger than the cash we project it will generate. ",
+      'A DCF cannot put a positive price on that, so check the debt and cash flow figures in the track record before relying on this result.');
+    return;
+  }
   const where = m.position === 'below' ? 'below the whole range, which would suggest it is cheap under these assumptions'
     : m.position === 'above' ? 'above the whole range, which would suggest it is expensive under these assumptions'
       : 'inside the range, so these assumptions do not clearly call it cheap or expensive';

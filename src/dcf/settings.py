@@ -39,4 +39,5 @@ def build_provider(settings: Settings) -> DataProvider:
     from .data.live import LiveProvider
     from .data.yahoo import YahooProvider
 
-    return LiveProvider(YahooProvider(SqliteCache(settings.cache_path)), settings.fred_key, settings.finnhub_key)
+    cache = SqliteCache(settings.cache_path)
+    return LiveProvider(YahooProvider(cache), settings.fred_key, settings.finnhub_key, cache)
