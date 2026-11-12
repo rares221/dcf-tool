@@ -1,0 +1,31 @@
+[
+  {"name": "bug", "color": "d73a4a", "description": "Something is not working as intended"},
+  {"name": "enhancement", "color": "a2eeef", "description": "A new capability or an improvement"},
+  {"name": "documentation", "color": "0075ca", "description": "Docs, README, comments or guides"},
+  {"name": "tests", "color": "bfd4f2", "description": "Adds or improves tests only"},
+  {"name": "chore", "color": "ededed", "description": "Tooling, dependencies or housekeeping"},
+  {"name": "question", "color": "d876e3", "description": "A question rather than a change request"},
+
+  {"name": "valuation-model", "color": "5319e7", "description": "How the DCF numbers are calculated"},
+  {"name": "data-source", "color": "1d76db", "description": "Yahoo, FRED, Finnhub or other data providers"},
+  {"name": "ui", "color": "fbca04", "description": "The web page: layout, wording, behaviour"},
+  {"name": "api", "color": "0e8a16", "description": "The FastAPI endpoints and payloads"},
+  {"name": "ci", "color": "c5def5", "description": "GitHub Actions and automation"},
+
+  {"name": "needs-triage", "color": "ffffff", "description": "A maintainer has not looked at this yet"},
+  {"name": "needs-discussion", "color": "f9d0c4", "description": "Design decision needed before any code"},
+  {"name": "blocked", "color": "b60205", "description": "Waiting on something external"},
+  {"name": "wip", "color": "e4e669", "description": "Work in progress, not ready for review"},
+  {"name": "ready-for-review", "color": "0e8a16", "description": "Tests pass and it is ready for a maintainer"},
+
+  {"name": "P1-critical", "color": "b60205", "description": "Wrong numbers or broken for everyone"},
+  {"name": "P2-important", "color": "d93f0b", "description": "Should be done soon"},
+  {"name": "P3-nice-to-have", "color": "fef2c0", "description": "Useful, but no rush"},
+
+  {"name": "good first issue", "color": "7057ff", "description": "Small, well-defined, friendly to newcomers"},
+  {"name": "help wanted", "color": "008672", "description": "Maintainers would welcome a contribution"},
+
+  {"name": "accuracy", "color": "5319e7", "description": "Changes the valuation numbers users see"},
+  {"name": "breaking-change", "color": "b60205", "description": "Changes behaviour or the API in an incompatible way"},
+  {"name": "security", "color": "ee0701", "description": "Security-related change (report issues privately)"}
+]

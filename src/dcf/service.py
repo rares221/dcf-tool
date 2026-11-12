@@ -8,8 +8,8 @@ from dataclasses import asdict, dataclass, field, replace
 
 from .currency import convert_statements
 from .data.provider import DataProvider, ProviderError
-from .defaults import (DEFAULT_COST_OF_DEBT, DEFAULT_TAX_RATE, DEFAULT_TERMINAL_GROWTH,
-                       EQUITY_RISK_PREMIUM, SLIDER_LIMITS)
+from .defaults import (DEFAULT_COST_OF_DEBT, DEFAULT_TAX_RATE, DEFAULT_TERMINAL_GROWTH, EQUITY_RISK_PREMIUM,
+                       SLIDER_LIMITS, TERMINAL_GROWTH_STEP, UNEVEN_GROWTH_SPREAD)
 from .detect import Assessment, assess
 from .peers import DIRECTION, PeerMetrics, metrics_for, peer_median, reading
 from .model import margin_used
@@ -95,6 +95,8 @@ def _prepare(raw_ticker: str, provider: DataProvider) -> Prepared:
     notes: list[str] = []
     if company.stale:
         notes.append("stale")
+    if company.interest_estimated:
+        notes.append("interest_estimated")
     if company.trading_currency != "USD" or "." in ticker:
         notes.append("non_us")
     converted, fx = _convert_if_needed(company, provider)
@@ -126,7 +128,8 @@ def _inputs_from(company: CompanyData) -> ModelInputs:
     sbc_pct = latest.sbc / latest.revenue * 100 if latest.revenue > 0 else 0.0
     return ModelInputs(revenue=latest.revenue, cash=company.cash + max(company.long_term_investments, 0.0),
                        debt=company.debt, shares=company.shares or 0.0, price=company.price, sbc_pct=sbc_pct,
-                       interest_pct=_interest_pct(company, latest.revenue))
+                       interest_pct=_interest_pct(company, latest.revenue),
+                       other_claims=max(company.minority_interest, 0.0) + max(company.preferred_stock, 0.0))
 
 
 def model_inputs(raw_ticker: str, provider: DataProvider) -> tuple[str, ModelInputs | None]:
@@ -150,6 +153,18 @@ def _cagr(company: CompanyData) -> float | None:
     if len(ys) < 2 or ys[0].revenue <= 0 or ys[-1].revenue <= 0:
         return None
     return ((ys[-1].revenue / ys[0].revenue) ** (1 / (len(ys) - 1)) - 1) * 100
+
+
+def _growth_range(company: CompanyData) -> dict | None:
+    """Best and worst yearly revenue growth (percent) across the years shown, or None with fewer than two changes."""
+    changes = [(b.revenue / a.revenue - 1) * 100 for a, b in zip(company.years, company.years[1:]) if a.revenue > 0]
+    return {"min": min(changes), "max": max(changes)} if len(changes) >= 2 else None
+
+
+def _terminal_growth_cap(risk_free: float) -> float:
+    """Long-term growth should not exceed the risk-free rate (Damodaran). Rounded down to the slider step."""
+    ceiling = min(risk_free, SLIDER_LIMITS["terminal_growth"][1])
+    return max(TERMINAL_GROWTH_STEP, math.floor(ceiling / TERMINAL_GROWTH_STEP) * TERMINAL_GROWTH_STEP)
 
 
 def _clamp(key: str, value: float, notes: list[str]) -> float:
@@ -230,7 +245,7 @@ def _peers_payload(rows: list[PeerMetrics]) -> dict:
 def _empty_payload(status: str) -> dict:
     return {
         "status": status, "notes": [], "suggestions": [], "company": None, "history": [], "history_cagr": None,
-        "suggested": None, "limits": {k: list(v) for k, v in SLIDER_LIMITS.items()}, "base": None,
+        "suggested": None, "growth_range": None, "limits": {k: list(v) for k, v in SLIDER_LIMITS.items()}, "base": None,
         "peers": {"rows": [], "medians": {}, "readings": {}}, "data_age_seconds": 0.0, "fx": None,
         "share_growth": None,
     }
@@ -264,16 +279,25 @@ def _analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | 
     out["history"] = _history(company)
     cagr = _cagr(company)
     out["history_cagr"] = cagr
+    out["growth_range"] = _growth_range(company)
+    if out["growth_range"] and out["growth_range"]["max"] - out["growth_range"]["min"] > UNEVEN_GROWTH_SPREAD:
+        out["notes"].append("growth_uneven")
     tickers = peer_tickers if peer_tickers is not None else provider.peer_tickers(company.ticker)
     out["peers"] = _peers_payload(_peer_rows(company, provider, tickers))
 
     if prepared.status in ("ok", "partial"):
         out["suggested"] = _suggested(company, provider, cagr, out["notes"])
+        cap = _terminal_growth_cap(out["suggested"]["wacc_breakdown"]["risk_free"])
+        out["suggested"]["terminal_growth"] = min(DEFAULT_TERMINAL_GROWTH, cap)
+        out["limits"]["terminal_growth"] = [0, cap]
         inputs = _inputs_from(company)
         out["base"] = asdict(inputs)
         out["base"]["long_term_investments"] = company.long_term_investments
         out["base"]["long_term_investments_per_share"] = (
             company.long_term_investments / inputs.shares if inputs.shares > 0 else 0.0)
+        out["base"]["minority_interest"] = company.minority_interest
+        out["base"]["preferred_stock"] = company.preferred_stock
+        out["base"]["other_claims_per_share"] = inputs.other_claims / inputs.shares if inputs.shares > 0 else 0.0
     return out
 
 

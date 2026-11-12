@@ -50,4 +50,4 @@ def load_fake_world(path: str) -> FakeProvider:
         world = json.load(f)
     companies = {t: company_from_dict({"ticker": t, **c}) for t, c in world["companies"].items()}
     return FakeProvider(companies, fx=world.get("fx"), peers=world.get("peers"),
-                        errors=set(world.get("errors", [])))
+                        errors=set(world.get("errors", [])), risk_free=world.get("risk_free"))

@@ -112,7 +112,7 @@ function scheduleRecalc() {
 }
 
 // ---------- rendering ----------
-const CARDS = ['company', 'takeaway', 'scenCard', 'whyCard', 'impCard', 'assumpRow', 'waccCard', 'peersCard', 'histRow', 'sources'];
+const CARDS = ['company', 'assumpCard', 'takeaway', 'scenCard', 'whyCard', 'impCard', 'torCard', 'waccCard', 'peersCard', 'histRow', 'sources'];
 const CONTEXT_ONLY = ['company', 'peersCard', 'histRow', 'sources'];
 const HAS_CONTEXT = new Set(['bank', 'loss_making', 'insufficient_data']); // no fair value, but history and peers still shown
 
@@ -149,7 +149,7 @@ function render() {
   const m = state.model && state.model.status === 'ok' ? state.model : null;
   const failed = state.model != null && !m; // the model call came back as an error or a validation failure
   for (const id of ['whyCard', 'impCard', 'torCard', 'waccCard']) $(id).hidden = !m;
-  renderAssumptions(a, m);
+  renderAssumptions(a, m, failed);
   renderTakeaway(a, m, failed);
   renderScenarios(a, m, failed);
   renderWhy(a, m);
@@ -247,25 +247,99 @@ function bannersFor(a) {
 
 function renderCompany(a) {
   const c = a.company;
-  const sub = [c.sector, c.industry].filter(Boolean).join(' · ');
-  fill($('company'), el('div', { class: 'head' },
-    el('div', {},
-      el('h1', {}, c.name, ' ', el('span', { class: 'muted', style: 'font-weight:400' }, `(${c.ticker})`)),
-      el('div', { class: 'small muted' }, [sub, `market cap ${money(c.market_cap, c.currency, { compact: true })}`].filter(Boolean).join(' · ')),
-      el('div', { class: 'small muted' }, freshness(a.data_age_seconds)),
-    ),
-    el('div', { class: 'price' }, el('b', {}, money(c.price, c.currency)), el('div', { class: 'small muted' }, `current price (${c.currency})`)),
-  ));
+  const sub = [c.sector, c.industry, `market cap ${money(c.market_cap, c.currency, { compact: true })}`, freshness(a.data_age_seconds)].filter(Boolean).join(' · ');
+  fill($('company'),
+    el('div', {}, el('h1', {}, c.name, ' ', el('span', { class: 'muted', style: 'font-weight:400' }, `(${c.ticker})`)),
+      el('div', { class: 'small muted' }, sub)),
+    el('div', { class: 'price' }, el('b', {}, money(c.price, c.currency)), el('div', { class: 'small muted' }, `current price (${c.currency})`)));
 }
 
-function renderAssumptions(a, m) {
-  const s = a.suggested;
+// One "our default / accepted values / change it if" block of an assumption row.
+const factBlock = (title, tag, ...content) => el('div', {},
+  el('h4', {}, title, tag ? el('span', { class: 'src' }, tag) : null), el('p', {}, ...content));
+
+function factsFor(key, a, m) {
+  const c = a.company, cur = c.currency, s = a.suggested, lim = a.limits, w = s.wacc_breakdown, notes = a.notes;
+  const years = a.history.length - 1;
+  const rfDefault = s.risk_free_source !== 'fred';
+  const wBar = m ? m.sensitivity.find((x) => x.key === 'wacc') : null;
+  if (key === 'g') {
+    const peerMedian = a.peers.medians.growth;
+    return [
+      factBlock('Our default', 'from company data', b(`${s.growth}%`),
+        a.history_cagr != null
+          ? `: ${c.name}'s average yearly revenue growth over the last ${years} ${years === 1 ? 'year' : 'years'} (${pct(a.history_cagr)}), rounded to the slider step.`
+          : ': based on the revenue history available.',
+        notes.includes('suggestion_clamped:growth') ? ' The real figure was outside the allowed range, so it was capped.' : '',
+        notes.includes('growth_uneven') && a.growth_range
+          ? ` Yearly growth has been uneven (${pct(a.growth_range.min)} to ${pct(a.growth_range.max)}), so check this one first.` : ''),
+      factBlock('Accepted values', null, b(`${lim.growth[0]}% to ${lim.growth[1]}%`), ' a year. Growth fades toward the long-term rate over the forecast, so it is a starting point.'),
+      factBlock('Change it if…', null, 'you expect the business to speed up or slow down (new products, a maturing market, a big acquisition).',
+        peerMedian != null ? ` For context: peers grew ${pct(peerMedian)} last year.` : ''),
+    ];
+  }
+  if (key === 'm') {
+    return [
+      factBlock('Our default', 'from company data', b(`${s.fcf_margin}%`), ": last year's free cash flow divided by revenue. The model then ",
+        a.base.interest_pct > 0 ? `adds back interest (${pct(a.base.interest_pct)} of revenue) and ` : '',
+        state.countSbc ? `subtracts stock pay (${pct(a.base.sbc_pct)} of revenue)` : 'does not subtract stock pay (switched off)',
+        m ? [', so it actually uses ', b(pct(m.margin_used))] : '', '.',
+        notes.includes('suggestion_clamped:fcf_margin') ? ' The real figure was outside the allowed range, so it was capped.' : ''),
+      factBlock('Accepted values', null, b(`${lim.fcf_margin[0]}% to ${lim.fcf_margin[1]}%`), '. Higher margins make the business worth more, and they are the easiest number to be too hopeful about.'),
+      factBlock('Change it if…', null, 'you expect costs or prices to change margins for good, not for one year. Check the track record first: ',
+        a.history.map((h) => pct(h.fcf_margin, 0)).join(', '), '.'),
+    ];
+  }
+  if (key === 'w') {
+    const betaMissing = notes.includes('beta_missing');
+    return [
+      factBlock('Our default', rfDefault ? 'partly an assumption' : 'from market data', b(`${s.wacc.toFixed(1)}%`),
+        ` = ${pct(w.risk_free)} risk-free rate + ${c.name}'s beta (${w.beta.toFixed(1)}${betaMissing ? ', assumed because none was available' : ''}) × a ${pct(w.erp)} risk premium`,
+        w.debt_weight > 0.02 ? ', blended with a little debt' : '', '. ',
+        rfDefault ? `The ${pct(w.risk_free)} risk-free rate is a default: no live rate is configured.` : 'The risk-free rate is the live US 10-year yield.',
+        notes.includes('suggestion_clamped:wacc') ? ` The calculated rate (${pct(w.wacc)}) was outside the allowed range, so it was limited.` : ''),
+      factBlock('Accepted values', null, b(`${lim.wacc[0]}% to ${lim.wacc[1]}%`), ', and always ', b('at least 1 point above long-term growth'),
+        '. Close to long-term growth the maths blows up, so the slider stops there.'),
+      factBlock('Change it if…', null, 'you want a different required return. Higher means you want more reward for the risk, so the value is lower.',
+        wBar ? [' In this case ', b(`1 point moves the base value by about ${money((wBar.high - wBar.low) / 2, cur)}`), '.'] : ''),
+    ];
+  }
+  if (key === 't') {
+    return [
+      factBlock('Our default', 'our assumption', b(`${s.terminal_growth}%`), ': roughly how fast the whole economy grows, applied forever after the forecast years.',
+        lim.terminal_growth[1] < 2.5 ? ' It is capped at the risk-free rate for this currency.' : ''),
+      factBlock('Accepted values', null, b(`${lim.terminal_growth[0]}% to ${lim.terminal_growth[1]}%`),
+        `, and never above the risk-free rate (${pct(w.risk_free)} here; lower for currencies with low rates).`),
+      factBlock('Change it if…', null, "rarely. Most of a company's value sits after the forecast years, so small changes here move the answer a lot. 2% to 3% is the usual range."),
+    ];
+  }
+  return [
+    factBlock('Our default', 'from company data', b(state.countSbc ? 'Counted as a cost.' : 'Ignored (switched off).'),
+      a.base.sbc_pct > 0
+        ? ` ${c.name} pays about ${pct(a.base.sbc_pct)} of revenue in shares. That is a real cost to existing owners even though no cash leaves.`
+        : ` No stock-based pay was found for ${c.name}.`),
+    factBlock('Accepted values', null, b('Count'), ' or ', b('ignore'), '.'),
+    factBlock('Change it if…', null, 'you disagree that it is a cost (some analysts add it back).',
+      m && m.sbc_effect > 0 ? [' Ignoring it would add about ', b(money(m.sbc_effect, cur)), ' a share, so it is the more flattering choice.'] : ''),
+  ];
+}
+
+function renderAssumptions(a, m, failed) {
+  const c = a.company, cur = c.currency, s = a.suggested;
   $('gv').textContent = `${state.a.growth}%`;
   $('mv').textContent = `${state.a.fcf_margin}%`;
   $('wv').textContent = `${state.a.wacc.toFixed(1)}%`;
   $('tv').textContent = `${state.a.terminal_growth}%`;
-  $('sbcHint').textContent = `${a.company.name} pays about ${pct(a.base.sbc_pct)} of revenue in shares. Reported cash flow ignores this cost.`;
   document.querySelectorAll('#sbcSeg button').forEach((btn) => btn.classList.toggle('on', (btn.dataset.v === '1') === state.countSbc));
+
+  fill($('assumpIntro'), b('Everything below is built from these five numbers. '),
+    `We filled them in from ${c.name}'s own history and from market data, so you can start with them as they are. Change `, b('one at a time'),
+    ' and watch the result line. If you cannot say why you would change a number, leave it.');
+  fill($('live'), m
+    ? [el('span', {}, 'Result with these assumptions:'), el('span', {}, 'Base ', b(money(m.scenarios.base, cur))),
+      el('span', {}, 'Range ', b(`${money(m.scenarios.bear, cur)} to ${money(m.scenarios.bull, cur)}`)), el('span', { class: 'muted' }, `Price ${money(c.price, cur)}`)]
+    : (failed ? 'Result not available right now.' : 'Calculating…'));
+
   if (m) {
     const parts = [`reported ${pct(state.a.fcf_margin)}`];
     if (a.base.interest_pct > 0) parts.push(`plus ${pct(a.base.interest_pct)} interest add-back`);
@@ -274,9 +348,20 @@ function renderAssumptions(a, m) {
   } else {
     $('mEff').textContent = '';
   }
-  const edited = SLIDERS.some(([, key]) => state.a[key] !== s[key]) || !state.countSbc;
-  $('edited').hidden = !edited;
-  $('reset').disabled = !edited;
+
+  const marks = [['gw', state.a.growth !== s.growth, `${s.growth}%`], ['mw', state.a.fcf_margin !== s.fcf_margin, `${s.fcf_margin}%`],
+    ['ww', state.a.wacc !== s.wacc, `${s.wacc.toFixed(1)}%`], ['tw', state.a.terminal_growth !== s.terminal_growth, `${s.terminal_growth}%`],
+    ['sw', !state.countSbc, 'counted as a cost']];
+  let changed = 0;
+  for (const [id, isChanged, was] of marks) {
+    $(id).textContent = isChanged ? `You changed this (default: ${was})` : '';
+    if (isChanged) changed += 1;
+  }
+  $('edited').hidden = changed === 0;
+  $('edited').textContent = `${changed} changed`;
+  $('reset').disabled = changed === 0;
+
+  for (const key of ['g', 'm', 'w', 't', 's']) fill($(`facts-${key}`), factsFor(key, a, m));
 }
 
 function renderTakeaway(a, m, failed) {
@@ -585,7 +670,16 @@ function renderFlags(a, m) {
       li('ok', 'Share count has been roughly stable, so there is little ', term('dilution', 'dilution'), '.');
     }
   }
-  li('mid-c', 'Analyst growth estimates are not available on free sources, so growth here is history-based.');
+  if (a.base.other_claims_per_share > 0) {
+    li('ok', `${money(a.base.minority_interest + a.base.preferred_stock, cur, { compact: true })} of minority interest and preferred stock (about ${money(a.base.other_claims_per_share, cur)} a share) is subtracted, because it belongs to other owners, not to the shares you would buy.`);
+  }
+  if (a.notes.includes('interest_estimated')) {
+    li('mid-c', "The latest interest expense was not reported, so it is estimated from the last reported interest rate and today's debt. The interest add-back is approximate.");
+  }
+  if (a.notes.includes('growth_uneven') && a.growth_range) {
+    li('mid-c', `Revenue growth has been uneven: yearly changes ranged from ${pct(a.growth_range.min)} to ${pct(a.growth_range.max)}, so the suggested growth averages very different years. Check for acquisitions, demergers or one-off events.`);
+  }
+  li('mid-c', 'Analyst growth estimates are not used yet, so growth here is history-based.');
   li('muted', 'Banks, insurers and companies with negative cash flow show a "DCF is a poor fit" message instead of a number.');
   fill($('flags'), items);
 }

@@ -1,0 +1,37 @@
+name: Feature request
+description: Suggest an improvement or a new capability
+title: "feat: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the **What's left to do** list in the README first; your idea may already be there. Items marked
+        *(needs a decision)* are best discussed in an issue like this one before any code is written.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Who is affected and what do they currently have to do instead?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What should the tool do? For valuation changes, include a source or reasoning.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to work on this myself (see integration.md for how pull requests work).
+          required: false

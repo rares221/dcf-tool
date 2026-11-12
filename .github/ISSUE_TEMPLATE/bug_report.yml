@@ -1,0 +1,50 @@
+name: Bug report
+description: Something is wrong, for example a number that looks off or a page that breaks
+title: "bug: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. For **wrong valuation numbers**, please add the ticker and what you expected
+        (with a source if you can); that is the fastest way to get it fixed.
+  - type: input
+    id: ticker
+    attributes:
+      label: Ticker(s)
+      description: The ticker(s) where you saw the problem, for example `AAPL` or `SAP.DE`.
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the app and search for ...
+        2. Move the ... slider to ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, browser, Python version, and whether API keys are configured.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and did not find this one.
+          required: true
+        - label: I did not include any API keys or personal information.
+          required: true

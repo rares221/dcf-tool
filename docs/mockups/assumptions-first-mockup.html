@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assumptions-first mockup</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1b1f27; --muted:#6b7280; --line:#e3e6ea; --accent:#2563eb; --good:#15803d; --bad:#b91c1c; --warn:#b45309; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1217; --card:#171b22; --ink:#e8eaee; --muted:#9aa3b2; --line:#2a303a; --accent:#6ea0ff; --good:#4ade80; --bad:#f87171; --warn:#fbbf24; }
+  }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; padding:20px 16px 64px; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; }
+  .wrap { max-width:1040px; margin:0 auto; }
+  .banner { background:color-mix(in srgb,var(--warn) 14%,transparent); border:1px solid color-mix(in srgb,var(--warn) 45%,transparent); border-radius:8px; padding:8px 12px; font-size:13px; margin-bottom:16px; }
+  .top { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .top .box { flex:1; min-width:140px; border:1px solid var(--line); background:var(--card); border-radius:8px; padding:9px 12px; }
+  .btn { background:var(--accent); color:#fff; border-radius:8px; padding:9px 16px; font-weight:600; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:820px){ .row{ grid-template-columns:1fr; } }
+  h1 { font-size:20px; margin:0; } h2 { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 10px; font-weight:600; }
+  .muted { color:var(--muted); } .small { font-size:12px; }
+  .head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+  .price { text-align:right; } .price b { font-size:22px; }
+  .tag { display:inline-block; font-size:11px; padding:1px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); margin-right:4px; }
+  .pills { display:flex; gap:6px; flex-wrap:wrap; }
+  .pills button { font:inherit; font-size:13px; border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:999px; padding:3px 14px; cursor:pointer; }
+  .pills button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .mb { font:inherit; font-size:13px; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:4px 12px; cursor:pointer; }
+  .mb[disabled] { opacity:.45; cursor:default; }
+  .scen { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .scen div { border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .scen .base { border-color:var(--accent); }
+  .scen b { display:block; font-size:22px; } .scen small { color:var(--muted); display:block; font-size:12px; }
+  .bar { position:relative; height:30px; background:var(--line); border-radius:6px; margin:30px 0 6px; }
+  .bar .rng { position:absolute; top:0; bottom:0; background:color-mix(in srgb,var(--accent) 28%,transparent); border:2px solid var(--accent); border-radius:6px; }
+  .bar .mid { position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--accent); }
+  .bar .px { position:absolute; top:-10px; bottom:-10px; width:2px; background:var(--ink); }
+  .bar .px span { position:absolute; top:-18px; left:-30px; font-size:11px; white-space:nowrap; }
+  .scale { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted); }
+  .verdict { margin-top:12px; padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:color-mix(in srgb,var(--accent) 8%,transparent); }
+  .takeaway { border-left:4px solid var(--accent); font-size:16px; }
+  .takeaway .fine { display:block; margin-top:6px; font-size:12px; color:var(--muted); }
+  .sl { display:grid; grid-template-columns:150px 1fr 56px; gap:8px; align-items:center; margin:8px 0; font-size:14px; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  .sl .val { text-align:right; font-variant-numeric:tabular-nums; }
+  .sbc { display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; margin:12px 0 4px; font-size:14px; }
+  .hint { font-size:11px; color:var(--muted); display:block; font-weight:400; }
+  .tor { display:grid; grid-template-columns:120px 1fr; gap:8px 10px; align-items:center; font-size:13px; }
+  .tor .t { position:relative; height:18px; background:var(--line); border-radius:3px; }
+  .tor .t i { position:absolute; top:0; bottom:0; background:var(--accent); opacity:.75; border-radius:3px; }
+  .tor .t u { position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink); }
+  .tor .t em { position:absolute; top:0; font-style:normal; font-size:10px; line-height:18px; color:var(--ink); }
+  .hist { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:12px; }
+  .hist .col { text-align:center; min-width:0; }
+  .hist .plot { height:90px; display:flex; align-items:flex-end; justify-content:center; border-bottom:1px solid var(--line); }
+  .hist .plot i { display:block; width:60%; background:var(--accent); opacity:.75; border-radius:3px 3px 0 0; }
+  .hist .lab { margin-top:10px; font-size:12px; line-height:1.6; color:var(--muted); }
+  .hist .lab b { display:block; color:var(--ink); font-size:14px; }
+  .explain { background:color-mix(in srgb,var(--accent) 7%,transparent); border:1px solid var(--line); border-radius:8px; padding:12px 14px; margin-bottom:14px; }
+  .calc { display:grid; grid-template-columns:1fr auto; gap:4px 16px; font-size:14px; margin:8px 0; }
+  .calc .r { text-align:right; font-variant-numeric:tabular-nums; }
+  .calc .tot { font-weight:600; border-top:1px solid var(--line); padding-top:6px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .chip { border:1px solid var(--line); border-radius:999px; padding:2px 10px; font-size:12px; }
+  .chip.add { border-style:dashed; color:var(--muted); }
+  .peer td.me, .peer th.me { background:color-mix(in srgb,var(--accent) 9%,transparent); }
+  .peer td { white-space:nowrap; }
+  .scroll { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:13px; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th { color:var(--muted); font-weight:500; font-size:12px; }
+  .peer td:first-child, .peer th:first-child { position:sticky; left:0; background:var(--card); z-index:1; }
+  .ok { color:var(--good); } .mid-c { color:var(--warn); } .no { color:var(--bad); }
+  .flags { padding-left:18px; margin:0; } .flags li { margin:6px 0; }
+  /* implied growth */
+  .big { font-size:34px; font-weight:700; line-height:1.1; }
+  .cmp { display:grid; grid-template-columns:150px 1fr 48px; gap:6px 10px; align-items:center; font-size:13px; margin-top:10px; }
+  .cmp .t { height:14px; background:var(--line); border-radius:3px; position:relative; }
+  .cmp .t i { position:absolute; left:0; top:0; bottom:0; background:var(--accent); opacity:.75; border-radius:3px; }
+  .cmp .t i.hl { background:var(--warn); opacity:.9; }
+  .cmp .v { text-align:right; font-variant-numeric:tabular-nums; }
+  /* glossary tooltips */
+  .term { border-bottom:1px dotted var(--muted); cursor:help; position:relative; }
+  .term:hover::after, .term:focus::after { content:attr(data-tip); position:absolute; left:0; top:100%; margin-top:6px; width:max-content; max-width:min(260px,78vw); background:var(--ink); color:var(--bg); padding:8px 10px; border-radius:8px; font-size:12px; line-height:1.45; font-weight:400; text-transform:none; letter-spacing:0; z-index:30; box-shadow:0 4px 14px rgba(0,0,0,.25); white-space:normal; text-align:left; }
+  /* mock controls + states */
+  .state ul { margin:6px 0 0; padding-left:18px; } .state li { margin:4px 0; }
+  .state h1 { margin-bottom:6px; }
+  .sk { height:18px; border-radius:6px; margin:10px 0; background:linear-gradient(90deg,var(--line) 25%,color-mix(in srgb,var(--line) 40%,transparent) 50%,var(--line) 75%); background-size:200% 100%; animation:sh 1.3s linear infinite; }
+  @keyframes sh { from{background-position:200% 0} to{background-position:-200% 0} }
+  @media (prefers-reduced-motion: reduce){ .sk{ animation:none; } }
+  /* phone preview */
+
+  /* ---- phone-width layout ---- */
+  @media (max-width:560px){
+    body { padding:12px 12px 48px; }
+    .card { padding:14px; }
+    .head .price { text-align:left; }
+    .sl { grid-template-columns:1fr auto; }
+    .sl label { grid-column:1; } .sl .val { grid-column:2; grid-row:1; } .sl input { grid-column:1 / -1; }
+    .scen { gap:6px; } .scen div { padding:8px; } .scen b { font-size:18px; } .scen small { font-size:11px; }
+    .tor { grid-template-columns:92px 1fr; }
+    .hist { grid-template-columns:repeat(2,1fr); gap:16px 14px; }
+    .cmp { grid-template-columns:110px 1fr 44px; }
+    .calc { grid-template-columns:1fr auto; }
+    .big { font-size:28px; }
+    .takeaway { font-size:15px; }
+    .scale { flex-direction:column; gap:2px; }
+  }
+
+/* ---- app additions ---- */
+.search { display:flex; gap:10px; margin-bottom:14px; }
+.search input { flex:1; min-width:0; font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:9px 12px; }
+.search button { font:inherit; font-weight:600; border:0; background:var(--accent); color:#fff; border-radius:8px; padding:9px 18px; cursor:pointer; }
+.fresh { font-size:12px; color:var(--muted); align-self:center; }
+.scen .scen-card { border:1px solid var(--line); border-radius:8px; padding:10px; }
+.scen .scen-card.base { border-color:var(--accent); }
+.visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+.chip button { border:0; background:none; color:var(--muted); cursor:pointer; padding:0 0 0 4px; font:inherit; }
+.chip.add { cursor:pointer; background:none; font:inherit; font-size:12px; color:var(--muted); }
+.peer-input { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:6px 10px; margin-bottom:8px; }
+
+/* data-sources table on phones: one block per input instead of three cramped columns */
+@media (max-width:560px){
+  #sources table, #sources tbody, #sources tr, #sources td { display:block; width:100%; }
+  #sources tr:first-child { display:none; }
+  #sources tr { padding:8px 0; border-bottom:1px solid var(--line); }
+  #sources td { border:0; padding:2px 0; }
+  #sources td:first-child { font-weight:600; }
+}
+
+.mockbanner { background:color-mix(in srgb,var(--warn) 14%,transparent); border:1px solid color-mix(in srgb,var(--warn) 45%,transparent); border-radius:8px; padding:8px 12px; font-size:13px; margin-bottom:14px; }
+.strip { display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; padding:2px 4px 12px; }
+.strip h1 { font-size:20px; margin:0; } .strip .px { text-align:right; }
+.intro { margin:0 0 12px; font-size:14px; }
+.live { position:sticky; top:0; z-index:5; background:color-mix(in srgb,var(--accent) 10%,var(--card)); border:1px solid var(--line); border-radius:8px; padding:8px 12px; margin:0 0 12px; font-size:14px; display:flex; gap:14px; flex-wrap:wrap; align-items:baseline; }
+.live b { font-size:17px; }
+.arow { display:grid; grid-template-columns:minmax(230px,1fr) 2fr; gap:10px 22px; padding:14px 0; border-top:1px solid var(--line); }
+@media (max-width:760px){ .arow { grid-template-columns:1fr; } }
+.arow .ctl label { font-weight:600; display:block; margin-bottom:2px; }
+.arow .ctl .big2 { font-size:22px; font-weight:700; font-variant-numeric:tabular-nums; }
+.arow input[type=range] { width:100%; accent-color:var(--accent); margin-top:4px; }
+.arow .was { font-size:12px; color:var(--warn); min-height:16px; }
+.facts { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; font-size:13px; }
+@media (max-width:1000px){ .facts { grid-template-columns:1fr; } }
+.facts h4 { margin:0 0 2px; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+.facts p { margin:0; }
+.src { display:inline-block; font-size:11px; padding:0 7px; border-radius:999px; border:1px solid var(--line); color:var(--muted); margin-left:6px; font-weight:400; }
+.accepted { margin-top:6px; padding:10px 12px; border:1px dashed var(--muted); border-radius:8px; font-size:13px; }
+.howto { margin:10px 0 0; padding-left:18px; font-size:13px; }
+.order { counter-reset:o; list-style:none; padding:0; margin:0; }
+.order li { counter-increment:o; padding:8px 12px; border:1px solid var(--line); border-radius:8px; margin:6px 0; background:var(--card); font-size:14px; }
+.order li::before { content:counter(o) ". "; font-weight:700; color:var(--accent); }
+.order li.new { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,var(--card)); }
+.order li small { color:var(--muted); }
+</style></head>
+<body><div class="wrap">
+
+<div class="mockbanner"><b>Mockup with Apple's real numbers (sample, not advice).</b> Move the sliders: the live summary and "you changed this" markers work. The cards below the assumptions are shown only as the proposed order.</div>
+
+<form class="search" onsubmit="return false"><input value="AAPL"><button>Analyze</button></form>
+
+<!-- slim strip instead of a card -->
+<div class="strip">
+  <div><h1>Apple Inc. <span class="muted" style="font-weight:400">(AAPL)</span></h1>
+    <div class="small muted">Technology · Consumer Electronics · market cap $5.2T · data fetched just now</div></div>
+  <div class="px"><b style="font-size:22px">$356</b><div class="small muted">current price (USD)</div></div>
+</div>
+
+<div class="card" id="assump">
+  <div class="head"><h2>Assumptions used</h2>
+    <div><span class="tag" id="edited" hidden></span><button type="button" class="mb" id="reset" disabled>Reset to suggested</button></div></div>
+  <p class="intro"><b>Everything below is built from these five numbers.</b> We filled them in from Apple's own history and from market data, so you can start with them as they are. Change <b>one at a time</b> and watch the result bar. If you cannot say why you would change a number, leave it.</p>
+
+  <div class="live" id="live"></div>
+
+  <div class="arow" data-k="g">
+    <div class="ctl"><label for="g">Revenue growth per year</label><span class="big2" id="gv"></span>
+      <input type="range" id="g" min="-10" max="30" step="0.5" value="7.5"><div class="was" id="gw"></div></div>
+    <div class="facts">
+      <div><h4>Our default <span class="src">from Apple's data</span></h4><p><b>7.5%</b>: Apple's average yearly revenue growth over the last 3 years (7.7%), rounded to the slider step.</p></div>
+      <div><h4>Accepted values</h4><p><b>-10% to 30%</b> a year. Growth fades toward the long-term rate over the forecast, so it is a starting point.</p></div>
+      <div><h4>Change it if…</h4><p>you expect the business to speed up or slow down (new products, a maturing market, a big acquisition). For context: peers grew 9.5% last year.</p></div>
+    </div></div>
+
+  <div class="arow" data-k="m">
+    <div class="ctl"><label for="m">Cash margin (free cash flow ÷ revenue)</label><span class="big2" id="mv"></span>
+      <input type="range" id="m" min="1" max="60" step="0.5" value="28.5"><div class="was" id="mw"></div></div>
+    <div class="facts">
+      <div><h4>Our default <span class="src">from Apple's data</span></h4><p><b>28.5%</b>: last year's free cash flow divided by revenue. The model then adds back interest (+0.5) and subtracts stock pay (−2.9), so it actually uses <b id="mused">26.1%</b>.</p></div>
+      <div><h4>Accepted values</h4><p><b>1% to 60%</b>. Higher margins make the business worth more, and they are the easiest number to be too hopeful about.</p></div>
+      <div><h4>Change it if…</h4><p>you expect costs or prices to change margins for good, not for one year. Check the track record first: 26%, 28%, 24%, 28%.</p></div>
+    </div></div>
+
+  <div class="arow" data-k="w">
+    <div class="ctl"><label for="w">Discount rate (the return you demand)</label><span class="big2" id="wv"></span>
+      <input type="range" id="w" min="5" max="16" step="0.1" value="9.1"><div class="was" id="ww"></div></div>
+    <div class="facts">
+      <div><h4>Our default <span class="src">partly an assumption</span></h4><p><b>9.1%</b> = 4.3% risk-free rate + Apple's beta (1.09) × a 4.5% risk premium, blended with a little debt. The 4.3% is a default: no live rate is configured.</p></div>
+      <div><h4>Accepted values</h4><p><b>5% to 16%</b>, and always <b>at least 1 point above long-term growth</b>. Close to long-term growth the maths blows up, so the slider stops there.</p></div>
+      <div><h4>Change it if…</h4><p>you want a different required return. Higher means you want more reward for the risk, so the value is lower. This number matters most: <b id="wsens">1 point moves the base value by about $30</b>.</p></div>
+    </div></div>
+
+  <div class="arow" data-k="t">
+    <div class="ctl"><label for="t">Long-term growth (after the forecast)</label><span class="big2" id="tv"></span>
+      <input type="range" id="t" min="0" max="4" step="0.25" value="2.5"><div class="was" id="tw"></div></div>
+    <div class="facts">
+      <div><h4>Our default <span class="src">our assumption</span></h4><p><b>2.5%</b>: roughly how fast the whole economy grows, applied forever after the forecast years.</p></div>
+      <div><h4>Accepted values</h4><p><b>0% to 4%</b>, and never above the risk-free rate (4.3% here; lower for currencies with low rates).</p></div>
+      <div><h4>Change it if…</h4><p>rarely. Most of a company's value sits after the forecast years, so small changes here move the answer a lot. 2% to 3% is the usual range.</p></div>
+    </div></div>
+
+  <div class="arow" data-k="s">
+    <div class="ctl"><label>Stock-based pay</label>
+      <div class="pills" id="sbc"><button type="button" class="on" data-v="1">Count as a cost</button><button type="button" data-v="0">Ignore</button></div><div class="was" id="sw"></div></div>
+    <div class="facts">
+      <div><h4>Our default <span class="src">from Apple's data</span></h4><p><b>Counted as a cost.</b> Apple pays about 2.9% of revenue in shares. That is a real cost to existing owners even though no cash leaves.</p></div>
+      <div><h4>Accepted values</h4><p><b>Count</b> or <b>ignore</b>.</p></div>
+      <div><h4>Change it if…</h4><p>you disagree that it is a cost (some analysts add it back). Ignoring it would add about <b id="sbcgap">$17</b> a share, so it is the more flattering choice.</p></div>
+    </div></div>
+
+  <div class="accepted"><b>About the limits.</b> The sliders only accept the values shown. That is deliberate: it keeps the maths meaningful (a discount rate too close to long-term growth would give an infinite value) and stops one typo from producing a nonsense result.</div>
+  <ol class="howto"><li>Start with the defaults and read the result.</li><li>Ask <i>"what would I have to believe?"</i> The card "What the market is already assuming" answers that.</li><li>Move one slider at a time. The summary above shows what changed.</li></ol>
+</div>
+
+<h2 style="margin:22px 0 8px">Proposed order of the page</h2>
+<ol class="order">
+  <li>Search bar</li>
+  <li>Company strip: name, price, data freshness <small>(a slim line, no longer a card)</small></li>
+  <li class="new">Assumptions used <small>(this card: defaults explained, accepted values, when to change, live result summary)</small></li>
+  <li>The headline sentence <small>(was first)</small></li>
+  <li>Forecast horizon, bear / base / bull and the range bar</li>
+  <li>Why the range looks like this</li>
+  <li>What is the market already assuming?</li>
+  <li>What moves the answer most <small>(sensitivity: used to sit beside the assumptions)</small></li>
+  <li>The discount rate (WACC) explained</li>
+  <li>Compared with peers</li>
+  <li>Track record and heads-up flags</li>
+  <li>Where the data comes from</li>
+</ol>
+</div>
+
+<script>
+const D = { g:7.5, m:28.5, w:9.1, t:2.5, s:1 };
+const AAPL = { rev0:478.83, cash:136.9, debt:80.11, shares:14.532, price:355.63, sbc:2.88, interest:0.49 };
+const $ = id => document.getElementById(id);
+function dcf(g, m, w, t, sbcOn, n=5) {
+  const margin = Math.max(0, m + AAPL.interest - (sbcOn ? AAPL.sbc : 0));
+  let rev = AAPL.rev0, pv = 0, f = 0;
+  for (let i = 1; i <= n; i++) { rev *= 1 + (g + (t - g) * ((i - 1) / n) * 0.5) / 100; f = rev * margin / 100; pv += f / Math.pow(1 + w / 100, i); }
+  const tv = f * (1 + t / 100) / ((w - t) / 100);
+  return Math.max(0, (pv + tv / Math.pow(1 + w / 100, n) + AAPL.cash - AAPL.debt) / AAPL.shares);
+}
+const cur = () => ({ g:+$('g').value, m:+$('m').value, w:+$('w').value, t:+$('t').value, s:$('sbc').querySelector('.on').dataset.v === '1' });
+const fmt = x => '$' + Math.round(x);
+function render() {
+  const a = cur();
+  if (a.w < a.t + 1) { a.w = a.t + 1; $('w').value = a.w; }
+  $('gv').textContent = a.g + '%'; $('mv').textContent = a.m + '%'; $('wv').textContent = a.w.toFixed(1) + '%'; $('tv').textContent = a.t + '%';
+  const used = Math.max(0, a.m + AAPL.interest - (a.s ? AAPL.sbc : 0)); $('mused').textContent = used.toFixed(1) + '%';
+  const base = dcf(a.g, a.m, a.w, a.t, a.s);
+  const bear = dcf(a.g - 4, a.m - 3, a.w + 1, Math.max(a.t - .5, 0), a.s), bull = dcf(a.g + 4, a.m + 3, Math.min(a.w, Math.max(a.w - 1, a.t + 2)), a.t, a.s);
+  $('live').innerHTML = `<span>Result with these assumptions (sample):</span> <span>Base <b>${fmt(base)}</b></span> <span>Range <b>${fmt(bear)} to ${fmt(bull)}</b></span> <span class="muted">Price ${fmt(AAPL.price)}</span>`;
+  const mark = (id, changed, was) => { $(id).textContent = changed ? 'You changed this (default: ' + was + ')' : ''; return changed ? 1 : 0; };
+  let n = 0;
+  n += mark('gw', a.g !== D.g, D.g + '%'); n += mark('mw', a.m !== D.m, D.m + '%'); n += mark('ww', Math.abs(a.w - D.w) > 1e-9, D.w + '%');
+  n += mark('tw', a.t !== D.t, D.t + '%'); n += mark('sw', a.s !== !!D.s, 'counted as a cost');
+  $('edited').hidden = !n; $('edited').textContent = n + ' changed'; $('reset').disabled = !n;
+  $('wsens').textContent = '1 point moves the base value by about ' + fmt((dcf(a.g, a.m, a.w - 1, a.t, a.s) - dcf(a.g, a.m, a.w + 1, a.t, a.s)) / 2);
+  $('sbcgap').textContent = fmt(dcf(a.g, a.m, a.w, a.t, false) - dcf(a.g, a.m, a.w, a.t, true));
+}
+['g','m','w','t'].forEach(id => $(id).addEventListener('input', render));
+$('sbc').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; [...$('sbc').children].forEach(x => x.classList.toggle('on', x === b)); render(); });
+$('reset').addEventListener('click', () => { $('g').value = D.g; $('m').value = D.m; $('w').value = D.w; $('t').value = D.t; [...$('sbc').children].forEach(x => x.classList.toggle('on', x.dataset.v === '1')); render(); });
+render();
+</script></body></html>

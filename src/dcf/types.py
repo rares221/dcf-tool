@@ -21,6 +21,7 @@ class ModelInputs:
     price: float
     sbc_pct: float  # stock-based pay as % of revenue
     interest_pct: float = 0.0  # after-tax interest as % of revenue, added back so cash flow matches a WACC discount rate
+    other_claims: float = 0.0  # minority interest and preferred stock: claims of other owners, subtracted like debt
 
 
 @dataclass(frozen=True)
@@ -53,3 +54,6 @@ class CompanyData:
     stale: bool = False
     share_growth: float | None = None  # average yearly change in diluted share count, percent
     long_term_investments: float = 0.0  # non-current marketable securities and similar, in statement_currency
+    minority_interest: float = 0.0  # part of consolidated equity that belongs to other owners, in statement_currency
+    preferred_stock: float = 0.0  # in statement_currency
+    interest_estimated: bool = False  # interest_expense was estimated because the feed's figure is older than the cash flow

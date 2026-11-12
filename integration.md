@@ -104,7 +104,7 @@ Apply one label from each group that fits (maintainers will correct them). Sugge
 | Group | Labels |
 |---|---|
 | Type | `bug`, `enhancement`, `documentation`, `tests`, `chore`, `question` |
-| Area | `valuation-model`, `data-source`, `ui`, `api`, `ci`, `docs` |
+| Area | `valuation-model`, `data-source`, `ui`, `api`, `ci` |
 | Status | `needs-triage`, `needs-discussion`, `blocked`, `wip`, `ready-for-review` |
 | Priority | `P1-critical`, `P2-important`, `P3-nice-to-have` |
 | Community | `good first issue`, `help wanted` |
@@ -139,5 +139,7 @@ project's [MIT License](LICENSE).
 - [ ] Set the default branch to `integration` so new PRs target it automatically.
 - [ ] Protect `integration` and `main`: require a pull request, at least one approval, passing checks (once CI exists),
       and disallow force-pushes and deletions.
-- [ ] Create the labels above (Settings → Labels, or `gh label create`).
-- [ ] Enable private vulnerability reporting (Settings → Code security).
+- [ ] Create the labels: `python scripts/sync_labels.py` (needs the GitHub CLI and `gh auth login`; add `--dry-run` to preview). The list lives in `.github/labels.json`, which a test keeps in step with the table above.
+- [ ] Enable private vulnerability reporting (Settings → Code security); the issue form links to it.
+- [ ] After the first CI run, make the `unit tests` check required on `integration` and `main`. The `browser tests` job is informational until it has been proven on Linux.
+- [ ] Issue forms live in `.github/ISSUE_TEMPLATE/`; blank issues are switched off so reports arrive in a useful shape.
