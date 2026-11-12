@@ -1,6 +1,7 @@
 """Orchestration: turn a ticker into the JSON payloads the API serves."""
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import asdict, dataclass, field, replace
 
@@ -44,6 +45,30 @@ def _convert_if_needed(company: CompanyData, provider: DataProvider) -> tuple[Co
     return convert_statements(company, rate), fx
 
 
+def _finite(x: float | None) -> float | None:
+    return x if x is not None and math.isfinite(x) else None
+
+
+def _clean_numbers(company: CompanyData) -> CompanyData:
+    """Non-finite provider numbers (NaN/inf) are treated as missing, so they can't poison the maths or the JSON."""
+    return replace(
+        company, beta=_finite(company.beta), forward_pe=_finite(company.forward_pe), tax_rate=_finite(company.tax_rate),
+        interest_expense=_finite(company.interest_expense), shares=_finite(company.shares),
+        market_cap=_finite(company.market_cap) or 0.0,
+    )
+
+
+def _json_safe(value):
+    """Last line of defence: any non-finite float left in a payload becomes null so serialisation can't fail."""
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {k: _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    return value
+
+
 def _prepare(raw_ticker: str, provider: DataProvider) -> Prepared:
     ticker = normalise_ticker(raw_ticker)
     if ticker is None:
@@ -55,6 +80,7 @@ def _prepare(raw_ticker: str, provider: DataProvider) -> Prepared:
     if company is None:
         return Prepared("not_found", suggestions=provider.suggest(ticker))
 
+    company = _clean_numbers(company)
     notes: list[str] = []
     if company.stale:
         notes.append("stale")
@@ -182,6 +208,10 @@ def _empty_payload(status: str) -> dict:
 
 
 def analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | None = None) -> dict:
+    return _json_safe(_analyze(raw_ticker, provider, peer_tickers))
+
+
+def _analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | None) -> dict:
     prepared = _prepare(raw_ticker, provider)
     out = _empty_payload(prepared.status)
     out["notes"] = prepared.notes
@@ -215,6 +245,10 @@ def analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | N
 
 
 def run_model(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool) -> dict:
+    return _json_safe(_run_model(inputs, a, horizon, count_sbc))
+
+
+def _run_model(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool) -> dict:
     s = build_scenarios(inputs, a, horizon, count_sbc)  # raises ValueError for invalid combinations
     return {
         "scenarios": {"bear": s.bear, "base": s.base, "bull": s.bull},

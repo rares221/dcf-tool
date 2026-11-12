@@ -144,6 +144,16 @@ def test_no_share_count_and_no_market_cap_is_a_designed_state_not_an_error():
     assert model_inputs("NOSH", world(companies={"NOSH": c}))[1] is None
 
 
+def test_non_finite_numbers_never_reach_the_payload_or_break_serialisation():
+    nan = float("nan")
+    c = make_company(ticker="NANS", beta=nan, tax_rate=nan, interest_expense=float("inf"), forward_pe=nan)
+    out = analyze("NANS", world(companies={"NANS": c}))
+    assert out["status"] == "partial" and {"beta_missing", "tax_missing", "interest_missing"} <= set(out["notes"])
+    assert out["suggested"]["wacc_breakdown"]["beta"] == 1.0
+    assert_finite(out)
+    json.dumps(out, allow_nan=False)  # must be valid JSON
+
+
 def test_bank_returns_history_but_no_suggestions():
     bank = make_company(ticker="BANK", industry="Banks - Regional")
     out = analyze("BANK", world(companies={"BANK": bank}))

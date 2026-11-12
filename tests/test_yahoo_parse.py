@@ -305,3 +305,39 @@ def test_fx_rate_is_none_when_source_fails_and_nothing_cached():
 
     provider = YahooProvider(SqliteCache(":memory:"), fetch=lambda t: None, fx_fetch=fx)
     assert provider.fx_rate("TWD", "USD") is None
+
+
+# ---------- bad provider values ----------
+
+def test_missing_price_currency_is_an_error_not_a_guessed_dollar():
+    raw = copy.deepcopy(load("german"))
+    del raw["info"]["currency"]
+    with pytest.raises(ValueError):
+        parse_company(raw)
+
+
+def test_fetch_treats_missing_currency_as_a_failed_fetch():
+    from dcf.data.yahoo import fetch_raw
+
+    stub = StubTicker({"currentPrice": 10.0, "quoteType": "EQUITY"}, income=_frame(),
+                      cashflow=_frame("Free Cash Flow"), balance=_frame("Total Debt"))
+    with pytest.raises(ProviderError):
+        fetch_raw("X", ticker_factory=lambda t: stub)
+
+
+def test_nan_numbers_from_the_provider_become_missing_values():
+    raw = copy.deepcopy(load("us"))
+    raw["info"]["beta"] = float("nan")
+    raw["info"]["forwardPE"] = float("inf")
+    raw["info"]["marketCap"] = float("nan")
+    c = parse_company(raw)
+    assert c.beta is None and c.forward_pe is None
+    assert c.market_cap == pytest.approx(c.shares * c.price, rel=0.001)  # derived, not NaN
+
+
+def test_nan_price_is_treated_as_no_price():
+    raw = copy.deepcopy(load("us"))
+    for k in ("currentPrice", "regularMarketPrice", "previousClose"):
+        raw["info"][k] = float("nan")
+    with pytest.raises(ValueError):
+        parse_company(raw)

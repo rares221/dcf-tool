@@ -23,6 +23,13 @@ TAX_RATE = ("Tax Rate For Calcs",)  # a fraction in the feed
 SHARE_COUNT = ("Diluted Average Shares", "Basic Average Shares")
 
 
+def _finite(value) -> float | None:
+    """A real, finite number or None (the feed sometimes carries NaN/inf or strings)."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return float(value) if math.isfinite(value) else None
+
+
 def _frame_to_dict(df) -> dict:
     """DataFrame (rows=labels, columns=period ends) -> {label: {"YYYY": value}}, NaN dropped."""
     out: dict = {}
@@ -54,7 +61,7 @@ def fetch_raw(ticker: str, ticker_factory: Callable | None = None) -> dict | Non
     try:
         t = ticker_factory(ticker)
         info = t.info or {}
-        if not any(info.get(k) is not None for k in ("currentPrice", "regularMarketPrice", "previousClose")):
+        if not any(_finite(info.get(k)) is not None for k in ("currentPrice", "regularMarketPrice", "previousClose")):
             return None
         keep = {k: v for k, v in info.items() if v is None or isinstance(v, (str, int, float, bool))}
         payload = {
@@ -70,6 +77,8 @@ def fetch_raw(ticker: str, ticker_factory: Callable | None = None) -> dict | Non
         if "404" in text or "Not Found" in text:
             return None
         raise ProviderError(text) from exc
+    if not keep.get("currency"):  # never guess the currency symbol the user will see
+        raise ProviderError(f"{ticker}: no price currency in data")
     if keep.get("quoteType") == "EQUITY" and not (payload["income"] and payload["cashflow"] and payload["balance"]):
         raise ProviderError(f"{ticker}: incomplete financial statements (likely rate limited)")
     return payload
@@ -110,12 +119,14 @@ def _consistent_shares(reported: float | None, market_cap: float, price: float) 
 
 def parse_company(raw: dict) -> CompanyData:
     info, income, cashflow, balance = raw["info"], raw.get("income", {}), raw.get("cashflow", {}), raw.get("balance", {})
-    price_raw = next((info[k] for k in ("currentPrice", "regularMarketPrice", "previousClose")
-                      if info.get(k) is not None), None)
+    price_raw = next((_finite(info.get(k)) for k in ("currentPrice", "regularMarketPrice", "previousClose")
+                      if _finite(info.get(k)) is not None), None)
     if price_raw is None:
         raise ValueError("no price in data")
-    quote_ccy = info.get("currency") or "USD"
-    trading_ccy, price = normalise_quote(quote_ccy, float(price_raw))
+    quote_ccy = info.get("currency")
+    if not quote_ccy:
+        raise ValueError("no price currency in data")
+    trading_ccy, price = normalise_quote(quote_ccy, price_raw)
     statement_ccy = (info.get("financialCurrency") or trading_ccy).upper()
     if statement_ccy in ("GBP", "GBX"):
         statement_ccy = "GBP"
@@ -130,16 +141,18 @@ def parse_company(raw: dict) -> CompanyData:
 
     tax = _latest(_row(income, TAX_RATE))
     interest = _latest(_row(income, INTEREST))
-    forward_pe = info.get("forwardPE")
+    forward_pe = _finite(info.get("forwardPE"))
+    reported_shares = _finite(info.get("sharesOutstanding"))
+    market_cap = _finite(info.get("marketCap")) or (price * reported_shares if reported_shares else 0.0)
     return CompanyData(
         ticker=info.get("symbol") or "",
         name=info.get("longName") or info.get("shortName") or info.get("symbol") or "",
         sector=info.get("sector"), industry=info.get("industry"),
         trading_currency=trading_ccy, statement_currency=statement_ccy,
-        price=price, market_cap=float(info.get("marketCap") or 0.0),
-        shares=_consistent_shares(info.get("sharesOutstanding"), float(info.get("marketCap") or 0.0), price),
-        beta=info.get("beta"),
-        forward_pe=forward_pe if isinstance(forward_pe, (int, float)) and forward_pe > 0 else None,
+        price=price, market_cap=market_cap,
+        shares=_consistent_shares(reported_shares, market_cap, price),
+        beta=_finite(info.get("beta")),
+        forward_pe=forward_pe if forward_pe is not None and forward_pe > 0 else None,
         cash=_latest(_row(balance, CASH)) or 0.0, debt=_latest(_row(balance, DEBT)) or 0.0,
         interest_expense=abs(interest) if interest is not None else None,
         tax_rate=tax * 100 if tax is not None else None,

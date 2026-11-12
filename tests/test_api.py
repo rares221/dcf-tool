@@ -105,3 +105,12 @@ def test_static_assets_have_browser_safe_content_types(path, expected):
     # Windows registries can map .js to text/plain, which browsers refuse for module scripts.
     r = client().get(path)
     assert r.status_code == 200 and expected in r.headers["content-type"]
+
+
+def test_provider_values_that_are_not_numbers_do_not_cause_a_server_error():
+    nan = float("nan")
+    c = TestClient(create_app(FakeProvider({"ACME": make_company(beta=nan, tax_rate=nan, interest_expense=nan)})))
+    r = c.get("/api/analyze", params={"ticker": "ACME"})
+    assert r.status_code == 200 and r.json()["status"] == "partial"
+    m = c.post("/api/model", json=MODEL_BODY)
+    assert m.status_code == 200 and m.json()["status"] == "ok"
