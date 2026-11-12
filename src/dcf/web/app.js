@@ -4,6 +4,12 @@ import { ageText, freshness, money, pct } from './format.js';
 
 const $ = (id) => document.getElementById(id);
 
+// A malformed hash such as #%E0%A4%A must not throw: fall back to the raw text.
+function hashTicker() {
+  const raw = location.hash.slice(1);
+  try { return decodeURIComponent(raw); } catch { return raw; }
+}
+
 const state = {
   analysis: null,   // /api/analyze payload
   model: null,      // /api/model payload for the current inputs
@@ -83,7 +89,7 @@ async function load(raw) {
 }
 
 function go(ticker) {
-  if (decodeURIComponent(location.hash.slice(1)) === ticker) load(ticker);
+  if (hashTicker() === ticker) load(ticker);
   else location.hash = encodeURIComponent(ticker);
 }
 
@@ -605,8 +611,8 @@ $('addPeer').addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('hashchange', () => {
-  const t = decodeURIComponent(location.hash.slice(1));
+  const t = hashTicker();
   if (t) load(t);
 });
 
-if (location.hash.length > 1) load(decodeURIComponent(location.hash.slice(1)));
+if (location.hash.length > 1) load(hashTicker());

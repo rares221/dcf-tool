@@ -16,7 +16,8 @@ from .scenarios import (build_scenarios, implied_growth, implied_return, present
 from .types import Assumptions, CompanyData, ModelInputs
 from .wacc import compute_wacc
 
-TICKER_RE = re.compile(r"^[A-Z0-9.\-^=]{1,15}$")
+TICKER_RE = re.compile(r"^(?=.*[A-Z0-9])[A-Z0-9.\-^=]{1,15}$")  # at least one letter or digit
+CLASS_TICKER_RE = re.compile(r"^[A-Z0-9]{1,5}\.[A-Z]$")  # BRK.B-style share-class tickers
 MAX_PEERS = 8
 
 
@@ -43,6 +44,14 @@ def _convert_if_needed(company: CompanyData, provider: DataProvider) -> tuple[Co
         return None, None
     fx = {"from": company.statement_currency, "to": company.trading_currency, "rate": rate}
     return convert_statements(company, rate), fx
+
+
+def _fetch_company(provider: DataProvider, ticker: str) -> CompanyData | None:
+    """Yahoo writes share classes with a dash (BRK-B) but people type BRK.B; try the dash form when the dot form is unknown."""
+    company = provider.fetch_company(ticker)
+    if company is None and CLASS_TICKER_RE.match(ticker):
+        company = provider.fetch_company(ticker.replace(".", "-"))
+    return company
 
 
 def _finite(x: float | None) -> float | None:
@@ -74,7 +83,7 @@ def _prepare(raw_ticker: str, provider: DataProvider) -> Prepared:
     if ticker is None:
         return Prepared("not_found")
     try:
-        company = provider.fetch_company(ticker)
+        company = _fetch_company(provider, ticker)
     except ProviderError:
         return Prepared("error")
     if company is None:
@@ -176,7 +185,7 @@ def _peer_rows(subject: CompanyData, provider: DataProvider, tickers: list[str])
             candidates.append(t)
     for t in candidates[:MAX_PEERS]:  # capped before fetching: junk input must not cause hundreds of lookups
         try:
-            peer = provider.fetch_company(t)
+            peer = _fetch_company(provider, t)
             if peer is None:
                 continue
             converted, _ = _convert_if_needed(peer, provider)

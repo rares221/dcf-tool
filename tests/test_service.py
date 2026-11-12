@@ -37,8 +37,24 @@ def test_normalise_ticker():
     assert normalise_ticker(" aapl ") == "AAPL"
     assert normalise_ticker("brk.b") == "BRK.B"
     assert normalise_ticker("BRK-B") == "BRK-B"
-    for bad in ("", "   ", "<script>", "A" * 16, "ap pl", "AAPL;DROP"):
+    assert normalise_ticker("^gspc") == "^GSPC"
+    for bad in ("", "   ", "<script>", "A" * 16, "ap pl", "AAPL;DROP", "...", "-", "^", "=", "^=", ".-"):
         assert normalise_ticker(bad) is None
+
+
+def test_share_class_ticker_with_a_dot_falls_back_to_yahoos_dash_form():
+    brk = make_company(ticker="BRK-B", name="Berkshire-like Class B")
+    p = world(companies={"BRK-B": brk})
+    out = analyze("brk.b", p)
+    assert out["status"] == "ok" and out["company"]["ticker"] == "BRK-B"
+    assert p.fetch_log[:2] == ["BRK.B", "BRK-B"]
+    assert model_inputs("BRK.B", p)[0] == "ok"
+
+
+def test_exchange_suffix_tickers_are_not_rewritten_when_found():
+    p = world(companies={"LSE.L": make_company(ticker="LSE.L", trading_currency="GBP", statement_currency="GBP")})
+    assert analyze("LSE.L", p)["status"] == "ok"
+    assert p.fetch_log[0] == "LSE.L" and "LSE-L" not in p.fetch_log
 
 
 def test_invalid_ticker_never_reaches_provider():

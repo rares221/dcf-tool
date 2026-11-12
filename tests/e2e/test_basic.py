@@ -68,3 +68,17 @@ def test_loading_a_company_produces_no_console_errors(browser, base_url):
     pg.wait_for_timeout(2000)
     ctx.close()
     assert errors == []
+
+
+def test_malformed_url_hash_does_not_break_the_page(browser, base_url):
+    ctx = browser.new_context(locale="en-US")
+    pg = ctx.new_page()
+    errors = []
+    pg.on("pageerror", lambda e: errors.append(str(e)))
+    pg.goto(base_url + "/#%E0%A4%A")
+    pg.wait_for_selector("#blocker .card")
+    pg.fill("#ticker", "ACME")
+    pg.press("#ticker", "Enter")
+    pg.wait_for_selector("#scen .scen-card")
+    ctx.close()
+    assert errors == []
