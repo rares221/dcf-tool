@@ -1,7 +1,7 @@
 import pytest
 
 from dcf.model import dcf_value
-from dcf.scenarios import (build_scenarios, implied_growth, implied_return, present_value_of_100,
+from dcf.scenarios import (build_scenarios, implied_growth, implied_return, implied_wacc, present_value_of_100,
                            price_position, sbc_effect, sensitivity)
 from dcf.types import Assumptions, ModelInputs
 
@@ -13,7 +13,7 @@ def test_build_scenarios_matches_reference_values():
     s = build_scenarios(ACME, BASE, 5, True)
     assert s.bear == pytest.approx(75.75, abs=0.01)
     assert s.base == pytest.approx(127.49, abs=0.01)
-    assert s.bull == pytest.approx(185.82, abs=0.01)
+    assert s.bull == pytest.approx(204.10, abs=0.01)  # discount rate 1 point lower than base
     assert 0 < s.terminal_share < 1
 
 
@@ -84,3 +84,42 @@ def test_bull_discount_rate_never_exceeds_base_discount_rate():
     a = Assumptions(7, 20, 5, 4)
     s = build_scenarios(ACME, a, 5, True)
     assert s.bull >= s.base
+
+
+def test_implied_discount_rate_round_trips_to_price():
+    w = implied_wacc(ACME, BASE, 5, True)
+    assert w == pytest.approx(7.112, abs=0.01) and w < BASE.wacc  # price above base value needs a LOWER rate
+    a = Assumptions(BASE.growth, BASE.fcf_margin, w, BASE.terminal_growth)
+    assert dcf_value(ACME, a, 5, True).value_per_share == pytest.approx(168, abs=0.01)
+
+
+def test_implied_discount_rate_is_higher_than_base_when_price_is_below_value():
+    cheap = ModelInputs(revenue=100, cash=30, debt=20, shares=2.7, price=60, sbc_pct=3)
+    assert implied_wacc(cheap, BASE, 5, True) > BASE.wacc
+
+
+def test_implied_discount_rate_apple_regression_vector():
+    # Live inputs from the Apple check on 2026-11-12: price needs a discount rate near 5.4%.
+    aapl = ModelInputs(revenue=478.83e9, cash=56.72e9, debt=80.11e9, shares=14.532e9, price=355.63, sbc_pct=2.88)
+    assert implied_wacc(aapl, Assumptions(7.5, 28.5, 9.1, 2.5), 5, True) == pytest.approx(5.408, abs=0.01)
+
+
+def test_implied_discount_rate_none_when_unreachable():
+    assert implied_wacc(ModelInputs(100, 30, 20, 2.7, 1e12, 3), BASE, 5, True) is None   # even a tiny gap can't reach it
+    assert implied_wacc(ModelInputs(100, 30, 20, 2.7, 0.01, 3), BASE, 5, True) is None   # even 30% is still too generous
+
+
+def test_bull_case_uses_a_discount_rate_one_point_below_base_but_never_below_floor():
+    s = build_scenarios(ACME, Assumptions(7, 20, 8.6, 2.5), 5, True)
+    expected = dcf_value(ACME, Assumptions(11, 23, 7.6, 2.5), 5, True).value_per_share
+    assert s.bull == pytest.approx(expected)
+    near_floor = build_scenarios(ACME, Assumptions(7, 20, 4.6, 2.5), 5, True)  # floor is long-term growth + 2 = 4.5
+    assert near_floor.bull == pytest.approx(dcf_value(ACME, Assumptions(11, 23, 4.5, 2.5), 5, True).value_per_share)
+
+
+def test_published_gordon_growth_reference_vector():
+    # Hand derivation reported by the research check: with growth equal to terminal growth every year grows at t, so
+    # value = R0 * margin * (1 + t) / (w - t) = 100 * 0.10 * 1.03 / 0.05 = 206.00 for any horizon.
+    inp = ModelInputs(revenue=100, cash=0, debt=0, shares=1, price=1, sbc_pct=0)
+    for n in (3, 5, 10):
+        assert dcf_value(inp, Assumptions(3, 10, 8, 3), n, False).value_per_share == pytest.approx(206.0, abs=1e-9)

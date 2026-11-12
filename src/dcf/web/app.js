@@ -26,11 +26,11 @@ const state = {
 
 const KEY_LABEL = { wacc: 'discount rate', growth: 'revenue growth', margin: 'FCF margin', terminal_growth: 'long-term growth' };
 const POSITION = {
-  below: ['below the whole range, so it looks ', 'cheap'],
+  below: ['below the whole range, so the market is ', 'more cautious than your assumptions'],
   lower: ['in the lower part of the range, leaning ', 'cheaper'],
   middle: ['in the middle of the range, roughly ', 'fairly priced'],
   upper: ['in the upper part of the range, leaning ', 'pricier'],
-  above: ['above the whole range, so it looks ', 'expensive'],
+  above: ['above the whole range, so the market is ', 'more optimistic than your assumptions'],
 };
 const SLIDERS = [['g', 'growth'], ['m', 'fcf_margin'], ['w', 'wacc'], ['t', 'terminal_growth']];
 const USABLE = new Set(['ok', 'partial']);
@@ -112,7 +112,7 @@ function scheduleRecalc() {
 }
 
 // ---------- rendering ----------
-const CARDS = ['company', 'takeaway', 'scenCard', 'impCard', 'assumpRow', 'waccCard', 'peersCard', 'histRow', 'sources'];
+const CARDS = ['company', 'takeaway', 'scenCard', 'whyCard', 'impCard', 'assumpRow', 'waccCard', 'peersCard', 'histRow', 'sources'];
 const CONTEXT_ONLY = ['company', 'peersCard', 'histRow', 'sources'];
 const HAS_CONTEXT = new Set(['bank', 'loss_making', 'insufficient_data']); // no fair value, but history and peers still shown
 
@@ -148,10 +148,11 @@ function render() {
   document.querySelectorAll('#pills button').forEach((btn) => btn.classList.toggle('on', Number(btn.dataset.n) === state.horizon));
   const m = state.model && state.model.status === 'ok' ? state.model : null;
   const failed = state.model != null && !m; // the model call came back as an error or a validation failure
-  for (const id of ['impCard', 'torCard', 'waccCard']) $(id).hidden = !m;
+  for (const id of ['whyCard', 'impCard', 'torCard', 'waccCard']) $(id).hidden = !m;
   renderAssumptions(a, m);
   renderTakeaway(a, m, failed);
   renderScenarios(a, m, failed);
+  renderWhy(a, m);
   renderImplied(a, m);
   renderTornado(a, m);
   renderWacc(a, m);
@@ -294,10 +295,14 @@ function renderTakeaway(a, m, failed) {
     ` (${money(s.bear, cur)} to ${money(s.bull, cur)}, base ${money(s.base, cur)}). The assumption that swings the answer most is the `,
     b(KEY_LABEL[m.sensitivity[0].key]), '. ',
   ];
+  const showRate = m.implied_wacc != null && m.position !== 'middle';
   if (m.implied_growth != null) {
     parts.push('The market is pricing in about ', b(pct(m.implied_growth)), ' yearly growth');
     if (a.history_cagr != null) parts.push(`, against ${pct(a.history_cagr)} over the last ${years} ${years === 1 ? 'year' : 'years'}`);
+    if (showRate) parts.push(', or a discount rate of about ', b(pct(m.implied_wacc)), ` instead of your ${pct(state.a.wacc)}`);
     parts.push('.');
+  } else if (showRate) {
+    parts.push('It would take a discount rate of about ', b(pct(m.implied_wacc)), ` instead of your ${pct(state.a.wacc)} to justify the price.`);
   }
   fill(node, el('p', { style: 'margin:0' }, ...parts),
     el('span', { class: 'fine' }, 'Educational estimate, not financial advice. Change the assumptions below and everything updates.'));
@@ -334,12 +339,58 @@ function renderScenarios(a, m, failed) {
       'A DCF cannot put a positive price on that, so check the debt and cash flow figures in the track record before relying on this result.');
     return;
   }
-  const where = m.position === 'below' ? 'below the whole range, which would suggest it is cheap under these assumptions'
-    : m.position === 'above' ? 'above the whole range, which would suggest it is expensive under these assumptions'
+  const where = m.position === 'below' ? 'below the whole range, which means the market is more cautious than these assumptions'
+    : m.position === 'above' ? 'above the whole range, which means the market is more optimistic than these assumptions'
       : 'inside the range, so these assumptions do not clearly call it cheap or expensive';
   const r = m.implied_return;
   fill($('verdict'), `Today's price is ${where}. If the price moved to the base estimate over ${state.horizon} years, that is about `,
     b(`${pct(r.base)} a year`), ` (bear ${pct(r.bear)}, bull ${pct(r.bull)}), before dividends.`);
+}
+
+// ---------- "why the range looks like this" ----------
+const BOTTOM_LINE = {
+  above: 'On these assumptions the market is more optimistic than the model. That usually means it is using a lower discount rate or expecting more growth than the last few years show. Try the sliders to test which one you believe.',
+  upper: 'Leaning pricier: the price is higher than these assumptions justify, but not out of reach. A modest change in growth, margin or the discount rate would close the gap.',
+  middle: 'These assumptions do not clearly call it cheap or expensive, so small changes can flip the answer. The sensitivity bars below show which input matters most.',
+  lower: 'Leaning cheaper: the price is a little lower than these assumptions suggest. Check that your growth and margin are not too generous before reading it as a bargain.',
+  below: 'On these assumptions the market is more cautious than the model. Check whether your growth or margin assumptions are too generous before reading this as a bargain.',
+};
+
+function renderWhy(a, m) {
+  if (!m) return;
+  const c = a.company, cur = c.currency, s = m.scenarios, sp = m.spreads;
+  const top = m.sensitivity[0];
+  const topLabel = KEY_LABEL[top.key].charAt(0).toUpperCase() + KEY_LABEL[top.key].slice(1);
+  const items = [];
+  const item = (lead, ...rest) => items.push(el('li', {}, b(lead, ' '), ...rest));
+
+  item('What the range is built from.',
+    `The base case of ${money(s.base, cur)} uses ${state.a.growth}% yearly growth, a ${pct(m.margin_used)} cash margin${state.countSbc ? ' after stock pay' : ''} and a ${pct(state.a.wacc)} discount rate. `,
+    `Bear and bull move growth by ${sp.growth} points, margin by ${sp.margin} and the discount rate by ${sp.wacc_bear}.`);
+
+  item(`${topLabel} moves the answer most.`,
+    `A shift of ${top.delta} ${top.delta === 1 ? 'point' : 'points'} takes the base from ${money(top.low, cur)} to ${money(top.high, cur)}.`);
+
+  const fcfYield = a.peers.rows.length ? a.peers.rows[0].fcf_yield : null;
+  const times = fcfYield != null && fcfYield > 0 ? Math.round(100 / fcfYield) : null;
+  const paid = times == null ? `The price is ${money(c.price, cur)}. ` : `At ${money(c.price, cur)}, the market pays about ${times} times last year's free cash flow (a ${pct(fcfYield)} yield). `;
+  if (m.position === 'middle') {
+    item('Where the price sits.', `The price is inside the range, so these assumptions don't clearly call it cheap or expensive.`);
+  } else if (m.position === 'above' || m.position === 'upper') {
+    item('Where the price sits.', paid, 'A range built from modest changes to your assumptions can sit well below a price like that.');
+  } else {
+    item('Where the price sits.', paid, 'That is a low multiple for the cash flows these assumptions project.');
+  }
+
+  if (m.position !== 'middle') {
+    const bits = [];
+    if (m.implied_growth != null) bits.push(`about ${pct(m.implied_growth)} yearly growth${a.history_cagr != null ? ` (recent: ${pct(a.history_cagr)})` : ''}`);
+    if (m.implied_wacc != null) bits.push(`a discount rate of about ${pct(m.implied_wacc)} (yours: ${pct(state.a.wacc)}; risk-free: ${pct(a.suggested.wacc_breakdown.risk_free)})`);
+    if (bits.length) item('What would close the gap.', `To reach ${money(c.price, cur)} you would need ${bits.join(' or ')}.`);
+  }
+
+  fill($('whyList'), items);
+  fill($('whyBottom'), b(`Bottom line for ${c.name}. `), BOTTOM_LINE[m.position]);
 }
 
 function renderImplied(a, m) {
@@ -371,10 +422,26 @@ function renderImplied(a, m) {
   if (off) note = 'Treat this as a sign the price is hard to justify (or the settings are extreme).';
   else if (Number.isFinite(ceiling) && imp > ceiling + 1 && peerMedian != null && hist != null) {
     note = ['The price assumes the company will grow ', b('faster than it has recently and faster than its peers'), '. That is a demanding bet.'];
+  } else if (hist != null && hist > 0 && imp > hist * 2) {
+    note = ['The price assumes growth ', b("more than double the company's recent rate"), '. That is a demanding bet.'];
   } else if (hist != null && imp > hist + 1) note = ['The price assumes some ', b('acceleration'), " compared with the company's recent growth."];
   else if (hist != null && imp < hist - 1) note = ['The price needs ', b('less growth than the company has recently delivered'), ', which leaves some room for disappointment.'];
   else note = ['The price roughly matches ', b('recent growth'), ', so the market is not assuming anything unusual.'];
   fill($('impNote'), note);
+
+  const iw = m.implied_wacc, w = state.a.wacc, rf = a.suggested.wacc_breakdown.risk_free;
+  const rfNote = a.suggested.risk_free_source === 'fred' ? '' : ' (a default assumption)';
+  if (iw == null) {
+    fill($('impWacc'), "No discount rate between the long-term growth rate and 30% reaches today's price with your other assumptions.");
+  } else {
+    const gap = iw - rf;
+    const reading = iw > w ? 'That is higher than yours, so the market is asking for a bigger reward than your assumptions do.'
+      : iw <= rf ? 'That is at or below the risk-free rate: at this price, buyers would accept less than safe government bonds pay.'
+        : gap < 1.5 ? `That is only ${gap.toFixed(1)} points above the risk-free rate, a very small reward for taking stock-market risk.`
+          : 'That is lower than yours: the price only makes sense if investors accept a smaller reward for risk than your discount rate assumes.';
+    fill($('impWacc'), "To justify today's price with your other assumptions, the discount rate would have to be about ",
+      b(pct(iw)), ` (yours: ${pct(w)}). For comparison, the risk-free rate is ${pct(rf)}${rfNote}. `, reading);
+  }
 }
 
 function renderTornado(a, m) {

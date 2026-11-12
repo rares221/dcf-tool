@@ -9,3 +9,6 @@ __pycache__/
 *.log
 .vscode/
 .idea/
+
+# Local development notes for Claude sessions (not part of the project)
+CLAUDE.md

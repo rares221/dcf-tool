@@ -236,12 +236,15 @@ def test_run_model_matches_reference_values():
     out = run_model(ACME_INPUTS, BASE, 5, True)
     assert out["scenarios"]["base"] == pytest.approx(127.49, abs=0.01)
     assert out["scenarios"]["bear"] == pytest.approx(75.75, abs=0.01)
+    assert out["scenarios"]["bull"] == pytest.approx(204.10, abs=0.01)
     assert out["position"] == "upper"
     assert out["implied_growth"] == pytest.approx(15.44, abs=0.01)
+    assert out["implied_wacc"] == pytest.approx(7.112, abs=0.01)
     assert out["implied_return"]["base"] == pytest.approx(-5.37, abs=0.01)
     assert out["sbc_effect"] == pytest.approx(21.84, abs=0.02)
     assert out["pv_of_100"] == pytest.approx(66.2, abs=0.1)
     assert out["margin_used"] == pytest.approx(17.0)
+    assert out["spreads"] == {"growth": 4.0, "margin": 3.0, "wacc_bear": 1.0, "wacc_bull": 1.0}
     assert {s["key"] for s in out["sensitivity"]} == {"wacc", "growth", "margin", "terminal_growth"}
     assert_finite(out)
 

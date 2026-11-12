@@ -37,6 +37,9 @@ acme_years = years((82, 88, 94, 100), (13.94, 16.72, 16.92, 20.0), (1.97, 2.38, 
 world = {
     "companies": {
         "ACME": company("ACME Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
+        "LONELY": company("Lonely Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
+        "RICH": company("Richly Valued Inc", 600.0, 1620.0, 2.7, acme_years, share_growth=1.3),
+        "CHEAP": company("Bargain Corp", 40.0, 108.0, 2.7, acme_years),
         "NOVA": peer("Nova Systems", 380, 10, 24, 3.9, 31, 1.2),
         "ORBT": peer("Orbit Labs", 520, 12, 18, 3.1, 36, 1.3),
         "KSTL": peer("Kestrel Soft", 210, 6, 22, 5.6, 22, 0.9),
@@ -76,7 +79,7 @@ world = {
     },
     "fx": {"TWDUSD": 0.0310123456, "EURUSD": 1.08, "GBPUSD": 1.27, "USDEUR": 0.93, "USDGBP": 0.79,
            "EURGBP": 0.85, "GBPEUR": 1.17},
-    "peers": {"ACME": ["NOVA", "ORBT", "KSTL", "LMND"], "SAP.DE": ["ACME"], "BANK": ["ACME"],
+    "peers": {"ACME": ["NOVA", "ORBT", "KSTL", "LMND"], "RICH": ["NOVA", "ORBT", "KSTL", "LMND"], "CHEAP": ["NOVA", "ORBT", "KSTL", "LMND"], "SAP.DE": ["ACME"], "BANK": ["ACME"],
               "LOSS": ["ACME"], "LSE.L": ["ACME"], "ADR": ["ACME"], "STALE": ["NOVA"], "PART": ["NOVA"], "THIN": ["NOVA"], "WILD": ["NOVA"]},
     "errors": ["DOWN"],
 }

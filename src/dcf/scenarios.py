@@ -7,6 +7,9 @@ from .model import dcf_value
 from .types import Assumptions, ModelInputs
 
 # Spec section 8 starting values (bear/bull spreads and sensitivity flex).
+# Bear/bull shifts around the user's base assumptions, in percentage points (also reported to the page).
+SCENARIO_SPREADS = {"growth": 4.0, "margin": 3.0, "wacc_bear": 1.0, "wacc_bull": 1.0}
+TERMINAL_GROWTH_BEAR_CUT = 0.5
 SENSITIVITY_FLEX = (("wacc", 1.0), ("growth", 3.0), ("margin", 3.0), ("terminal_growth", 1.0))
 WACC_GAP = 0.5  # flexed discount rate must stay this far above long-term growth
 
@@ -32,14 +35,16 @@ def _value(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool) -
 
 
 def build_scenarios(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool) -> Scenarios:
+    sp = SCENARIO_SPREADS
     bear_a = Assumptions(
-        growth=a.growth - 4, fcf_margin=a.fcf_margin - 3, wacc=a.wacc + 1,
-        terminal_growth=max(a.terminal_growth - 0.5, 0.0),
+        growth=a.growth - sp["growth"], fcf_margin=a.fcf_margin - sp["margin"], wacc=a.wacc + sp["wacc_bear"],
+        terminal_growth=max(a.terminal_growth - TERMINAL_GROWTH_BEAR_CUT, 0.0),
     )
     bull_a = Assumptions(
-        growth=a.growth + 4, fcf_margin=a.fcf_margin + 3,
-        # never above the base rate, or the bull case could be worth less than the base case
-        wacc=min(a.wacc, max(a.wacc - 0.5, a.terminal_growth + 2)), terminal_growth=a.terminal_growth,
+        growth=a.growth + sp["growth"], fcf_margin=a.fcf_margin + sp["margin"],
+        # below the base rate by the bull spread, but never above the base rate, and never within 2 points of
+        # long-term growth (so the bull case can never be worth less than the base case)
+        wacc=min(a.wacc, max(a.wacc - sp["wacc_bull"], a.terminal_growth + 2)), terminal_growth=a.terminal_growth,
     )
     base = dcf_value(inputs, a, horizon, count_sbc)
     return Scenarios(
@@ -81,6 +86,26 @@ def implied_growth(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc:
     for _ in range(60):
         mid = (lo + hi) / 2
         if at(mid) < inputs.price:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+def implied_wacc(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool) -> float | None:
+    """Discount rate that makes the base value equal the current price, other assumptions fixed; None if unreachable.
+
+    Value falls as the discount rate rises, so a price above the base value needs a lower rate than the user's."""
+    lo, hi = a.terminal_growth + 0.25, 30.0
+
+    def at(w: float) -> float:
+        return _value(inputs, replace(a, wacc=w), horizon, count_sbc)
+
+    if at(lo) < inputs.price or at(hi) > inputs.price:
+        return None
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        if at(mid) > inputs.price:
             lo = mid
         else:
             hi = mid

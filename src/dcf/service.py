@@ -11,7 +11,7 @@ from .defaults import (DEFAULT_COST_OF_DEBT, DEFAULT_TAX_RATE, DEFAULT_TERMINAL_
                        EQUITY_RISK_PREMIUM, SLIDER_LIMITS)
 from .detect import Assessment, assess
 from .peers import DIRECTION, PeerMetrics, metrics_for, peer_median, reading
-from .scenarios import (build_scenarios, implied_growth, implied_return, present_value_of_100,
+from .scenarios import (SCENARIO_SPREADS, build_scenarios, implied_growth, implied_return, implied_wacc, present_value_of_100,
                         price_position, sbc_effect, sensitivity)
 from .types import Assumptions, CompanyData, ModelInputs
 from .wacc import compute_wacc
@@ -269,8 +269,10 @@ def _run_model(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: boo
             "bull": implied_return(s.bull, inputs.price, horizon),
         },
         "implied_growth": implied_growth(inputs, a, horizon, count_sbc),
+        "implied_wacc": implied_wacc(inputs, a, horizon, count_sbc),
         "sensitivity": [asdict(b) for b in sensitivity(inputs, a, horizon, count_sbc)],
         "sbc_effect": sbc_effect(inputs, a, horizon),
         "pv_of_100": present_value_of_100(a.wacc, horizon),
         "margin_used": max(0.0, a.fcf_margin - (inputs.sbc_pct if count_sbc else 0.0)),
+        "spreads": dict(SCENARIO_SPREADS),
     }
