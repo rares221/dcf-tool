@@ -142,26 +142,26 @@ def _suggested(company: CompanyData, provider: DataProvider, cagr: float | None,
 def _peer_rows(subject: CompanyData, provider: DataProvider, tickers: list[str]) -> list[PeerMetrics]:
     rows: list[PeerMetrics] = [metrics_for(subject, subject.market_cap)]
     seen = {subject.ticker.upper()}
+    candidates: list[str] = []
     for raw in tickers:
         t = normalise_ticker(raw)
-        if t is None or t in seen:
-            continue
-        seen.add(t)
-        if len(rows) > MAX_PEERS:
-            break
+        if t is not None and t not in seen:
+            seen.add(t)
+            candidates.append(t)
+    for t in candidates[:MAX_PEERS]:  # capped before fetching: junk input must not cause hundreds of lookups
         try:
             peer = provider.fetch_company(t)
-        except ProviderError:
+            if peer is None:
+                continue
+            converted, _ = _convert_if_needed(peer, provider)
+            if converted is None:
+                continue
+            to_subject = provider.fx_rate(converted.trading_currency, subject.trading_currency)
+            if to_subject is None:
+                continue
+            rows.append(metrics_for(converted, converted.market_cap * to_subject))
+        except Exception:  # one unusable peer must never take down the whole analysis
             continue
-        if peer is None:
-            continue
-        converted, _ = _convert_if_needed(peer, provider)
-        if converted is None:
-            continue
-        to_subject = provider.fx_rate(converted.trading_currency, subject.trading_currency)
-        if to_subject is None:
-            continue
-        rows.append(metrics_for(converted, converted.market_cap * to_subject))
     return rows
 
 

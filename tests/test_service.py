@@ -178,6 +178,25 @@ def test_peer_in_other_currency_is_converted_and_failures_are_dropped():
     assert out["peers"]["rows"][1]["market_cap"] == pytest.approx(110.0)
 
 
+def test_a_peer_that_breaks_in_an_unexpected_way_is_skipped_not_fatal():
+    class Flaky(FakeProvider):
+        def fetch_company(self, ticker):
+            if ticker == "BAD":
+                raise ValueError("unparseable peer")
+            return super().fetch_company(ticker)
+
+    p = Flaky({"ACME": make_company(), **PEER_ROWS})
+    out = analyze("ACME", p, peer_tickers=["BAD", "NOVA"])
+    assert out["status"] == "ok"
+    assert [r["ticker"] for r in out["peers"]["rows"]] == ["ACME", "NOVA"]
+
+
+def test_peer_list_is_capped_before_any_fetching():
+    p = world()
+    analyze("ACME", p, peer_tickers=[f"JUNK{i}" for i in range(300)])
+    assert len(p.fetch_log) <= 1 + 8  # the company itself plus at most 8 peers
+
+
 def test_requested_peers_override_suggested_peers():
     out = analyze("ACME", world(), peer_tickers=["ORBT"])
     assert [r["ticker"] for r in out["peers"]["rows"]] == ["ACME", "ORBT"]
