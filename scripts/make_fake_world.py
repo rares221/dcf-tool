@@ -47,6 +47,8 @@ world = {
                           currency="JPY", cash=2000.0, debt=1500.0, interest=15.0),
         "RICH": company("Richly Valued Inc", 600.0, 1620.0, 2.7, acme_years, share_growth=1.3, long_term_investments=20.0),
         "CHEAP": company("Bargain Corp", 40.0, 108.0, 2.7, acme_years),
+        "RAND": company("Rand Corp", 100.0, 270.0, 2.7, acme_years, currency="ZAR"),
+        "NEGBETA": company("Odd Beta Co", 168.0, 453.6, 2.7, acme_years, beta=-0.4),
         "NOVA": peer("Nova Systems", 380, 10, 24, 3.9, 31, 1.2),
         "ORBT": peer("Orbit Labs", 520, 12, 18, 3.1, 36, 1.3),
         "KSTL": peer("Kestrel Soft", 210, 6, 22, 5.6, 22, 0.9),
@@ -89,7 +91,7 @@ world = {
     "peers": {"ACME": ["NOVA", "ORBT", "KSTL", "LMND"], "RICH": ["NOVA", "ORBT", "KSTL", "LMND"], "CHEAP": ["NOVA", "ORBT", "KSTL", "LMND"], "SAP.DE": ["ACME"], "BANK": ["ACME"],
               "LOSS": ["ACME"], "LSE.L": ["ACME"], "ADR": ["ACME"], "STALE": ["NOVA"], "PART": ["NOVA"], "THIN": ["NOVA"], "WILD": ["NOVA"]},
     "errors": ["DOWN"],
-    "risk_free": {"JPY": 1.5},
+    "risk_free": {"JPY": 1.5, "EUR": 2.6, "GBP": 4.5},
 }
 
 out = Path(__file__).resolve().parents[1] / "tests" / "fixtures" / "fake_world.json"

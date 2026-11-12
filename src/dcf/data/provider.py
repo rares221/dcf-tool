@@ -14,7 +14,7 @@ class ProviderError(Exception):
 @dataclass(frozen=True)
 class RateResult:
     rate_pct: float
-    source: str  # "fred" | "default"
+    source: str  # "fred" (live) | "default" (labelled table value for the currency) | "generic" (no entry for the currency)
     as_of: str | None = None
 
 

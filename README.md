@@ -60,6 +60,7 @@ Live-check results: `docs/superpowers/plans/live-check.md`.
 - Banks, insurers and loss-making companies are declined with an explanation (no fair value); a DCF is the wrong tool for them.
 - Annual statements only. Analyst consensus estimates are not used yet (Yahoo does publish them), so suggested growth is history-based and can mislead after demergers or acquisitions.
 - Non-USD risk-free rates are labelled default assumptions (placeholder values in `src/dcf/data/rates.py`; refresh them). Set `FRED_API_KEY` for a live US rate.
+- Listings in a currency with no entry in that table use a generic 5% risk-free rate and are flagged as unreliable (values are probably too high). Betas outside 0.3 to 3.0 (Sasol's was -0.37) are treated as unreliable and replaced by a market beta of 1.0, with a warning.
 - Peers need `FINNHUB_API_KEY`; without it users add peer tickers by hand.
 - Educational estimate, not financial advice.
 
@@ -74,8 +75,7 @@ A living list. Pick something, open an issue to say so, and follow [integration.
 - [ ] Tie terminal growth to reinvestment (growth versus margin). Terminal growth is already capped at the risk-free rate.
 - [ ] Equity bridge: options and RSUs (stock pay is already deducted as a cost; existing grants are not valued separately).
 - [ ] Verify the FRED path with a real key; refresh the placeholder risk-free defaults; consider Damodaran's monthly implied equity risk premium instead of a fixed 4.5%.
-- [ ] **Unreliable discount rates for some listings** (found 2026-11-12). Currencies without a table entry fall back to a generic 5% risk-free rate, far below typical emerging-market yields (Sasol, in rand, is valued at about four times its price). Warn clearly when the rate is the generic default, or source real government yields.
-- [ ] **Negative or tiny betas** (Sasol's Yahoo beta is -0.37) push the discount rate down to the 5% floor. Treat betas below a sensible floor as unreliable, use a fallback, and say so.
+- [ ] Replace the generic 5% risk-free rate with real government yields for more currencies (rand, real, rupee, shekel and others), ideally live. Until then those listings are flagged as unreliable on the page. Emerging markets also need a country risk premium on top of the risk-free rate.
 - [ ] **Companies with finance arms** (Toyota: Yahoo free cash flow is negative in 3 of 4 years because car financing sits in operating cash flow) are declined as loss-making. Detect captive-finance cash flows or use a different cash-flow measure.
 - [ ] Wider coverage: a dividend or excess-return model for banks and insurers, and something sensible for loss-making companies, REITs and ETFs. **(needs a decision)**
 

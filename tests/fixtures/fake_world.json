@@ -294,6 +294,104 @@
    "preferred_stock": 0.0,
    "interest_estimated": false
   },
+  "RAND": {
+   "name": "Rand Corp",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "ZAR",
+   "statement_currency": "ZAR",
+   "price": 100.0,
+   "market_cap": 270000000000.0,
+   "shares": 2700000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 82000000000.0,
+     "fcf": 13940000000.0,
+     "sbc": 1970000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 88000000000.0,
+     "fcf": 16719999999.999998,
+     "sbc": 2380000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 94000000000.0,
+     "fcf": 16920000000.000002,
+     "sbc": 2730000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 20000000000.0,
+     "sbc": 3000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false,
+   "share_growth": null,
+   "long_term_investments": 0.0,
+   "minority_interest": 0.0,
+   "preferred_stock": 0.0,
+   "interest_estimated": false
+  },
+  "NEGBETA": {
+   "name": "Odd Beta Co",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 168.0,
+   "market_cap": 453600000000.0,
+   "shares": 2700000000.0,
+   "beta": -0.4,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 82000000000.0,
+     "fcf": 13940000000.0,
+     "sbc": 1970000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 88000000000.0,
+     "fcf": 16719999999.999998,
+     "sbc": 2380000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 94000000000.0,
+     "fcf": 16920000000.000002,
+     "sbc": 2730000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 20000000000.0,
+     "sbc": 3000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false,
+   "share_growth": null,
+   "long_term_investments": 0.0,
+   "minority_interest": 0.0,
+   "preferred_stock": 0.0,
+   "interest_estimated": false
+  },
   "NOVA": {
    "name": "Nova Systems",
    "sector": "Technology",
@@ -1213,6 +1311,8 @@
   "DOWN"
  ],
  "risk_free": {
-  "JPY": 1.5
+  "JPY": 1.5,
+  "EUR": 2.6,
+  "GBP": 4.5
  }
 }

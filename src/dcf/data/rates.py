@@ -34,4 +34,8 @@ def risk_free_rate(currency: str, fred_key: str | None,
             return fetch(fred_key)
         except Exception:
             pass
-    return RateResult(DEFAULT_RISK_FREE.get(cur, DEFAULT_RISK_FREE["OTHER"]), "default", None)
+    if cur in DEFAULT_RISK_FREE and cur != "OTHER":
+        return RateResult(DEFAULT_RISK_FREE[cur], "default", None)
+    # No entry for this currency: a generic placeholder, far below many emerging-market yields. Reported as "generic"
+    # so the page can warn that the resulting values are probably too high.
+    return RateResult(DEFAULT_RISK_FREE["OTHER"], "generic", None)

@@ -30,7 +30,12 @@ class FakeProvider:
         return self.fx.get(f"{from_ccy.upper()}{to_ccy.upper()}")
 
     def risk_free_rate(self, currency: str) -> RateResult:
-        return RateResult(self.risk_free.get(currency.upper(), 4.3), "default", None)
+        cur = currency.upper()
+        if cur in self.risk_free:
+            return RateResult(self.risk_free[cur], "default", None)
+        if cur == "USD":
+            return RateResult(4.3, "default", None)
+        return RateResult(5.0, "generic", None)  # like the real provider: no table entry
 
     def peer_tickers(self, ticker: str) -> list[str]:
         return list(self.peers.get(ticker, []))

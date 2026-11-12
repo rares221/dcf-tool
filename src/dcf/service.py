@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass, field, replace
 
 from .currency import convert_statements
 from .data.provider import DataProvider, ProviderError
-from .defaults import (DEFAULT_COST_OF_DEBT, DEFAULT_TAX_RATE, DEFAULT_TERMINAL_GROWTH, EQUITY_RISK_PREMIUM,
+from .defaults import (BETA_RELIABLE_RANGE, DEFAULT_COST_OF_DEBT, DEFAULT_TAX_RATE, DEFAULT_TERMINAL_GROWTH, EQUITY_RISK_PREMIUM,
                        SLIDER_LIMITS, TERMINAL_GROWTH_STEP, UNEVEN_GROWTH_SPREAD)
 from .detect import Assessment, assess
 from .peers import DIRECTION, PeerMetrics, metrics_for, peer_median, reading
@@ -185,8 +185,15 @@ def _suggested(company: CompanyData, provider: DataProvider, cagr: float | None,
             kd = implied
     tax = company.tax_rate if company.tax_rate is not None and 0 <= company.tax_rate <= 60 else DEFAULT_TAX_RATE
     market_cap = company.market_cap if company.market_cap > 0 else company.price * inputs.shares
-    breakdown = compute_wacc(rf.rate_pct, company.beta if company.beta is not None else 1.0,
-                             EQUITY_RISK_PREMIUM, kd, tax, market_cap, company.debt)
+    beta = 1.0
+    if company.beta is not None:
+        if BETA_RELIABLE_RANGE[0] <= company.beta <= BETA_RELIABLE_RANGE[1]:
+            beta = company.beta
+        else:
+            notes.append("beta_unreliable")
+    if rf.source == "generic":
+        notes.append("risk_free_generic")
+    breakdown = compute_wacc(rf.rate_pct, beta, EQUITY_RISK_PREMIUM, kd, tax, market_cap, company.debt)
 
     growth = _clamp("growth", cagr if cagr is not None else 0.0, notes)
     margin = _clamp("fcf_margin", latest.fcf / latest.revenue * 100 if latest.revenue > 0 else 0.0, notes)
@@ -199,6 +206,7 @@ def _suggested(company: CompanyData, provider: DataProvider, cagr: float | None,
         "sbc_pct": inputs.sbc_pct,
         "wacc_breakdown": asdict(breakdown),
         "risk_free_source": rf.source,
+        "beta_reported": company.beta,
     }
 
 

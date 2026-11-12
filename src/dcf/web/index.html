@@ -170,7 +170,7 @@
         <tr><td>Price, market cap, shares, beta</td><td>Yahoo Finance</td><td><span class="ok">Good</span> · unofficial source, can break or rate-limit</td></tr>
         <tr><td>Revenue, FCF, cash, debt (up to 4 years)</td><td>Yahoo Finance statements</td><td><span class="ok">Good</span> for large companies, <span class="mid-c">patchy</span> for small or foreign ones</td></tr>
         <tr><td>Stock-based pay, share count history</td><td>Yahoo Finance cash-flow statement and share data</td><td><span class="ok">Good</span> for most companies · field names vary</td></tr>
-        <tr><td>Risk-free rate</td><td>FRED (US 10-year Treasury) when available, otherwise a labelled default per currency</td><td><span class="ok">Excellent</span> from FRED, <span class="mid-c">assumption</span> otherwise</td></tr>
+        <tr><td>Risk-free rate</td><td>FRED (US 10-year Treasury) when available, otherwise a labelled default per currency; a generic 5% for currencies we have no entry for</td><td><span class="ok">Excellent</span> from FRED, <span class="mid-c">assumption</span> otherwise, <span class="no">unreliable</span> when generic</td></tr>
         <tr><td>Equity risk premium</td><td>Fixed default (about 4.5%)</td><td><span class="mid-c">Assumption</span> · not a data feed</td></tr>
         <tr><td>Analyst growth estimates</td><td>Yahoo Finance publishes consensus revenue estimates; not used yet</td><td><span class="mid-c">Not used yet</span> · growth here is history-based</td></tr>
         <tr><td>Bear / base / bull spreads</td><td>Our rules (±4 points growth, ±3 margin, discount rate +1 / −1)</td><td><span class="mid-c">Assumption</span></td></tr>

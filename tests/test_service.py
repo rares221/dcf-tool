@@ -371,3 +371,33 @@ def test_estimated_interest_is_reported_to_the_page():
     c = make_company(ticker="EST", interest_estimated=True)
     assert "interest_estimated" in analyze("EST", world(companies={"EST": c}))["notes"]
     assert "interest_estimated" not in analyze("ACME", world())["notes"]
+
+
+def test_currency_without_a_table_rate_is_flagged_as_a_generic_risk_free_rate():
+    zar = make_company(ticker="ZA", trading_currency="ZAR", statement_currency="ZAR")
+    out = analyze("ZA", FakeProvider({"ZA": zar}))
+    assert "risk_free_generic" in out["notes"] and out["suggested"]["risk_free_source"] == "generic"
+    jp = make_company(ticker="JP", trading_currency="JPY", statement_currency="JPY")
+    tabled = analyze("JP", FakeProvider({"JP": jp}, risk_free={"JPY": 1.5}))
+    assert "risk_free_generic" not in tabled["notes"] and tabled["suggested"]["risk_free_source"] == "default"
+    assert "risk_free_generic" not in analyze("ACME", world())["notes"]
+
+
+@pytest.mark.parametrize("beta", [-0.4, 0.0, 0.29, 3.01, 5.0])
+def test_unreliable_beta_is_replaced_by_the_market_beta_and_flagged(beta):
+    out = analyze("BET", world(companies={"BET": make_company(ticker="BET", beta=beta)}))
+    assert "beta_unreliable" in out["notes"]
+    assert out["suggested"]["wacc_breakdown"]["beta"] == 1.0 and out["suggested"]["beta_reported"] == beta
+
+
+@pytest.mark.parametrize("beta", [0.3, 0.8, 1.0, 3.0])
+def test_plausible_betas_are_kept(beta):
+    out = analyze("BET", world(companies={"BET": make_company(ticker="BET", beta=beta)}))
+    assert "beta_unreliable" not in out["notes"]
+    assert out["suggested"]["wacc_breakdown"]["beta"] == beta and out["suggested"]["beta_reported"] == beta
+
+
+def test_missing_beta_is_reported_as_missing_not_unreliable():
+    out = analyze("BET", world(companies={"BET": make_company(ticker="BET", beta=None)}))
+    assert "beta_missing" in out["notes"] and "beta_unreliable" not in out["notes"]
+    assert out["suggested"]["beta_reported"] is None and out["suggested"]["wacc_breakdown"]["beta"] == 1.0

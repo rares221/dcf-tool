@@ -235,6 +235,9 @@ function bannersFor(a) {
   if (notes.includes('non_us')) {
     banner(b(`${c.ticker} trades in ${c.currency}.`), ` Prices and fair values are shown in ${c.currency}, the currency this stock trades in. The discount rate starts from assumed defaults for this currency (risk-free rate and risk premium); move the discount rate slider if you disagree.`);
   }
+  if (notes.includes('risk_free_generic')) {
+    banner(b('Rough discount rate.'), ` We don't have a government bond rate for ${c.currency}, so a generic ${pct(a.suggested.wacc_breakdown.risk_free)} is used as the risk-free rate. Rates in many currencies, especially in emerging markets, are much higher, so this value is probably too high. Treat it as unreliable until you have set the discount rate yourself.`);
+  }
   if (notes.includes('fx_converted') && a.fx) {
     banner(b('Currency conversion:'), ` the company reports in ${a.fx.from}. Reported figures were converted to ${a.fx.to} at ${Number(a.fx.rate.toPrecision(4))} (the current exchange rate), because the stock trades in ${a.fx.to}.`);
   }
@@ -292,11 +295,14 @@ function factsFor(key, a, m) {
   }
   if (key === 'w') {
     const betaMissing = notes.includes('beta_missing');
+    const betaOdd = notes.includes('beta_unreliable') && s.beta_reported != null;
+    const rfGeneric = s.risk_free_source === 'generic';
     return [
-      factBlock('Our default', rfDefault ? 'partly an assumption' : 'from market data', b(`${s.wacc.toFixed(1)}%`),
-        ` = ${pct(w.risk_free)} risk-free rate + ${c.name}'s beta (${w.beta.toFixed(1)}${betaMissing ? ', assumed because none was available' : ''}) × a ${pct(w.erp)} risk premium`,
+      factBlock('Our default', rfGeneric ? 'generic assumption' : rfDefault ? 'partly an assumption' : 'from market data', b(`${s.wacc.toFixed(1)}%`),
+        ` = ${pct(w.risk_free)} risk-free rate + ${c.name}'s beta (${w.beta.toFixed(1)}${betaMissing ? ', assumed because none was available' : betaOdd ? `, used instead of the reported ${s.beta_reported.toFixed(2)}, which looks unreliable` : ''}) × a ${pct(w.erp)} risk premium`,
         w.debt_weight > 0.02 ? ', blended with a little debt' : '', '. ',
-        rfDefault ? `The ${pct(w.risk_free)} risk-free rate is a default: no live rate is configured.` : 'The risk-free rate is the live US 10-year yield.',
+        rfGeneric ? `The ${pct(w.risk_free)} risk-free rate is a generic placeholder: we have no government bond rate for ${cur}, so this value is probably too high.`
+          : rfDefault ? `The ${pct(w.risk_free)} risk-free rate is a default: no live rate is configured.` : 'The risk-free rate is the live US 10-year yield.',
         notes.includes('suggestion_clamped:wacc') ? ` The calculated rate (${pct(w.wacc)}) was outside the allowed range, so it was limited.` : ''),
       factBlock('Accepted values', null, b(`${lim.wacc[0]}% to ${lim.wacc[1]}%`), ', and always ', b('at least 1 point above long-term growth'),
         '. Close to long-term growth the maths blows up, so the slider stops there.'),
@@ -672,6 +678,9 @@ function renderFlags(a, m) {
   }
   if (a.base.other_claims_per_share > 0) {
     li('ok', `${money(a.base.minority_interest + a.base.preferred_stock, cur, { compact: true })} of minority interest and preferred stock (about ${money(a.base.other_claims_per_share, cur)} a share) is subtracted, because it belongs to other owners, not to the shares you would buy.`);
+  }
+  if (a.notes.includes('beta_unreliable') && a.suggested.beta_reported != null) {
+    li('mid-c', `The beta reported for ${a.company.name} (${a.suggested.beta_reported.toFixed(2)}) looks unreliable, so a market beta of 1.0 was used for the discount rate. Check the discount rate yourself if the company is unusual (very leveraged or thinly traded).`);
   }
   if (a.notes.includes('interest_estimated')) {
     li('mid-c', "The latest interest expense was not reported, so it is estimated from the last reported interest rate and today's debt. The interest add-back is approximate.");

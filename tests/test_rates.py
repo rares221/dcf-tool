@@ -49,5 +49,7 @@ def test_other_currencies_use_default_table():
     assert r.source == "default" and r.rate_pct == DEFAULT_RISK_FREE["EUR"]
 
 
-def test_unknown_currency_uses_generic_default():
-    assert risk_free_rate("BRL", None).rate_pct == DEFAULT_RISK_FREE["OTHER"]
+def test_unknown_currency_uses_the_generic_default_and_says_so():
+    r = risk_free_rate("BRL", None)
+    assert r.rate_pct == DEFAULT_RISK_FREE["OTHER"] and r.source == "generic"   # distinct from a labelled table default
+    assert risk_free_rate("EUR", None).source == "default"
