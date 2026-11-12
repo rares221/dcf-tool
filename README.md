@@ -26,3 +26,10 @@ Visual mockup: `docs/mockups/dcf-results-page-mockup.html`.
 - `ZAc` and `ILA` sub-unit handling (South Africa, Israel) is implemented from the plan but not yet verified against live quotes.
 - **Finnhub peers** (`FINNHUB_API_KEY`, optional): I could not confirm from Finnhub's public pages whether `/stock/peers` is on the free plan or what the free rate limit is. Treat it as unverified. Without a key, or if the call fails, the app shows no suggested peers and the user adds tickers manually.
 - **FRED** (`FRED_API_KEY`, optional): used for the USD risk-free rate. Without a key the labelled default is used.
+
+## Run
+
+    .venv\Scripts\python -m uvicorn dcf.api:create_app --factory --reload
+
+Then open http://127.0.0.1:8000. Environment variables (all optional): `FRED_API_KEY`, `FINNHUB_API_KEY`,
+`DCF_CACHE_PATH` (default `./dcf-cache.sqlite`), `DCF_PROVIDER` (`live` or `fake`), `DCF_FAKE_WORLD` (JSON file for `fake`).
