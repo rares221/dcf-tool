@@ -24,3 +24,5 @@ Visual mockup: `docs/mockups/dcf-results-page-mockup.html`.
 - London listings quote prices in pence (`GBp`) while `marketCap` is already in pounds; statements can be in a third currency (Unilever: trades in GBP, reports in EUR). Both handled in `dcf.data.yahoo` and `dcf.currency`.
 - Statement row labels used: Total Revenue, Free Cash Flow (fallback: Operating Cash Flow + Capital Expenditure), Stock Based Compensation, Total Debt, cash and short-term investments, Interest Expense, Tax Rate For Calcs (a fraction in the feed).
 - `ZAc` and `ILA` sub-unit handling (South Africa, Israel) is implemented from the plan but not yet verified against live quotes.
+- **Finnhub peers** (`FINNHUB_API_KEY`, optional): I could not confirm from Finnhub's public pages whether `/stock/peers` is on the free plan or what the free rate limit is. Treat it as unverified. Without a key, or if the call fails, the app shows no suggested peers and the user adds tickers manually.
+- **FRED** (`FRED_API_KEY`, optional): used for the USD risk-free rate. Without a key the labelled default is used.
