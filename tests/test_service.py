@@ -181,8 +181,15 @@ def test_run_model_matches_reference_values():
     assert out["implied_return"]["base"] == pytest.approx(-5.37, abs=0.01)
     assert out["sbc_effect"] == pytest.approx(21.84, abs=0.02)
     assert out["pv_of_100"] == pytest.approx(66.2, abs=0.1)
+    assert out["margin_used"] == pytest.approx(17.0)
     assert {s["key"] for s in out["sensitivity"]} == {"wacc", "growth", "margin", "terminal_growth"}
     assert_finite(out)
+
+
+def test_margin_used_ignores_stock_pay_when_switched_off():
+    assert run_model(ACME_INPUTS, BASE, 5, False)["margin_used"] == pytest.approx(20.0)
+    low = run_model(ACME_INPUTS, Assumptions(7, 2, 8.6, 2.5), 5, True)
+    assert low["margin_used"] == 0.0
 
 
 def test_run_model_rejects_discount_rate_at_or_below_terminal_growth():

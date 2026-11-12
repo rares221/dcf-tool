@@ -226,4 +226,5 @@ def run_model(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool
         "sensitivity": [asdict(b) for b in sensitivity(inputs, a, horizon, count_sbc)],
         "sbc_effect": sbc_effect(inputs, a, horizon),
         "pv_of_100": present_value_of_100(a.wacc, horizon),
+        "margin_used": max(0.0, a.fcf_margin - (inputs.sbc_pct if count_sbc else 0.0)),
     }

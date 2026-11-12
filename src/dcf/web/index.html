@@ -23,7 +23,7 @@
 
     <div class="card" id="scenCard">
       <div class="head">
-        <h2>Forecast horizon</h2>
+        <h2>Forecast horizon <span data-g="horizon" class="small" style="text-transform:none;letter-spacing:0">(what's this?)</span></h2>
         <div class="pills" id="pills">
           <button type="button" data-n="3">3 yr</button>
           <button type="button" data-n="5" class="on">5 yr</button>
@@ -34,6 +34,66 @@
       <div class="bar" id="bar"><div class="rng" id="rng"></div><div class="mid" id="mid"></div><div class="px" id="px"><span id="pxLabel"></span></div></div>
       <div class="scale"><span id="sMin"></span><span id="sRange"></span><span id="sMax"></span></div>
       <div class="verdict" id="verdict"></div>
+    </div>
+
+    <div class="card" id="impCard">
+      <h2>What is the market already assuming?</h2>
+      <div class="row">
+        <div>
+          <div class="explain">Instead of asking "what is this company worth?", we flip it around: <b>what growth would you need to believe for today's price to be fair?</b> Then you can ask yourself whether that is realistic. <span data-g="impl">(what's this?)</span></div>
+          <div class="big" id="impBig"></div>
+          <div class="small muted" id="impSub"></div>
+          <div class="verdict" id="impNote"></div>
+          <div style="margin-top:10px"><button type="button" class="mb" id="setImp">Use this as my growth assumption</button></div>
+        </div>
+        <div>
+          <div class="small muted">Starting yearly revenue growth, compared</div>
+          <div class="cmp" id="impCmp"></div>
+          <p class="small muted" style="margin:10px 0 0">This depends on your margin, discount rate and stock-pay settings below, so it moves when you change them.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card" id="assumpCard">
+        <div class="head">
+          <h2>Your assumptions (base case)</h2>
+          <div><span class="tag" id="edited" hidden>Edited</span><button type="button" class="mb" id="reset" disabled>Reset to suggested</button></div>
+        </div>
+        <div class="sl"><label for="g">Revenue growth / yr</label><input type="range" id="g" min="-10" max="30" step="0.5" value="7"><span class="val" id="gv"></span></div>
+        <div class="sl"><label for="m"><span data-g="fcfm">FCF margin</span> (reported)</label><input type="range" id="m" min="1" max="60" step="0.5" value="20"><span class="val" id="mv"></span></div>
+        <div class="sl"><label for="w"><span data-g="wacc">Discount rate</span></label><input type="range" id="w" min="5" max="16" step="0.1" value="8.6"><span class="val" id="wv"></span></div>
+        <div class="sl"><label for="t"><span data-g="ltg">Long-term growth</span></label><input type="range" id="t" min="0" max="4" step="0.25" value="2.5"><span class="val" id="tv"></span></div>
+        <div class="sbc">
+          <div><span data-g="sbc">Stock-based pay</span><span class="hint" id="sbcHint"></span></div>
+          <div class="pills" id="sbcSeg"><button type="button" data-v="1" class="on">Count as a cost</button><button type="button" data-v="0">Ignore</button></div>
+        </div>
+        <div class="small muted" id="mEff"></div>
+        <p class="small muted" style="margin:10px 0 0">Starting points come from history: growth = revenue growth over the years shown, margin = latest reported FCF margin, discount rate = risk-free rate + beta × equity risk premium. Bear and bull cases are the base plus or minus a spread.</p>
+      </div>
+      <div class="card" id="torCard">
+        <h2>What moves the answer most</h2>
+        <div class="tor" id="tor"></div>
+        <p class="small muted" style="margin:10px 0 0">Each bar shows the fair value when that one assumption is nudged down and up while the rest stay at base. Wider means more sensitive. The black line is the base value.</p>
+      </div>
+    </div>
+
+    <div class="card" id="waccCard">
+      <h2>The discount rate (WACC), explained</h2>
+      <div class="row">
+        <div>
+          <div class="explain">
+            <b>In plain words:</b> a DCF adds up the cash a company is expected to earn in the future, then shrinks it back into today's money. Money received later is worth less than the same amount today, because you could invest it elsewhere and because the future is uncertain. The <b>discount rate</b> is how hard it shrinks. Analysts call it <b>WACC</b> (weighted average cost of capital): the return that the company's investors and lenders, mixed together, demand for the risk they take.
+          </div>
+          <p style="margin:0 0 8px"><b>Example with your current rate:</b> <span id="wPV"></span></p>
+          <p style="margin:0" class="muted small">Typical ranges are only a rule of thumb: large, stable companies often land around 7 to 9%, smaller or riskier ones around 10 to 12% or more.</p>
+        </div>
+        <div>
+          <div class="small muted" style="margin-bottom:4px">How we estimate it for this company (starting point for the slider)</div>
+          <div class="calc" id="waccCalc"></div>
+          <div class="verdict" id="waccSens"></div>
+        </div>
+      </div>
     </div>
   </div>
 
