@@ -217,6 +217,45 @@ def test_a_peer_that_breaks_in_an_unexpected_way_is_skipped_not_fatal():
     assert [r["ticker"] for r in out["peers"]["rows"]] == ["ACME", "NOVA"]
 
 
+def test_interest_is_added_back_after_tax_as_a_share_of_revenue():
+    _, inputs = model_inputs("ACME", world())              # interest 1.0 on revenue 100, tax 21%
+    assert inputs.interest_pct == pytest.approx(0.79)
+
+
+def test_interest_addback_uses_default_tax_when_missing_and_nothing_when_interest_is_unknown_or_odd():
+    no_tax = make_company(ticker="NT", tax_rate=None)
+    assert model_inputs("NT", world(companies={"NT": no_tax}))[1].interest_pct == pytest.approx(0.79)
+    for odd in (None, float("nan"), -5.0):
+        c = make_company(ticker="ODD", interest_expense=odd)
+        assert model_inputs("ODD", world(companies={"ODD": c}))[1].interest_pct == 0.0
+
+
+def test_long_term_investments_count_as_cash_like_assets_in_the_bridge():
+    c = make_company(ticker="LTI", long_term_investments=10.0)       # cash is 30, debt 20, shares 2.7
+    _, inputs = model_inputs("LTI", world(companies={"LTI": c}))
+    assert inputs.cash == pytest.approx(40.0)
+    base = analyze("LTI", world(companies={"LTI": c}))["base"]
+    assert base["long_term_investments"] == 10.0
+    assert base["long_term_investments_per_share"] == pytest.approx(10.0 / 2.7)
+    assert analyze("ACME", world())["base"]["long_term_investments"] == 0.0
+
+
+def test_peers_are_fetched_concurrently_and_keep_their_order():
+    import threading
+
+    barrier = threading.Barrier(4, timeout=3)
+
+    class Concurrent(FakeProvider):
+        def fetch_company(self, ticker):
+            if ticker.startswith("P"):
+                barrier.wait()  # only passes if all four peers are being fetched at the same moment
+            return super().fetch_company(ticker)
+
+    companies = {"ACME": make_company(), **{f"P{i}": make_company(ticker=f"P{i}") for i in range(1, 5)}}
+    out = analyze("ACME", Concurrent(companies), peer_tickers=["P1", "P2", "P3", "P4"])
+    assert [r["ticker"] for r in out["peers"]["rows"]] == ["ACME", "P1", "P2", "P3", "P4"]
+
+
 def test_peer_list_is_capped_before_any_fetching():
     p = world()
     analyze("ACME", p, peer_tickers=[f"JUNK{i}" for i in range(300)])
@@ -253,6 +292,12 @@ def test_margin_used_ignores_stock_pay_when_switched_off():
     assert run_model(ACME_INPUTS, BASE, 5, False)["margin_used"] == pytest.approx(20.0)
     low = run_model(ACME_INPUTS, Assumptions(7, 2, 8.6, 2.5), 5, True)
     assert low["margin_used"] == 0.0
+
+
+def test_margin_used_includes_the_interest_addback():
+    inputs = ModelInputs(revenue=100, cash=30, debt=20, shares=2.7, price=168, sbc_pct=3, interest_pct=0.8)
+    assert run_model(inputs, BASE, 5, True)["margin_used"] == pytest.approx(20 + 0.8 - 3)
+    assert run_model(inputs, BASE, 5, False)["margin_used"] == pytest.approx(20.8)
 
 
 def test_run_model_rejects_discount_rate_at_or_below_terminal_growth():

@@ -21,6 +21,9 @@ DEBT = ("Total Debt",)
 INTEREST = ("Interest Expense",)
 TAX_RATE = ("Tax Rate For Calcs",)  # a fraction in the feed
 SHARE_COUNT = ("Diluted Average Shares", "Basic Average Shares")
+# Non-current investments (Apple: 80.2B of marketable securities, separate from cash and short-term investments).
+LONG_TERM_INVESTMENTS = ("Investments And Advances", "Available For Sale Securities", "Held To Maturity Securities",
+                         "Long Term Equity Investment")
 
 
 def _finite(value) -> float | None:
@@ -157,6 +160,7 @@ def parse_company(raw: dict) -> CompanyData:
         interest_expense=abs(interest) if interest is not None else None,
         tax_rate=tax * 100 if tax is not None else None,
         years=years, share_growth=_share_growth(income),
+        long_term_investments=max(0.0, _latest(_row(balance, LONG_TERM_INVESTMENTS)) or 0.0),
     )
 
 

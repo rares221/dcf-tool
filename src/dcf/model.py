@@ -13,6 +13,11 @@ class DcfResult:
     terminal_share: float
 
 
+def margin_used(inputs: ModelInputs, fcf_margin: float, count_sbc: bool) -> float:
+    """The cash margin the model applies: reported margin, plus after-tax interest added back, minus stock pay if counted."""
+    return max(0.0, fcf_margin + inputs.interest_pct - (inputs.sbc_pct if count_sbc else 0.0))
+
+
 def dcf_value(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool) -> DcfResult:
     if a.wacc <= a.terminal_growth:
         raise ValueError("discount rate must exceed long-term growth")
@@ -21,7 +26,7 @@ def dcf_value(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool
     if horizon < 1:
         raise ValueError("horizon must be at least 1")
 
-    margin = max(0.0, a.fcf_margin - (inputs.sbc_pct if count_sbc else 0.0))
+    margin = margin_used(inputs, a.fcf_margin, count_sbc)
     w = a.wacc / 100
     rev = inputs.revenue
     pv_fcf = 0.0

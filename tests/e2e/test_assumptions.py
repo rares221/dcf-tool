@@ -56,18 +56,18 @@ def test_reset_button_and_edited_tag(acme):
 
 def test_ignoring_stock_pay_raises_value_and_updates_margin_line(acme):
     before = number(base_text(acme))
-    assert "17.0%" in acme.inner_text("#mEff")
+    assert "17.8%" in acme.inner_text("#mEff")  # 20.0 reported + 0.8 interest add-back - 3.0 stock pay
     acme.click("#sbcSeg button[data-v='0']")
     acme.wait_for_function("document.getElementById('mEff').textContent.includes('ignored')")
     assert number(base_text(acme)) > before
-    assert "20.0%" in acme.inner_text("#mEff")
+    assert "20.8%" in acme.inner_text("#mEff")
 
 
 def test_use_implied_growth_sets_slider(acme):
     acme.wait_for_selector("#impBig")
-    assert re.match(r"^15\.4% a year", acme.inner_text("#impBig"))
+    assert re.match(r"^14\.1% a year", acme.inner_text("#impBig"))
     acme.click("#setImp")
-    acme.wait_for_function("document.getElementById('g').value === '15.5'")
+    acme.wait_for_function("document.getElementById('g').value === '14'")
 
 
 def test_reverse_dcf_card_content(acme):
@@ -126,3 +126,8 @@ def test_rapid_slider_events_show_only_the_newest_result(page):
         "terminal_growth": 2.5, "count_sbc": True}).json()["scenarios"]["base"]
     assert page.inner_text("#gv") == "20%"
     assert number(base_text(page)) == round(expected)
+
+
+def test_margin_line_explains_the_interest_addback(acme):
+    line = acme.inner_text("#mEff")
+    assert "interest add-back" in line and "reported 20.0%" in line and "stock pay" in line

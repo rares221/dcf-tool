@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import math
 import re
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field, replace
 
 from .currency import convert_statements
@@ -11,6 +12,7 @@ from .defaults import (DEFAULT_COST_OF_DEBT, DEFAULT_TAX_RATE, DEFAULT_TERMINAL_
                        EQUITY_RISK_PREMIUM, SLIDER_LIMITS)
 from .detect import Assessment, assess
 from .peers import DIRECTION, PeerMetrics, metrics_for, peer_median, reading
+from .model import margin_used
 from .scenarios import (SCENARIO_SPREADS, build_scenarios, implied_growth, implied_return, implied_wacc, present_value_of_100,
                         price_position, sbc_effect, sensitivity)
 from .types import Assumptions, CompanyData, ModelInputs
@@ -109,11 +111,22 @@ def _prepare(raw_ticker: str, provider: DataProvider) -> Prepared:
     return Prepared(assessment.status, company=company, notes=notes, fx=fx)
 
 
+def _interest_pct(company: CompanyData, revenue: float) -> float:
+    """After-tax interest as a % of revenue. Yahoo's free cash flow is after interest, so it is added back to match
+    a discount rate (WACC) that already prices the debt; unknown or odd interest figures add nothing."""
+    interest = company.interest_expense
+    if interest is None or not math.isfinite(interest) or interest <= 0 or revenue <= 0:
+        return 0.0
+    tax = company.tax_rate if company.tax_rate is not None and 0 <= company.tax_rate <= 60 else DEFAULT_TAX_RATE
+    return interest * (1 - tax / 100) / revenue * 100
+
+
 def _inputs_from(company: CompanyData) -> ModelInputs:
     latest = company.years[-1]
     sbc_pct = latest.sbc / latest.revenue * 100 if latest.revenue > 0 else 0.0
-    return ModelInputs(revenue=latest.revenue, cash=company.cash, debt=company.debt,
-                       shares=company.shares or 0.0, price=company.price, sbc_pct=sbc_pct)
+    return ModelInputs(revenue=latest.revenue, cash=company.cash + max(company.long_term_investments, 0.0),
+                       debt=company.debt, shares=company.shares or 0.0, price=company.price, sbc_pct=sbc_pct,
+                       interest_pct=_interest_pct(company, latest.revenue))
 
 
 def model_inputs(raw_ticker: str, provider: DataProvider) -> tuple[str, ModelInputs | None]:
@@ -174,6 +187,22 @@ def _suggested(company: CompanyData, provider: DataProvider, cagr: float | None,
     }
 
 
+def _load_peer(provider: DataProvider, subject: CompanyData, ticker: str) -> PeerMetrics | None:
+    try:
+        peer = _fetch_company(provider, ticker)
+        if peer is None:
+            return None
+        converted, _ = _convert_if_needed(peer, provider)
+        if converted is None:
+            return None
+        to_subject = provider.fx_rate(converted.trading_currency, subject.trading_currency)
+        if to_subject is None:
+            return None
+        return metrics_for(converted, converted.market_cap * to_subject)
+    except Exception:  # one unusable peer must never take down the whole analysis
+        return None
+
+
 def _peer_rows(subject: CompanyData, provider: DataProvider, tickers: list[str]) -> list[PeerMetrics]:
     rows: list[PeerMetrics] = [metrics_for(subject, subject.market_cap)]
     seen = {subject.ticker.upper()}
@@ -183,20 +212,11 @@ def _peer_rows(subject: CompanyData, provider: DataProvider, tickers: list[str])
         if t is not None and t not in seen:
             seen.add(t)
             candidates.append(t)
-    for t in candidates[:MAX_PEERS]:  # capped before fetching: junk input must not cause hundreds of lookups
-        try:
-            peer = _fetch_company(provider, t)
-            if peer is None:
-                continue
-            converted, _ = _convert_if_needed(peer, provider)
-            if converted is None:
-                continue
-            to_subject = provider.fx_rate(converted.trading_currency, subject.trading_currency)
-            if to_subject is None:
-                continue
-            rows.append(metrics_for(converted, converted.market_cap * to_subject))
-        except Exception:  # one unusable peer must never take down the whole analysis
-            continue
+    candidates = candidates[:MAX_PEERS]  # capped before fetching: junk input must not cause hundreds of lookups
+    if candidates:
+        with ThreadPoolExecutor(max_workers=len(candidates)) as pool:  # lookups are network-bound, so run them together
+            loaded = list(pool.map(lambda t: _load_peer(provider, subject, t), candidates))  # keeps the input order
+        rows.extend(r for r in loaded if r is not None)
     return rows
 
 
@@ -249,7 +269,11 @@ def _analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | 
 
     if prepared.status in ("ok", "partial"):
         out["suggested"] = _suggested(company, provider, cagr, out["notes"])
-        out["base"] = asdict(_inputs_from(company))
+        inputs = _inputs_from(company)
+        out["base"] = asdict(inputs)
+        out["base"]["long_term_investments"] = company.long_term_investments
+        out["base"]["long_term_investments_per_share"] = (
+            company.long_term_investments / inputs.shares if inputs.shares > 0 else 0.0)
     return out
 
 
@@ -273,6 +297,6 @@ def _run_model(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: boo
         "sensitivity": [asdict(b) for b in sensitivity(inputs, a, horizon, count_sbc)],
         "sbc_effect": sbc_effect(inputs, a, horizon),
         "pv_of_100": present_value_of_100(a.wacc, horizon),
-        "margin_used": max(0.0, a.fcf_margin - (inputs.sbc_pct if count_sbc else 0.0)),
+        "margin_used": margin_used(inputs, a.fcf_margin, count_sbc),
         "spreads": dict(SCENARIO_SPREADS),
     }

@@ -20,6 +20,7 @@ class ModelInputs:
     shares: float
     price: float
     sbc_pct: float  # stock-based pay as % of revenue
+    interest_pct: float = 0.0  # after-tax interest as % of revenue, added back so cash flow matches a WACC discount rate
 
 
 @dataclass(frozen=True)
@@ -51,3 +52,4 @@ class CompanyData:
     data_age_seconds: float = 0.0
     stale: bool = False
     share_growth: float | None = None  # average yearly change in diluted share count, percent
+    long_term_investments: float = 0.0  # non-current marketable securities and similar, in statement_currency

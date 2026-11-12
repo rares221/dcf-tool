@@ -69,11 +69,22 @@ def test_flags_show_terminal_share_stock_pay_effect_and_dilution(acme):
     acme.wait_for_function("document.getElementById('flags').textContent.includes('not counted')")
 
 
+def test_long_term_investments_flag_appears_only_when_they_are_counted(page):
+    search(page, "RICH")
+    base_text(page)
+    flags = page.inner_text("#flags")
+    assert re.search(r"\$20B of long-term investments \(about \$7\.\d\d a share\) is counted as a cash-like asset", flags)
+    search(page, "ACME")
+    page.wait_for_function("document.getElementById('company').textContent.includes('ACME Corp')")
+    base_text(page)
+    assert "long-term investments" not in page.inner_text("#flags")
+
+
 def test_sources_table_covers_every_input(acme):
     text = acme.inner_text("#sources")
     for name in ["Price, market cap, shares, beta", "Revenue, FCF, cash, debt", "Stock-based pay",
                  "Risk-free rate", "Equity risk premium", "Analyst growth estimates", "Bear / base / bull",
-                 "Peer list", "Peer growth, margin", "Cost of debt, tax rate", "Forecasts beyond"]:
+                 "Peer list", "Peer growth, margin", "Cost of debt, tax rate", "Long-term investments", "Forecasts beyond"]:
         assert name in text, name
     assert "not financial advice" in text.lower()
 

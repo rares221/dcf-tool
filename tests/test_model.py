@@ -46,3 +46,17 @@ def test_margin_after_sbc_never_negative():
     a = Assumptions(growth=7, fcf_margin=2, wacc=8.6, terminal_growth=2.5)
     r = dcf_value(ACME, a, 5, True)
     assert r.value_per_share == pytest.approx((30 - 20) / 2.7)
+
+
+def test_interest_addback_acts_like_a_higher_margin():
+    # Yahoo's free cash flow is after interest; adding back after-tax interest (as % of revenue) keeps it consistent
+    # with a discount rate that already prices the debt.
+    with_interest = ModelInputs(revenue=100, cash=30, debt=20, shares=2.7, price=168, sbc_pct=3, interest_pct=1.0)
+    for count_sbc in (True, False):
+        plain = dcf_value(ACME, Assumptions(7, 21, 8.6, 2.5), 5, count_sbc).value_per_share
+        added = dcf_value(with_interest, Assumptions(7, 20, 8.6, 2.5), 5, count_sbc).value_per_share
+        assert added == pytest.approx(plain)
+
+
+def test_interest_addback_defaults_to_nothing():
+    assert ModelInputs(100, 30, 20, 2.7, 168, 3).interest_pct == 0.0

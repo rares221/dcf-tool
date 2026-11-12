@@ -57,6 +57,21 @@ def test_reported_shares_kept_when_consistent_with_market_cap():
     assert c.shares == raw["info"]["sharesOutstanding"]
 
 
+def test_long_term_investments_are_read_from_the_balance_sheet():
+    # Apple: 80.21B of non-current marketable securities, separate from the 56.72B of cash and short-term investments.
+    us = parse_company(load("us"))
+    assert us.long_term_investments == pytest.approx(80.21e9, rel=0.001)
+    assert us.cash == pytest.approx(56.72e9, rel=0.001)
+    assert parse_company(load("multiclass")).long_term_investments == pytest.approx(68.69e9, rel=0.001)
+
+
+def test_missing_long_term_investments_row_means_zero():
+    raw = copy.deepcopy(load("us"))
+    for label in ("Investments And Advances", "Available For Sale Securities", "Investmentin Financial Assets"):
+        raw["balance"].pop(label, None)
+    assert parse_company(raw).long_term_investments == 0.0
+
+
 def test_german_listing_in_euros():
     c = parse_company(load("german"))
     assert c.trading_currency == c.statement_currency == "EUR"

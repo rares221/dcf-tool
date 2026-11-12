@@ -36,6 +36,7 @@ def convert_statements(company: CompanyData, rate: float) -> CompanyData:
         years=years,
         cash=company.cash * rate,
         debt=company.debt * rate,
+        long_term_investments=company.long_term_investments * rate,
         interest_expense=None if company.interest_expense is None else company.interest_expense * rate,
         statement_currency=company.trading_currency,
     )

@@ -19,10 +19,11 @@ def test_fx_symbol():
 
 
 def test_convert_statements_scales_statement_figures_only():
-    c = make_company(statement_currency="TWD", trading_currency="USD", interest_expense=4.0)
+    c = make_company(statement_currency="TWD", trading_currency="USD", interest_expense=4.0, long_term_investments=8.0)
     out = convert_statements(c, 0.5)
     assert out.statement_currency == "USD"
     assert out.cash == c.cash * 0.5 and out.debt == c.debt * 0.5 and out.interest_expense == 2.0
+    assert out.long_term_investments == 4.0
     for before, after in zip(c.years, out.years):
         assert after.revenue == before.revenue * 0.5
         assert after.fcf == before.fcf * 0.5 and after.sbc == before.sbc * 0.5

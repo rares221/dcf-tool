@@ -267,9 +267,10 @@ function renderAssumptions(a, m) {
   $('sbcHint').textContent = `${a.company.name} pays about ${pct(a.base.sbc_pct)} of revenue in shares. Reported cash flow ignores this cost.`;
   document.querySelectorAll('#sbcSeg button').forEach((btn) => btn.classList.toggle('on', (btn.dataset.v === '1') === state.countSbc));
   if (m) {
-    $('mEff').textContent = state.countSbc
-      ? `Margin used in the model: ${pct(m.margin_used)} (reported ${pct(state.a.fcf_margin)} minus ${pct(a.base.sbc_pct)} stock pay)`
-      : `Margin used in the model: ${pct(m.margin_used)} (stock pay ignored)`;
+    const parts = [`reported ${pct(state.a.fcf_margin)}`];
+    if (a.base.interest_pct > 0) parts.push(`plus ${pct(a.base.interest_pct)} interest add-back`);
+    parts.push(state.countSbc ? `minus ${pct(a.base.sbc_pct)} stock pay` : 'stock pay ignored');
+    $('mEff').textContent = `Margin used in the model: ${pct(m.margin_used)} (${parts.join(', ')})`;
   } else {
     $('mEff').textContent = '';
   }
@@ -568,6 +569,9 @@ function renderFlags(a, m) {
     } else {
       li('mid-c', term('sbc', 'Stock-based pay'), ` (about ${pctRev} of revenue) is `, b('not counted'), ', which flatters the estimate by about ', b(money(m.sbc_effect, cur)), ' a share.');
     }
+  }
+  if (a.base.long_term_investments > 0) {
+    li('ok', `${money(a.base.long_term_investments, cur, { compact: true })} of long-term investments (about ${money(a.base.long_term_investments_per_share, cur)} a share) is counted as a cash-like asset, because it is not part of the operating business. Book value can differ from what it could be sold for.`);
   }
   const sg = a.share_growth;
   if (sg != null) {

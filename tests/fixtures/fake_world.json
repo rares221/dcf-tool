@@ -43,7 +43,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": 1.3
+   "share_growth": 1.3,
+   "long_term_investments": 0.0
   },
   "LONELY": {
    "name": "Lonely Corp",
@@ -88,7 +89,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": 1.3
+   "share_growth": 1.3,
+   "long_term_investments": 0.0
   },
   "RICH": {
    "name": "Richly Valued Inc",
@@ -133,7 +135,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": 1.3
+   "share_growth": 1.3,
+   "long_term_investments": 20000000000.0
   },
   "CHEAP": {
    "name": "Bargain Corp",
@@ -178,7 +181,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "NOVA": {
    "name": "Nova Systems",
@@ -223,7 +227,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "ORBT": {
    "name": "Orbit Labs",
@@ -268,7 +273,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "KSTL": {
    "name": "Kestrel Soft",
@@ -313,7 +319,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "LMND": {
    "name": "Lumen Data",
@@ -358,7 +365,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "SAP.DE": {
    "name": "Sample Software AG",
@@ -403,7 +411,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "LSE.L": {
    "name": "London Goods plc",
@@ -448,7 +457,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "ADR": {
    "name": "Taiwan Chips ADR",
@@ -493,7 +503,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "NOFX": {
    "name": "Unconvertible ADR",
@@ -538,7 +549,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "BANK": {
    "name": "Sample Bank Corp",
@@ -583,7 +595,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "LOSS": {
    "name": "Burn Rate Inc",
@@ -628,7 +641,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "ADRLOSS": {
    "name": "Burning ADR",
@@ -673,7 +687,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "WILD": {
    "name": "Rocket Growth Inc",
@@ -718,7 +733,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "DEBT": {
    "name": "Overleveraged Corp",
@@ -733,7 +749,7 @@
    "forward_pe": 28.0,
    "cash": 0.0,
    "debt": 500000000000.0,
-   "interest_expense": 25000000000.0,
+   "interest_expense": 500000000.0,
    "tax_rate": 21.0,
    "years": [
     {
@@ -763,7 +779,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "NOSH": {
    "name": "Float Unknown Ltd",
@@ -808,7 +825,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "THIN": {
    "name": "Fresh IPO Ltd",
@@ -835,7 +853,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "STALE": {
    "name": "Stale Data Co",
@@ -880,7 +899,8 @@
    ],
    "data_age_seconds": 200000.0,
    "stale": true,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "PART": {
    "name": "Partial Data Co",
@@ -919,7 +939,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   },
   "DOWN": {
    "name": "Outage Co",
@@ -964,7 +985,8 @@
    ],
    "data_age_seconds": 0.0,
    "stale": false,
-   "share_growth": null
+   "share_growth": null,
+   "long_term_investments": 0.0
   }
  },
  "fx": {

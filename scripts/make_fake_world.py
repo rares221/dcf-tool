@@ -15,13 +15,14 @@ def years(revs, fcfs, sbcs, start=2022):
 
 def company(name, price, mcap, shares, ys, *, currency="USD", statement=None, beta=1.0, pe=28.0,
             industry="Software - Application", sector="Technology", cash=30.0, debt=20.0, interest=1.0,
-            tax=21.0, stale=False, age=0.0, share_growth=None):
+            tax=21.0, stale=False, age=0.0, share_growth=None, long_term_investments=0.0):
     return {
         "name": name, "sector": sector, "industry": industry, "trading_currency": currency,
         "statement_currency": statement or currency, "price": price, "market_cap": mcap * B,
         "shares": None if shares is None else shares * B, "beta": beta, "forward_pe": pe, "cash": cash * B, "debt": debt * B,
         "interest_expense": None if interest is None else interest * B, "tax_rate": tax, "years": ys,
         "data_age_seconds": age, "stale": stale, "share_growth": share_growth,
+        "long_term_investments": long_term_investments * B,
     }
 
 
@@ -38,7 +39,7 @@ world = {
     "companies": {
         "ACME": company("ACME Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
         "LONELY": company("Lonely Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
-        "RICH": company("Richly Valued Inc", 600.0, 1620.0, 2.7, acme_years, share_growth=1.3),
+        "RICH": company("Richly Valued Inc", 600.0, 1620.0, 2.7, acme_years, share_growth=1.3, long_term_investments=20.0),
         "CHEAP": company("Bargain Corp", 40.0, 108.0, 2.7, acme_years),
         "NOVA": peer("Nova Systems", 380, 10, 24, 3.9, 31, 1.2),
         "ORBT": peer("Orbit Labs", 520, 12, 18, 3.1, 36, 1.3),
@@ -69,7 +70,7 @@ world = {
                            currency="USD", statement="TWD"),
         "WILD": company("Rocket Growth Inc", 50.0, 100.0, 2.0, years((10, 20, 50, 100), (7, 14, 35, 70), (1, 1, 1, 1))),
         "DEBT": company("Overleveraged Corp", 5.0, 5.0, 1.0, years((10, 11, 12, 13), (1.0, 1.1, 1.2, 1.3), (0.1, 0.1, 0.1, 0.1)),
-                        cash=0.0, debt=500.0, interest=25.0),
+                        cash=0.0, debt=500.0, interest=0.5),
         "NOSH": company("Float Unknown Ltd", 10.0, 0.0, None, acme_years),
         "THIN": company("Fresh IPO Ltd", 20.0, 40.0, 2.0, years((100,), (10,), (1,))),
         "STALE": company("Stale Data Co", 168.0, 453.6, 2.7, acme_years, stale=True, age=200000.0),
