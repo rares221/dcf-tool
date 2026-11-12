@@ -36,3 +36,14 @@ Then open http://127.0.0.1:8000. Environment variables (all optional): `FRED_API
 
 Browser tests use your installed Microsoft Edge through Playwright (no download); if Edge is missing they fall back to
 Playwright's Chromium (`python -m playwright install chromium`).
+
+## Known limitations (first version)
+
+- No accounts, saved analyses, watchlists or shareable links.
+- Banks, insurers and loss-making companies are declined with an explanation (no fair value); a DCF is the wrong tool for them.
+- Annual statements only; analyst growth estimates are not used (they are not available on free sources), so suggested growth is history-based and can mislead after demergers or acquisitions.
+- Non-USD risk-free rates are labelled default assumptions (placeholder values in `src/dcf/data/rates.py`; refresh them). Set `FRED_API_KEY` for a live US rate.
+- Peers need `FINNHUB_API_KEY`; without it users add peer tickers by hand.
+- Educational estimate, not financial advice.
+
+Live-check results: `docs/superpowers/plans/live-check.md`.

@@ -78,7 +78,8 @@ def test_adr_shows_fx_note_with_both_currencies_and_rate(page):
     search(page, "ADR")
     page.wait_for_selector("#banners .banner")
     text = page.inner_text("#banners")
-    assert "TWD" in text and "USD" in text and "0.031" in text
+    assert "TWD" in text and "USD" in text
+    assert "0.03101" in text and "0.0310123" not in text  # rate shown to 4 significant digits
     base_text(page)
 
 

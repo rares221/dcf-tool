@@ -55,3 +55,16 @@ def test_ticker_in_url_hash_loads_on_reload(page):
     page.reload()
     page.wait_for_selector("#scen .scen-card")
     assert "ACME Corp" in page.inner_text("#company")
+
+
+def test_loading_a_company_produces_no_console_errors(browser, base_url):
+    ctx = browser.new_context(locale="en-US")
+    pg = ctx.new_page()
+    errors = []
+    pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+    pg.on("pageerror", lambda e: errors.append(str(e)))
+    pg.goto(base_url + "/#ACME")
+    pg.wait_for_selector("#scen .scen-card")
+    pg.wait_for_timeout(2000)
+    ctx.close()
+    assert errors == []

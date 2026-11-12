@@ -222,7 +222,7 @@ function bannersFor(a) {
     banner(b(`${c.ticker} trades in ${c.currency}.`), ` Prices and fair values are shown in ${c.currency}, the currency this stock trades in. Defaults for the risk-free rate and risk premium are assumptions for this currency that you can edit.`);
   }
   if (notes.includes('fx_converted') && a.fx) {
-    banner(b('Currency conversion:'), ` the company reports in ${a.fx.from}. Reported figures were converted to ${a.fx.to} at ${a.fx.rate} (the current exchange rate), because the stock trades in ${a.fx.to}.`);
+    banner(b('Currency conversion:'), ` the company reports in ${a.fx.from}. Reported figures were converted to ${a.fx.to} at ${Number(a.fx.rate.toPrecision(4))} (the current exchange rate), because the stock trades in ${a.fx.to}.`);
   }
   const clamped = notes.filter((n) => n.startsWith('suggestion_clamped:')).map((n) => CLAMP_LABEL[n.split(':')[1]]).filter(Boolean);
   if (clamped.length) {

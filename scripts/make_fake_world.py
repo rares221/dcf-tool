@@ -68,7 +68,7 @@ world = {
                         interest=None),
         "DOWN": company("Outage Co", 10.0, 10.0, 1.0, acme_years),
     },
-    "fx": {"TWDUSD": 0.031, "EURUSD": 1.08, "GBPUSD": 1.27, "USDEUR": 0.93, "USDGBP": 0.79,
+    "fx": {"TWDUSD": 0.0310123456, "EURUSD": 1.08, "GBPUSD": 1.27, "USDEUR": 0.93, "USDGBP": 0.79,
            "EURGBP": 0.85, "GBPEUR": 1.17},
     "peers": {"ACME": ["NOVA", "ORBT", "KSTL", "LMND"], "SAP.DE": ["ACME"], "BANK": ["ACME"],
               "LOSS": ["ACME"], "LSE.L": ["ACME"], "ADR": ["ACME"], "STALE": ["NOVA"], "PART": ["NOVA"], "THIN": ["NOVA"], "WILD": ["NOVA"]},
