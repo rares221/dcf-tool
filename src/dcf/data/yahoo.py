@@ -42,27 +42,37 @@ def _frame_to_dict(df) -> dict:
     return out
 
 
-def fetch_raw(ticker: str) -> dict | None:
-    """Raw payload (JSON-serialisable) or None when the ticker doesn't exist. Failures raise ProviderError."""
-    import yfinance as yf
+def fetch_raw(ticker: str, ticker_factory: Callable | None = None) -> dict | None:
+    """Raw payload (JSON-serialisable) or None when the ticker doesn't exist. Failures raise ProviderError.
 
+    yfinance hides some rate-limit errors by returning empty statement tables, so an equity with missing statements
+    is treated as a failed fetch (never cached) rather than as a real company with no history."""
+    if ticker_factory is None:
+        import yfinance as yf
+
+        ticker_factory = yf.Ticker
     try:
-        t = yf.Ticker(ticker)
+        t = ticker_factory(ticker)
         info = t.info or {}
         if not any(info.get(k) is not None for k in ("currentPrice", "regularMarketPrice", "previousClose")):
             return None
         keep = {k: v for k, v in info.items() if v is None or isinstance(v, (str, int, float, bool))}
-        return {
+        payload = {
             "info": keep,
             "income": _frame_to_dict(t.income_stmt),
             "cashflow": _frame_to_dict(t.cashflow),
             "balance": _frame_to_dict(t.balance_sheet),
         }
+    except ProviderError:
+        raise
     except Exception as exc:  # network, rate limit, parsing: all transient from the user's point of view
         text = f"{type(exc).__name__}: {exc}"
         if "404" in text or "Not Found" in text:
             return None
         raise ProviderError(text) from exc
+    if keep.get("quoteType") == "EQUITY" and not (payload["income"] and payload["cashflow"] and payload["balance"]):
+        raise ProviderError(f"{ticker}: incomplete financial statements (likely rate limited)")
+    return payload
 
 
 def _row(section: dict, aliases: tuple[str, ...]) -> dict[str, float]:
@@ -85,6 +95,17 @@ def _share_growth(income: dict) -> float | None:
     if span <= 0 or series[first] <= 0 or series[last] <= 0:
         return None
     return ((series[last] / series[first]) ** (1 / span) - 1) * 100
+
+
+def _consistent_shares(reported: float | None, market_cap: float, price: float) -> float | None:
+    """Per-share maths needs the share count that matches market cap. Yahoo's sharesOutstanding can count a single
+    share class (Alphabet, Berkshire) while marketCap covers all classes, so prefer market_cap / price when they disagree."""
+    derived = market_cap / price if market_cap > 0 and price > 0 else None
+    if not reported:
+        return derived
+    if derived is not None and abs(float(reported) / derived - 1) > 0.05:
+        return derived
+    return float(reported)
 
 
 def parse_company(raw: dict) -> CompanyData:
@@ -116,7 +137,7 @@ def parse_company(raw: dict) -> CompanyData:
         sector=info.get("sector"), industry=info.get("industry"),
         trading_currency=trading_ccy, statement_currency=statement_ccy,
         price=price, market_cap=float(info.get("marketCap") or 0.0),
-        shares=float(info["sharesOutstanding"]) if info.get("sharesOutstanding") else None,
+        shares=_consistent_shares(info.get("sharesOutstanding"), float(info.get("marketCap") or 0.0), price),
         beta=info.get("beta"),
         forward_pe=forward_pe if isinstance(forward_pe, (int, float)) and forward_pe > 0 else None,
         cash=_latest(_row(balance, CASH)) or 0.0, debt=_latest(_row(balance, DEBT)) or 0.0,
@@ -162,7 +183,10 @@ class YahooProvider:
                 raise
             return self._parse(stale.value, ticker, stale.age_seconds, True)
         if raw is None:
-            return None
+            # yfinance can hide an HTTP outage as "no price", which looks like an unknown ticker. A company we have
+            # seen before does not disappear: serve the saved copy and say it is old.
+            stale = self._cache.get(key, allow_stale=True)
+            return self._parse(stale.value, ticker, stale.age_seconds, True) if stale else None
         self._cache.put(key, raw)
         return self._parse(raw, ticker, 0.0, False)
 
@@ -177,11 +201,20 @@ class YahooProvider:
         a, b = from_ccy.upper(), to_ccy.upper()
         if a == b:
             return 1.0
+        symbol = fx_symbol(a, b)
+        key = f"fx:{symbol}"
+        fresh = self._cache.get(key)
+        if fresh is not None:
+            return fresh.value["rate"]
         try:
-            rate = self._fx_fetch(fx_symbol(a, b))
+            rate = self._fx_fetch(symbol)
         except Exception:
-            return None
-        return rate if rate and rate > 0 else None
+            rate = None
+        if rate and rate > 0:
+            self._cache.put(key, {"rate": float(rate)})
+            return float(rate)
+        stale = self._cache.get(key, allow_stale=True)
+        return stale.value["rate"] if stale else None
 
     def suggest(self, query: str) -> list[str]:
         try:

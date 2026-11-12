@@ -38,7 +38,8 @@ def build_scenarios(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc
     )
     bull_a = Assumptions(
         growth=a.growth + 4, fcf_margin=a.fcf_margin + 3,
-        wacc=max(a.wacc - 0.5, a.terminal_growth + 2), terminal_growth=a.terminal_growth,
+        # never above the base rate, or the bull case could be worth less than the base case
+        wacc=min(a.wacc, max(a.wacc - 0.5, a.terminal_growth + 2)), terminal_growth=a.terminal_growth,
     )
     base = dcf_value(inputs, a, horizon, count_sbc)
     return Scenarios(

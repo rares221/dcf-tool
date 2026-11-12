@@ -44,6 +44,19 @@ def test_london_listing_prices_in_pounds_not_pence():
     assert c.market_cap == pytest.approx(c.price * c.shares, rel=0.01)
 
 
+def test_multi_class_company_shares_follow_market_cap_not_one_share_class():
+    # Alphabet: Yahoo reports ~5.9B shares for one class while market cap covers all classes (~12.3B shares).
+    c = parse_company(load("multiclass"))
+    assert c.shares == pytest.approx(c.market_cap / c.price, rel=0.001)
+    assert c.shares > 1.2e10
+
+
+def test_reported_shares_kept_when_consistent_with_market_cap():
+    raw = load("us")
+    c = parse_company(raw)
+    assert c.shares == raw["info"]["sharesOutstanding"]
+
+
 def test_german_listing_in_euros():
     c = parse_company(load("german"))
     assert c.trading_currency == c.statement_currency == "EUR"
@@ -172,3 +185,123 @@ def test_suggest_caps_at_five_and_swallows_errors():
         raise RuntimeError("x")
 
     assert YahooProvider(SqliteCache(":memory:"), fetch=lambda t: None, search=boom).suggest("x") == []
+
+
+# ---------- fetch_raw error mapping (stubbed yfinance.Ticker) ----------
+
+def _frame(label="Total Revenue"):
+    import pandas as pd
+
+    return pd.DataFrame({pd.Timestamp("2025-12-31"): {label: 100.0}, pd.Timestamp("2024-12-31"): {label: 90.0}})
+
+
+def _empty():
+    import pandas as pd
+
+    return pd.DataFrame()
+
+
+class StubTicker:
+    def __init__(self, info, income=None, cashflow=None, balance=None):
+        self.info = info
+        self.income_stmt = _empty() if income is None else income
+        self.cashflow = _empty() if cashflow is None else cashflow
+        self.balance_sheet = _empty() if balance is None else balance
+
+
+PRICED = {"currentPrice": 10.0, "currency": "USD"}
+
+
+def test_equity_with_all_statements_empty_is_treated_as_a_failed_fetch():
+    from dcf.data.yahoo import fetch_raw
+
+    stub = StubTicker({**PRICED, "quoteType": "EQUITY"})
+    with pytest.raises(ProviderError):
+        fetch_raw("X", ticker_factory=lambda t: stub)
+
+
+def test_equity_missing_balance_sheet_is_treated_as_a_failed_fetch():
+    from dcf.data.yahoo import fetch_raw
+
+    stub = StubTicker({**PRICED, "quoteType": "EQUITY"}, income=_frame(), cashflow=_frame("Free Cash Flow"))
+    with pytest.raises(ProviderError):
+        fetch_raw("X", ticker_factory=lambda t: stub)
+
+
+def test_etf_without_statements_is_a_normal_payload():
+    from dcf.data.yahoo import fetch_raw
+
+    raw = fetch_raw("SPY", ticker_factory=lambda t: StubTicker({**PRICED, "quoteType": "ETF"}))
+    assert raw is not None and raw["income"] == {}
+
+
+def test_complete_equity_payload_is_returned():
+    from dcf.data.yahoo import fetch_raw
+
+    stub = StubTicker({**PRICED, "quoteType": "EQUITY"}, income=_frame(), cashflow=_frame("Free Cash Flow"),
+                      balance=_frame("Total Debt"))
+    raw = fetch_raw("X", ticker_factory=lambda t: stub)
+    assert raw["income"]["Total Revenue"]["2025"] == 100.0
+
+
+def test_info_without_price_is_not_found():
+    from dcf.data.yahoo import fetch_raw
+
+    assert fetch_raw("X", ticker_factory=lambda t: StubTicker({"quoteType": "EQUITY"})) is None
+
+
+def test_incomplete_fetch_is_not_cached_so_retry_reaches_the_source():
+    calls = []
+
+    def fetch(t):
+        calls.append(t)
+        raise ProviderError("incomplete")
+
+    provider, _ = make_provider(fetch)
+    for _ in range(2):
+        with pytest.raises(ProviderError):
+            provider.fetch_company("AAPL")
+    assert calls == ["AAPL", "AAPL"]
+
+
+def test_stale_cache_served_when_live_lookup_claims_not_found():
+    # yfinance swallows some HTTP errors and returns info without a price, which looks like "not found".
+    state = {"missing": False}
+    provider, clock = make_provider(lambda t: None if state["missing"] else load("us"))
+    provider.fetch_company("AAPL")
+    clock.now += 500
+    state["missing"] = True
+    c = provider.fetch_company("AAPL")
+    assert c is not None and c.stale and c.data_age_seconds == pytest.approx(500)
+
+
+def test_fx_rate_is_cached_between_calls():
+    calls = []
+    provider = YahooProvider(SqliteCache(":memory:"), fetch=lambda t: None,
+                             fx_fetch=lambda s: calls.append(s) or 0.031)
+    assert [provider.fx_rate("TWD", "USD") for _ in range(5)] == [0.031] * 5
+    assert calls == ["TWDUSD=X"]
+
+
+def test_fx_rate_falls_back_to_stale_value_when_source_fails():
+    clock = Clock()
+    state = {"fail": False}
+
+    def fx(symbol):
+        if state["fail"]:
+            raise RuntimeError("down")
+        return 0.031
+
+    provider = YahooProvider(SqliteCache(":memory:", ttl_seconds=100, clock=clock), fetch=lambda t: None, fx_fetch=fx)
+    provider.fx_rate("TWD", "USD")
+    clock.now += 500
+    state["fail"] = True
+    assert provider.fx_rate("TWD", "USD") == 0.031
+
+
+def test_fx_rate_is_none_when_source_fails_and_nothing_cached():
+    def fx(symbol):
+        raise RuntimeError("down")
+
+    provider = YahooProvider(SqliteCache(":memory:"), fetch=lambda t: None, fx_fetch=fx)
+    assert provider.fx_rate("TWD", "USD") is None

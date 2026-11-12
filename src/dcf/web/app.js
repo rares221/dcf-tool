@@ -58,6 +58,7 @@ function syncSliders() {
 
 async function load(raw) {
   const mine = ++state.loadSeq;
+  ++state.peerSeq; // a peer reload for the previous company must not land on this one
   state.ticker = raw;
   state.loading = true;
   $('ticker').value = raw;
@@ -129,6 +130,7 @@ function render() {
     renderCompany(a);
     renderPeers(a);
     renderHistory(a);
+    fill($('banners'), bannersFor(a));
     fill($('statePanel'), declinedPanel(a));
     hydrate();
     return;
@@ -139,9 +141,11 @@ function render() {
   renderCompany(a);
   document.querySelectorAll('#pills button').forEach((btn) => btn.classList.toggle('on', Number(btn.dataset.n) === state.horizon));
   const m = state.model && state.model.status === 'ok' ? state.model : null;
+  const failed = state.model != null && !m; // the model call came back as an error or a validation failure
+  for (const id of ['impCard', 'torCard', 'waccCard']) $(id).hidden = !m;
   renderAssumptions(a, m);
-  renderTakeaway(a, m);
-  renderScenarios(a, m);
+  renderTakeaway(a, m, failed);
+  renderScenarios(a, m, failed);
   renderImplied(a, m);
   renderTornado(a, m);
   renderWacc(a, m);
@@ -256,14 +260,22 @@ function renderAssumptions(a, m) {
     $('mEff').textContent = state.countSbc
       ? `Margin used in the model: ${pct(m.margin_used)} (reported ${pct(state.a.fcf_margin)} minus ${pct(a.base.sbc_pct)} stock pay)`
       : `Margin used in the model: ${pct(m.margin_used)} (stock pay ignored)`;
+  } else {
+    $('mEff').textContent = '';
   }
   const edited = SLIDERS.some(([, key]) => state.a[key] !== s[key]) || !state.countSbc;
   $('edited').hidden = !edited;
   $('reset').disabled = !edited;
 }
 
-function renderTakeaway(a, m) {
+function renderTakeaway(a, m, failed) {
   const node = $('takeaway');
+  if (failed) {
+    fill(node, el('p', { style: 'margin:0' }, "We couldn't recalculate these numbers just now. ",
+      el('button', { type: 'button', class: 'mb', 'data-retry-model': '' }, 'Retry')),
+    el('span', { class: 'fine' }, 'Educational estimate, not financial advice.'));
+    return;
+  }
   if (!m) { fill(node, el('p', { style: 'margin:0' }, 'Calculating…')); return; }
   const c = a.company, s = m.scenarios, cur = c.currency;
   const [lead, word] = POSITION[m.position];
@@ -282,11 +294,12 @@ function renderTakeaway(a, m) {
     el('span', { class: 'fine' }, 'Educational estimate, not financial advice. Change the assumptions below and everything updates.'));
 }
 
-function renderScenarios(a, m) {
+function renderScenarios(a, m, failed) {
   const cur = a.company.currency, price = a.company.price;
   $('pxLabel').textContent = `Price ${money(price, cur)}`;
+  for (const id of ['bar', 'scale', 'verdict']) $(id).hidden = !m;
   if (!m) {
-    fill($('scen'), el('p', { class: 'muted' }, 'Calculating…'));
+    fill($('scen'), el('p', { class: 'muted' }, failed ? 'Not available right now.' : 'Calculating…'));
     return;
   }
   const s = m.scenarios;
@@ -501,6 +514,7 @@ $('search').addEventListener('submit', (e) => {
 });
 
 document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-retry-model]')) { recalc(); return; }
   const chip = e.target.closest('#blocker [data-ticker]');
   if (chip) { go(chip.dataset.ticker); return; }
   if (e.target.closest('[data-retry]')) load(state.ticker);

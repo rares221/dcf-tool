@@ -63,3 +63,24 @@ def test_sbc_effect():
 
 def test_present_value_of_100():
     assert present_value_of_100(8.6, 5) == pytest.approx(66.2, abs=0.1)
+
+
+def test_bull_is_never_below_base_and_bear_never_above_base_across_the_slider_grid():
+    # Review finding: wacc 5 with long-term growth 4 once gave bear 214 / base 736 / bull 500.
+    for growth in (-10, 0, 7, 15, 30):
+        for margin in (1, 20, 60):
+            for wacc in (5, 5.5, 6, 6.5, 8.6, 12, 16):
+                for terminal in (0, 2.5, 4):
+                    if wacc < terminal + 1:
+                        continue
+                    a = Assumptions(growth, margin, wacc, terminal)
+                    for sbc in (True, False):
+                        s = build_scenarios(ACME, a, 5, sbc)
+                        assert s.bear <= s.base + 1e-9, (a, sbc, s)
+                        assert s.base <= s.bull + 1e-9, (a, sbc, s)
+
+
+def test_bull_discount_rate_never_exceeds_base_discount_rate():
+    a = Assumptions(7, 20, 5, 4)
+    s = build_scenarios(ACME, a, 5, True)
+    assert s.bull >= s.base
