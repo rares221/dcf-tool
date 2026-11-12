@@ -103,6 +103,7 @@ def test_adr_without_rate_is_blocking():
     adr = make_company(ticker="ADR", trading_currency="USD", statement_currency="TWD")
     out = analyze("ADR", world(companies={"ADR": adr}))
     assert out["status"] == "no_fx" and out["suggested"] is None and out["base"] is None
+    assert out["company"]["currency"] == "USD" and out["company"]["statement_currency"] == "TWD"
 
 
 def test_extreme_company_is_clamped_with_notes():

@@ -495,6 +495,78 @@
    "stale": false,
    "share_growth": null
   },
+  "WILD": {
+   "name": "Rocket Growth Inc",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 50.0,
+   "market_cap": 100000000000.0,
+   "shares": 2000000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 10000000000.0,
+     "fcf": 7000000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 20000000000.0,
+     "fcf": 14000000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 50000000000.0,
+     "fcf": 35000000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 70000000000.0,
+     "sbc": 1000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false,
+   "share_growth": null
+  },
+  "THIN": {
+   "name": "Fresh IPO Ltd",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 20.0,
+   "market_cap": 40000000000.0,
+   "shares": 2000000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 100000000000.0,
+     "fcf": 10000000000.0,
+     "sbc": 1000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false,
+   "share_growth": null
+  },
   "STALE": {
    "name": "Stale Data Co",
    "sector": "Technology",
@@ -660,6 +732,12 @@
    "NOVA"
   ],
   "PART": [
+   "NOVA"
+  ],
+  "THIN": [
+   "NOVA"
+  ],
+  "WILD": [
    "NOVA"
   ]
  },

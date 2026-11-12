@@ -61,6 +61,8 @@ world = {
         "LOSS": company("Burn Rate Inc", 13.54, 19.8, 1.456,
                         years((1.7, 4.4, 5.0, 5.4), (-6.4, -5.9, -2.9, -2.5), (1.0, 0.8, 0.7, 0.7)),
                         beta=1.6, pe=None, industry="Auto Manufacturers", cash=3.6, debt=5.2),
+        "WILD": company("Rocket Growth Inc", 50.0, 100.0, 2.0, years((10, 20, 50, 100), (7, 14, 35, 70), (1, 1, 1, 1))),
+        "THIN": company("Fresh IPO Ltd", 20.0, 40.0, 2.0, years((100,), (10,), (1,))),
         "STALE": company("Stale Data Co", 168.0, 453.6, 2.7, acme_years, stale=True, age=200000.0),
         "PART": company("Partial Data Co", 168.0, 453.6, 2.7, acme_years[1:], beta=None, tax=None,
                         interest=None),
@@ -69,7 +71,7 @@ world = {
     "fx": {"TWDUSD": 0.031, "EURUSD": 1.08, "GBPUSD": 1.27, "USDEUR": 0.93, "USDGBP": 0.79,
            "EURGBP": 0.85, "GBPEUR": 1.17},
     "peers": {"ACME": ["NOVA", "ORBT", "KSTL", "LMND"], "SAP.DE": ["ACME"], "BANK": ["ACME"],
-              "LOSS": ["ACME"], "LSE.L": ["ACME"], "ADR": ["ACME"], "STALE": ["NOVA"], "PART": ["NOVA"]},
+              "LOSS": ["ACME"], "LSE.L": ["ACME"], "ADR": ["ACME"], "STALE": ["NOVA"], "PART": ["NOVA"], "THIN": ["NOVA"], "WILD": ["NOVA"]},
     "errors": ["DOWN"],
 }
 

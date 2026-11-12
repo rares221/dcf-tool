@@ -1,6 +1,6 @@
 import { b, el, fill } from './dom.js';
 import { hydrate } from './glossary.js';
-import { freshness, money, pct } from './format.js';
+import { ageText, freshness, money, pct } from './format.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -13,6 +13,8 @@ const state = {
   loadSeq: 0,       // newest analyze request
   seq: 0,           // newest model request; older responses are dropped
   peerSeq: 0,       // newest peer reload
+  ticker: '',       // what the user asked for (shown in messages)
+  loading: false,
   peers: [],        // peer tickers currently compared (excluding the company itself)
 };
 
@@ -56,21 +58,32 @@ function syncSliders() {
 
 async function load(raw) {
   const mine = ++state.loadSeq;
+  state.ticker = raw;
+  state.loading = true;
   $('ticker').value = raw;
+  render();
   const analysis = await getJson(`/api/analyze?ticker=${encodeURIComponent(raw)}`);
   if (mine !== state.loadSeq) return;
+  state.loading = false;
   state.analysis = analysis;
   state.model = null;
-  state.peers = analysis.peers.rows.slice(1).map((r) => r.ticker);
+  state.peers = (analysis.peers?.rows ?? []).slice(1).map((r) => r.ticker);
   fill($('peerMsg'), '');
   if (analysis.suggested) {
     state.a = suggestedAssumptions(analysis.suggested);
     state.countSbc = true;
     state.horizon = 5;
     syncSliders();
+  } else {
+    state.a = null;
   }
   render();
   if (analysis.suggested) recalc();
+}
+
+function go(ticker) {
+  if (decodeURIComponent(location.hash.slice(1)) === ticker) load(ticker);
+  else location.hash = encodeURIComponent(ticker);
 }
 
 async function recalc() {
@@ -92,12 +105,37 @@ function scheduleRecalc() {
 }
 
 // ---------- rendering ----------
+const CARDS = ['company', 'takeaway', 'scenCard', 'impCard', 'assumpRow', 'waccCard', 'peersCard', 'histRow', 'sources'];
+const CONTEXT_ONLY = ['company', 'peersCard', 'histRow', 'sources'];
+const HAS_CONTEXT = new Set(['bank', 'loss_making', 'insufficient_data']); // no fair value, but history and peers still shown
+
+function showCards(ids) {
+  for (const id of CARDS) $(id).hidden = !ids.includes(id);
+}
+
 function render() {
   const a = state.analysis;
-  const usable = a && USABLE.has(a.status);
-  $('main').hidden = !usable;
-  fill($('banners'), a && !usable ? el('div', { class: 'banner', role: 'status' }, `Could not analyze this ticker (${a.status}).`) : null);
-  if (!usable) return;
+  fill($('blocker'));
+  fill($('banners'));
+  fill($('statePanel'));
+  if (state.loading) { $('main').hidden = true; fill($('blocker'), loadingPanel()); return; }
+  if (!a) { $('main').hidden = true; return; }
+  const usable = USABLE.has(a.status);
+  if (!usable && !HAS_CONTEXT.has(a.status)) { $('main').hidden = true; fill($('blocker'), blockerFor(a)); return; }
+  $('main').hidden = false;
+  if (!usable) {
+    showCards(CONTEXT_ONLY);
+    $('flagsCard').hidden = true;
+    renderCompany(a);
+    renderPeers(a);
+    renderHistory(a);
+    fill($('statePanel'), declinedPanel(a));
+    hydrate();
+    return;
+  }
+  showCards(CARDS);
+  $('flagsCard').hidden = false;
+  fill($('banners'), bannersFor(a));
   renderCompany(a);
   document.querySelectorAll('#pills button').forEach((btn) => btn.classList.toggle('on', Number(btn.dataset.n) === state.horizon));
   const m = state.model && state.model.status === 'ok' ? state.model : null;
@@ -111,6 +149,86 @@ function render() {
   renderHistory(a);
   renderFlags(a, m);
   hydrate();
+}
+
+// ---------- states and banners ----------
+const DISCLAIMER = 'This page is an educational estimate, not financial advice.';
+const CLAMP_LABEL = { growth: 'revenue growth', fcf_margin: 'FCF margin', wacc: 'discount rate' };
+const retryButton = () => el('button', { type: 'button', class: 'mb', 'data-retry': '' }, 'Retry');
+
+function loadingPanel() {
+  return el('div', { class: 'card', role: 'status' },
+    el('h1', {}, `Analyzing ${state.ticker}…`),
+    el('p', { class: 'muted small', style: 'margin:4px 0 12px' }, 'Fetching statements, price and peers. The first lookup of a ticker takes a few seconds; repeat lookups are faster.'),
+    el('div', { class: 'sk', style: 'width:60%' }), el('div', { class: 'sk', style: 'height:60px' }),
+    el('div', { class: 'sk', style: 'width:85%' }), el('div', { class: 'sk', style: 'width:40%' }));
+}
+
+function blockerFor(a) {
+  const panel = (title, ...children) => el('div', { class: 'card state' }, el('h1', {}, title), ...children,
+    el('p', { class: 'small muted' }, DISCLAIMER));
+  if (a.status === 'not_found') {
+    return panel(`We couldn't find "${state.ticker}"`,
+      el('p', { class: 'muted' }, "The ticker doesn't match any listed company in our data source."),
+      el('h2', {}, 'What you can try'),
+      el('ul', {},
+        a.suggestions.length ? el('li', {}, 'Closest matches: ', a.suggestions.map((t) => el('button', { type: 'button', class: 'chip', 'data-ticker': t }, t))) : null,
+        el('li', {}, 'Tickers for non-US exchanges need a suffix, for example ', b('SAP.DE')),
+        el('li', {}, 'Nothing else is shown, so there is no half-empty analysis to misread')));
+  }
+  if (a.status === 'no_fx') {
+    const c = a.company;
+    return panel(`${c.name}: we can't convert the reported figures reliably`,
+      el('p', { class: 'muted' }, `This stock trades in ${c.currency} but reports its financial statements in ${c.statement_currency}, and we couldn't get a reliable ${c.statement_currency} to ${c.currency} exchange rate. Showing numbers without converting them would be wrong, so no fair value is shown.`),
+      el('p', {}, retryButton()));
+  }
+  return panel('Something went wrong on our side',
+    el('p', { class: 'muted' }, "We couldn't get data for this ticker right now. The data provider may be busy or down. Please try again in a moment."),
+    el('p', {}, retryButton()));
+}
+
+function declinedPanel(a) {
+  const name = a.company.name;
+  const copy = {
+    bank: [`${name}: this type of company needs a different model`,
+      'Banks and insurers earn money by lending and investing other people\'s money, so "free cash flow" does not mean what it does for other companies. Valuing them properly needs a different method (dividends or excess returns) that this tool does not support yet.'],
+    loss_making: [`${name}: a DCF would be misleading here`,
+      'It had negative free cash flow in the latest year or in several of the last years. A standard DCF built on negative or tiny cash flow gives meaningless or extreme values, and a precise-looking number would be worse than none.'],
+    insufficient_data: [`${name}: not enough history for a DCF`,
+      'We found fewer than 2 years of financial statements, which is not enough to project a company\'s cash flow with any confidence.'],
+  }[a.status];
+  return el('div', { class: 'card state' }, el('h1', {}, copy[0]), el('p', { class: 'muted', style: 'margin:0 0 10px' }, copy[1]),
+    el('h2', {}, 'What you can still see'),
+    el('ul', {}, el('li', {}, 'The track record and the peer comparison below'), el('li', {}, 'No fair value range is shown')),
+    el('p', { class: 'small muted' }, DISCLAIMER));
+}
+
+function bannersFor(a) {
+  const notes = a.notes, c = a.company, out = [];
+  const banner = (...children) => out.push(el('div', { class: 'banner', role: 'status' }, ...children));
+  if (notes.includes('stale')) {
+    banner(b('Data may be old.'), ` This was last updated ${ageText(a.data_age_seconds)}, because the data provider was unavailable. `, retryButton());
+  }
+  const missing = [];
+  if (notes.includes('years_missing')) missing.push(`only ${a.history.length} years of statements were available`);
+  if (notes.includes('beta_missing')) missing.push('beta was unavailable (1.0 is assumed)');
+  if (notes.includes('tax_missing') || notes.includes('interest_missing')) missing.push('the tax rate or cost of debt was unavailable (defaults are used)');
+  if (notes.includes('sbc_missing')) missing.push('no stock-based pay data was found (treated as zero)');
+  if (notes.includes('shares_missing')) missing.push('the share count was unavailable');
+  if (missing.length) {
+    banner(b('Some data is missing:'), ` ${missing.join('; ')}. Treat the range as rougher than usual. `, retryButton());
+  }
+  if (notes.includes('non_us')) {
+    banner(b(`${c.ticker} trades in ${c.currency}.`), ` Prices and fair values are shown in ${c.currency}, the currency this stock trades in. Defaults for the risk-free rate and risk premium are assumptions for this currency that you can edit.`);
+  }
+  if (notes.includes('fx_converted') && a.fx) {
+    banner(b('Currency conversion:'), ` the company reports in ${a.fx.from}. Reported figures were converted to ${a.fx.to} at ${a.fx.rate} (the current exchange rate), because the stock trades in ${a.fx.to}.`);
+  }
+  const clamped = notes.filter((n) => n.startsWith('suggestion_clamped:')).map((n) => CLAMP_LABEL[n.split(':')[1]]).filter(Boolean);
+  if (clamped.length) {
+    banner(b('Outside the usual range:'), ` the suggested ${clamped.join(' and ')} for this company is outside the slider range, so it was limited to the edge of the range. Treat the result with extra care.`);
+  }
+  return out;
 }
 
 function renderCompany(a) {
@@ -315,7 +433,9 @@ function renderPeers(a) {
   fill($('peers'), head, body);
 
   const medG = a.peers.medians.growth, medM = a.peers.medians.fcf_margin;
-  if (rows.length < 2 || medG == null) {
+  if (!state.a) {
+    fill($('peerNote'), 'Peers are shown for context only.');
+  } else if (rows.length < 2 || medG == null) {
     fill($('peerNote'), 'No peers loaded. Add tickers above to compare.');
   } else {
     const verdict = state.a.growth > medG * 1.15 ? 'You are assuming faster growth than most peers, so be ready to explain why.'
@@ -377,8 +497,13 @@ $('search').addEventListener('submit', (e) => {
   e.preventDefault();
   const t = $('ticker').value.trim().toUpperCase();
   if (!t) return;
-  if (decodeURIComponent(location.hash.slice(1)) === t) load(t);
-  else location.hash = encodeURIComponent(t);
+  go(t);
+});
+
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('#blocker [data-ticker]');
+  if (chip) { go(chip.dataset.ticker); return; }
+  if (e.target.closest('[data-retry]')) load(state.ticker);
 });
 
 $('pills').addEventListener('click', (e) => {

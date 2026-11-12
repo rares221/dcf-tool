@@ -15,10 +15,12 @@
     <button type="submit">Analyze</button>
   </form>
 
+  <div id="blocker"></div>
   <div id="banners"></div>
 
   <div id="main" hidden>
     <div class="card" id="company"></div>
+    <div id="statePanel"></div>
     <div class="card takeaway" id="takeaway"></div>
 
     <div class="card" id="scenCard">
@@ -54,7 +56,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="assumpRow">
       <div class="card" id="assumpCard">
         <div class="head">
           <h2>Your assumptions (base case)</h2>
@@ -109,7 +111,7 @@
       <p class="small muted" style="margin:10px 0 0">Peers are suggested by sector and company size, and you can add or remove tickers. Different peers can tell different stories, so the list is shown openly and not hidden.</p>
     </div>
 
-    <div class="row">
+    <div class="row" id="histRow">
       <div class="card" id="histCard">
         <h2 id="histTitle">Track record</h2>
         <div class="small muted">Revenue, FCF margin, and margin after counting stock pay</div>

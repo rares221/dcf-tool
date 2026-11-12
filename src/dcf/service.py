@@ -192,7 +192,8 @@ def analyze(raw_ticker: str, provider: DataProvider, peer_tickers: list[str] | N
 
     out["company"] = {
         "ticker": company.ticker, "name": company.name, "sector": company.sector, "industry": company.industry,
-        "currency": company.trading_currency, "price": company.price, "market_cap": company.market_cap,
+        "currency": company.trading_currency, "statement_currency": company.statement_currency,
+        "price": company.price, "market_cap": company.market_cap,
         "shares": company.shares,
     }
     out["data_age_seconds"] = company.data_age_seconds

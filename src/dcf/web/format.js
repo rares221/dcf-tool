@@ -23,9 +23,13 @@ export function pct(value, digits = 1) {
   return `${value.toFixed(digits)}%`;
 }
 
+export function ageText(ageSeconds) {
+  if (ageSeconds < 60) return 'just now';
+  if (ageSeconds < 3600) return `${Math.round(ageSeconds / 60)} min ago`;
+  if (ageSeconds < 86400) return `${Math.round(ageSeconds / 3600)} h ago`;
+  return `${Math.round(ageSeconds / 86400)} days ago`;
+}
+
 export function freshness(ageSeconds) {
-  if (ageSeconds < 60) return 'Data fetched just now';
-  if (ageSeconds < 3600) return `Data fetched ${Math.round(ageSeconds / 60)} min ago`;
-  if (ageSeconds < 86400) return `Data fetched ${Math.round(ageSeconds / 3600)} h ago`;
-  return `Data fetched ${Math.round(ageSeconds / 86400)} days ago`;
+  return `Data fetched ${ageText(ageSeconds)}`;
 }
