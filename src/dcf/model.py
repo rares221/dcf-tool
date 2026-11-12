@@ -40,7 +40,7 @@ def dcf_value(inputs: ModelInputs, a: Assumptions, horizon: int, count_sbc: bool
     terminal_value = fcf * (1 + a.terminal_growth / 100) / (w - a.terminal_growth / 100)
     pv_terminal = terminal_value / (1 + w) ** horizon
     total = pv_fcf + pv_terminal
-    equity = total + inputs.cash - inputs.debt
+    equity = total + inputs.cash - inputs.debt - inputs.other_claims
     return DcfResult(
         value_per_share=max(0.0, equity / inputs.shares),
         terminal_share=pv_terminal / total if total > 0 else 0.0,

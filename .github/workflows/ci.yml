@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [integration, main]
+  push:
+    branches: [integration, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Unit tests (offline, no keys needed)
+        run: python -m pytest
+
+  browser:
+    name: browser tests (informational)
+    runs-on: ubuntu-latest
+    # Not required to pass yet: these tests were written and run against Microsoft Edge on Windows.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+      - name: Install a browser
+        run: python -m playwright install --with-deps chromium
+      - name: Browser tests
+        run: python -m pytest -m e2e

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem (private)
+    url: https://github.com/rares221/dcf-tool/security/advisories/new
+    about: Please do not open a public issue for security problems. Use a private advisory.
+  - name: Read the contribution guide first
+    url: https://github.com/rares221/dcf-tool/blob/main/integration.md
+    about: Branches, labels, tests and how to open a pull request (against the integration branch).

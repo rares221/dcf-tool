@@ -321,3 +321,53 @@ def test_load_fake_world_roundtrip(tmp_path):
     path.write_text(json.dumps({"companies": {"ACME": d}, "fx": {"EURUSD": 1.1}}), encoding="utf-8")
     p = load_fake_world(str(path))
     assert p.fetch_company("ACME").price == 168.0 and p.fx_rate("EUR", "USD") == 1.1
+
+
+def test_minority_interest_and_preferred_stock_are_subtracted_in_the_bridge():
+    c = make_company(ticker="MIN", minority_interest=4.0, preferred_stock=2.0)       # shares 2.7
+    status, inputs = model_inputs("MIN", world(companies={"MIN": c}))
+    assert inputs.other_claims == pytest.approx(6.0) and inputs.debt == 20.0
+    base = analyze("MIN", world(companies={"MIN": c}))["base"]
+    assert base["minority_interest"] == 4.0 and base["preferred_stock"] == 2.0
+    assert base["other_claims_per_share"] == pytest.approx(6.0 / 2.7)
+    assert analyze("ACME", world())["base"]["other_claims_per_share"] == 0.0
+
+
+def test_terminal_growth_is_capped_at_the_risk_free_rate():
+    jp = make_company(ticker="JP", trading_currency="JPY", statement_currency="JPY")
+    out = analyze("JP", FakeProvider({"JP": jp}, risk_free={"JPY": 1.5}))
+    assert out["suggested"]["terminal_growth"] == 1.5
+    assert list(out["limits"]["terminal_growth"]) == [0, 1.5]
+    usd = analyze("ACME", world())
+    assert usd["suggested"]["terminal_growth"] == 2.5 and list(usd["limits"]["terminal_growth"]) == [0, 4]
+
+
+def test_cap_follows_the_slider_step_and_leaves_a_usable_slider_when_rates_are_tiny():
+    def run(rate):
+        c = make_company(ticker="X", trading_currency="CHF", statement_currency="CHF")
+        return analyze("X", FakeProvider({"X": c}, risk_free={"CHF": rate}))
+    assert list(run(3.3)["limits"]["terminal_growth"]) == [0, 3.25]
+    tiny = run(0.1)
+    assert list(tiny["limits"]["terminal_growth"]) == [0, 0.25] and tiny["suggested"]["terminal_growth"] == 0.25
+
+
+def test_uneven_yearly_growth_is_reported_and_flagged():
+    steady = analyze("ACME", world())
+    assert steady["growth_range"]["max"] == pytest.approx(7.3, abs=0.1) and steady["growth_range"]["min"] == pytest.approx(6.4, abs=0.1)
+    assert "growth_uneven" not in steady["notes"]
+    c = make_company(ticker="UNE", years=make_years((100, 86, 87.3, 84), (10, 9, 9, 9), (1, 1, 1, 1)))
+    out = analyze("UNE", world(companies={"UNE": c}))
+    assert out["growth_range"]["min"] == pytest.approx(-14.0) and out["growth_range"]["max"] == pytest.approx(1.5, abs=0.1)
+    assert "growth_uneven" in out["notes"]
+
+
+def test_growth_range_needs_at_least_two_yearly_changes():
+    c = make_company(ticker="TWO", years=make_years((100, 130), (10, 13), (1, 1)))
+    out = analyze("TWO", world(companies={"TWO": c}))
+    assert out["growth_range"] is None and "growth_uneven" not in out["notes"]
+
+
+def test_estimated_interest_is_reported_to_the_page():
+    c = make_company(ticker="EST", interest_estimated=True)
+    assert "interest_estimated" in analyze("EST", world(companies={"EST": c}))["notes"]
+    assert "interest_estimated" not in analyze("ACME", world())["notes"]

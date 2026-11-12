@@ -60,3 +60,9 @@ def test_interest_addback_acts_like_a_higher_margin():
 
 def test_interest_addback_defaults_to_nothing():
     assert ModelInputs(100, 30, 20, 2.7, 168, 3).interest_pct == 0.0
+
+
+def test_other_claims_are_subtracted_from_equity_value():
+    base = dcf_value(ACME, BASE, 5, True).value_per_share
+    claims = ModelInputs(revenue=100, cash=30, debt=20, shares=2.7, price=168, sbc_pct=3, other_claims=5.4)  # 2.0 a share
+    assert dcf_value(claims, BASE, 5, True).value_per_share == pytest.approx(base - 2.0)

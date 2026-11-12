@@ -115,3 +115,12 @@
 .chip button { border:0; background:none; color:var(--muted); cursor:pointer; padding:0 0 0 4px; font:inherit; }
 .chip.add { cursor:pointer; background:none; font:inherit; font-size:12px; color:var(--muted); }
 .peer-input { font:inherit; border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:6px 10px; margin-bottom:8px; }
+
+/* data-sources table on phones: one block per input instead of three cramped columns */
+@media (max-width:560px){
+  #sources table, #sources tbody, #sources tr, #sources td { display:block; width:100%; }
+  #sources tr:first-child { display:none; }
+  #sources tr { padding:8px 0; border-bottom:1px solid var(--line); }
+  #sources td { border:0; padding:2px 0; }
+  #sources td:first-child { font-weight:600; }
+}

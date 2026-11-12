@@ -21,6 +21,8 @@ DEBT = ("Total Debt",)
 INTEREST = ("Interest Expense",)
 TAX_RATE = ("Tax Rate For Calcs",)  # a fraction in the feed
 SHARE_COUNT = ("Diluted Average Shares", "Basic Average Shares")
+MINORITY_INTEREST = ("Minority Interest",)
+PREFERRED_STOCK = ("Preferred Stock Equity", "Preferred Stock")
 # Non-current investments (Apple: 80.2B of marketable securities, separate from cash and short-term investments).
 LONG_TERM_INVESTMENTS = ("Investments And Advances", "Available For Sale Securities", "Held To Maturity Securities",
                          "Long Term Equity Investment")
@@ -98,6 +100,21 @@ def _latest(row: dict[str, float]) -> float | None:
     return row[max(row)] if row else None
 
 
+def _interest_expense(interest_row: dict[str, float], debt_row: dict[str, float], years) -> tuple[float | None, bool]:
+    """(interest expense, estimated?). Yahoo's interest line can stop years before the cash-flow data (Apple: 2023), so
+    an older figure is rescaled by how much debt has changed since: the last reported rate applied to today's debt."""
+    if not interest_row:
+        return None, False
+    year = max(interest_row)
+    reported = abs(interest_row[year])
+    if not years or year >= str(years[-1].year):
+        return reported, False
+    debt_then, debt_now = debt_row.get(year), (debt_row[max(debt_row)] if debt_row else 0.0)
+    if debt_then and debt_then > 0:
+        return reported / debt_then * debt_now, True
+    return reported, True
+
+
 def _share_growth(income: dict) -> float | None:
     series = _row(income, SHARE_COUNT)
     if len(series) < 2:
@@ -143,7 +160,8 @@ def parse_company(raw: dict) -> CompanyData:
     years = tuple(YearFigures(int(y), revenue[y], fcf[y], sbc.get(y, 0.0)) for y in year_keys)
 
     tax = _latest(_row(income, TAX_RATE))
-    interest = _latest(_row(income, INTEREST))
+    debt_row = _row(balance, DEBT)
+    interest, interest_estimated = _interest_expense(_row(income, INTEREST), debt_row, years)
     forward_pe = _finite(info.get("forwardPE"))
     reported_shares = _finite(info.get("sharesOutstanding"))
     market_cap = _finite(info.get("marketCap")) or (price * reported_shares if reported_shares else 0.0)
@@ -156,11 +174,13 @@ def parse_company(raw: dict) -> CompanyData:
         shares=_consistent_shares(reported_shares, market_cap, price),
         beta=_finite(info.get("beta")),
         forward_pe=forward_pe if forward_pe is not None and forward_pe > 0 else None,
-        cash=_latest(_row(balance, CASH)) or 0.0, debt=_latest(_row(balance, DEBT)) or 0.0,
-        interest_expense=abs(interest) if interest is not None else None,
+        cash=_latest(_row(balance, CASH)) or 0.0, debt=_latest(debt_row) or 0.0,
+        interest_expense=interest, interest_estimated=interest_estimated,
         tax_rate=tax * 100 if tax is not None else None,
         years=years, share_growth=_share_growth(income),
         long_term_investments=max(0.0, _latest(_row(balance, LONG_TERM_INVESTMENTS)) or 0.0),
+        minority_interest=max(0.0, _latest(_row(balance, MINORITY_INTEREST)) or 0.0),
+        preferred_stock=max(0.0, _latest(_row(balance, PREFERRED_STOCK)) or 0.0),
     )
 
 

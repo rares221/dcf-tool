@@ -143,11 +143,12 @@
         <tr><td>Stock-based pay, share count history</td><td>Yahoo Finance cash-flow statement and share data</td><td><span class="ok">Good</span> for most companies · field names vary</td></tr>
         <tr><td>Risk-free rate</td><td>FRED (US 10-year Treasury) when available, otherwise a labelled default per currency</td><td><span class="ok">Excellent</span> from FRED, <span class="mid-c">assumption</span> otherwise</td></tr>
         <tr><td>Equity risk premium</td><td>Fixed default (about 4.5%)</td><td><span class="mid-c">Assumption</span> · not a data feed</td></tr>
-        <tr><td>Analyst growth estimates</td><td>Not available on free sources</td><td><span class="mid-c">Partial</span> · growth here is history-based</td></tr>
+        <tr><td>Analyst growth estimates</td><td>Yahoo Finance publishes consensus revenue estimates; not used yet</td><td><span class="mid-c">Not used yet</span> · growth here is history-based</td></tr>
         <tr><td>Bear / base / bull spreads</td><td>Our rules (±4 points growth, ±3 margin, discount rate +1 / −1)</td><td><span class="mid-c">Assumption</span></td></tr>
         <tr><td>Peer list</td><td>Finnhub peers when a key is configured, otherwise you add tickers</td><td><span class="mid-c">Partial</span></td></tr>
         <tr><td>Peer growth, margin, P/E, FCF yield, beta</td><td>Yahoo Finance, one fetch per peer</td><td><span class="ok">Good</span></td></tr>
         <tr><td>Cost of debt, tax rate, interest add-back</td><td>Yahoo Finance interest expense and tax lines, with defaults. After-tax interest is added back to cash flow, because Yahoo's free cash flow is already after interest</td><td><span class="mid-c">Approximate</span> · interest figures can be a year or two old</td></tr>
+        <tr><td>Minority interest, preferred stock</td><td>Yahoo Finance balance sheet, subtracted like debt</td><td><span class="ok">Good</span> · book values</td></tr>
         <tr><td>Long-term investments</td><td>Yahoo Finance balance sheet ("Investments And Advances"), counted with cash</td><td><span class="mid-c">Approximate</span> · book value; can include stakes that are hard to sell</td></tr>
         <tr><td>Forecasts beyond the horizon</td><td>Computed: growth fades toward long-term growth</td><td><span class="mid-c">Model choice</span></td></tr>
       </table>

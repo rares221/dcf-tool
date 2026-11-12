@@ -356,3 +356,57 @@ def test_nan_price_is_treated_as_no_price():
         raw["info"][k] = float("nan")
     with pytest.raises(ValueError):
         parse_company(raw)
+
+
+# ---------- South Africa / Israel quote units (verified live 2026-11-12) ----------
+
+@pytest.mark.parametrize("name,trading,statements", [("jse", "ZAR", "ZAR"), ("tase", "ILS", "USD")])
+def test_cents_and_agorot_prices_are_converted_to_rand_and_shekels(name, trading, statements):
+    raw = load(name)
+    c = parse_company(raw)
+    assert raw["info"]["currency"] in ("ZAc", "ILA")          # the feed quotes in the sub-unit
+    assert c.trading_currency == trading and c.statement_currency == statements
+    assert c.price == pytest.approx(raw["info"]["currentPrice"] / 100)
+    assert c.price * c.shares == pytest.approx(c.market_cap, rel=0.02)   # market cap is already in rand / shekels
+
+
+# ---------- claims on the business that belong to other owners ----------
+
+def test_minority_interest_is_read_from_the_balance_sheet():
+    assert parse_company(load("german")).minority_interest == pytest.approx(0.49e9, rel=0.02)
+    assert parse_company(load("london")).minority_interest == pytest.approx(2.06e9, rel=0.02)
+    us = parse_company(load("us"))
+    assert us.minority_interest == 0.0 and us.preferred_stock == 0.0
+
+
+def test_preferred_stock_is_read_when_present():
+    raw = copy.deepcopy(load("us"))
+    raw["balance"]["Preferred Stock Equity"] = {"2026": 3.0e9, "2025": 3.0e9}
+    assert parse_company(raw).preferred_stock == 3.0e9
+
+
+# ---------- interest expense that is older than the cash-flow year ----------
+
+def test_old_interest_expense_is_estimated_from_the_last_reported_rate_and_current_debt():
+    # Apple reports interest only to 2023 (3.93B on 111.09B of debt) while debt is 80.11B today.
+    raw = load("us")
+    c = parse_company(raw)
+    interest, debt_then = raw["income"]["Interest Expense"], raw["balance"]["Total Debt"]
+    last = max(interest)
+    assert last < str(c.years[-1].year)
+    assert c.interest_estimated is True
+    assert c.interest_expense == pytest.approx(interest[last] / debt_then[last] * c.debt, rel=0.001)
+
+
+def test_current_year_interest_expense_is_used_as_reported():
+    c = parse_company(load("german"))
+    assert c.interest_estimated is False
+    assert c.interest_expense == pytest.approx(0.49e9, rel=0.02)
+
+
+def test_old_interest_without_matching_debt_keeps_the_reported_figure_but_is_flagged():
+    raw = copy.deepcopy(load("us"))
+    raw["balance"]["Total Debt"] = {"2026": 80.11e9}
+    c = parse_company(raw)
+    assert c.interest_estimated is True
+    assert c.interest_expense == pytest.approx(raw["income"]["Interest Expense"][max(raw["income"]["Interest Expense"])])

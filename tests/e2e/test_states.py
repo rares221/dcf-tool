@@ -143,6 +143,14 @@ def test_phone_slider_rows_stack(phone):
     assert slider["y"] >= label["y"] + label["height"] - 1
 
 
+def test_phone_sources_table_stacks_each_input_into_a_block(phone):
+    row = phone.locator("#sources tr:nth-child(2)")
+    cells = [row.locator("td").nth(i).bounding_box() for i in range(3)]
+    assert cells[1]["y"] > cells[0]["y"] and cells[2]["y"] > cells[1]["y"]   # stacked, not side by side
+    assert all(c["width"] > 250 for c in cells)
+    assert phone.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
+
+
 def test_phone_track_record_is_two_columns(phone):
     boxes = [phone.locator("#hist .col").nth(i).bounding_box() for i in range(4)]
     assert abs(boxes[0]["y"] - boxes[1]["y"]) < 2 and boxes[2]["y"] > boxes[0]["y"] + 20

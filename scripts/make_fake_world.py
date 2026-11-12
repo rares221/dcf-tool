@@ -15,7 +15,8 @@ def years(revs, fcfs, sbcs, start=2022):
 
 def company(name, price, mcap, shares, ys, *, currency="USD", statement=None, beta=1.0, pe=28.0,
             industry="Software - Application", sector="Technology", cash=30.0, debt=20.0, interest=1.0,
-            tax=21.0, stale=False, age=0.0, share_growth=None, long_term_investments=0.0):
+            tax=21.0, stale=False, age=0.0, share_growth=None, long_term_investments=0.0, minority_interest=0.0, preferred_stock=0.0,
+            interest_estimated=False):
     return {
         "name": name, "sector": sector, "industry": industry, "trading_currency": currency,
         "statement_currency": statement or currency, "price": price, "market_cap": mcap * B,
@@ -23,6 +24,8 @@ def company(name, price, mcap, shares, ys, *, currency="USD", statement=None, be
         "interest_expense": None if interest is None else interest * B, "tax_rate": tax, "years": ys,
         "data_age_seconds": age, "stale": stale, "share_growth": share_growth,
         "long_term_investments": long_term_investments * B,
+        "minority_interest": minority_interest * B, "preferred_stock": preferred_stock * B,
+        "interest_estimated": interest_estimated,
     }
 
 
@@ -38,7 +41,10 @@ acme_years = years((82, 88, 94, 100), (13.94, 16.72, 16.92, 20.0), (1.97, 2.38, 
 world = {
     "companies": {
         "ACME": company("ACME Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
-        "LONELY": company("Lonely Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3),
+        "LONELY": company("Lonely Corp", 168.0, 453.6, 2.7, acme_years, share_growth=1.3, interest_estimated=True),
+        "UNEVEN": company("Bumpy Revenue Co", 168.0, 453.6, 2.7, years((100, 130, 120, 125), (20, 26, 24, 25), (3, 3, 3, 3))),
+        "NIPPON": company("Nihon Test KK", 3200.0, 8000.0, 2.5, years((10000, 10500, 11000, 11500), (1000, 1100, 1150, 1200), (50, 50, 50, 50)),
+                          currency="JPY", cash=2000.0, debt=1500.0, interest=15.0),
         "RICH": company("Richly Valued Inc", 600.0, 1620.0, 2.7, acme_years, share_growth=1.3, long_term_investments=20.0),
         "CHEAP": company("Bargain Corp", 40.0, 108.0, 2.7, acme_years),
         "NOVA": peer("Nova Systems", 380, 10, 24, 3.9, 31, 1.2),
@@ -47,7 +53,7 @@ world = {
         "LMND": peer("Lumen Data", 95, 9, 15, 4.8, 25, 1.1),
         "SAP.DE": company("Sample Software AG", 210.75, 243.2, 1.154,
                           years((29.5, 31.2, 34.2, 36.8), (4.8, 5.5, 4.4, 8.4), (1.4, 2.2, 2.4, 1.7)),
-                          currency="EUR", beta=0.7, pe=24.8, cash=9.8, debt=7.5, interest=0.5, tax=29.0),
+                          currency="EUR", beta=0.7, pe=24.8, cash=9.8, debt=7.5, interest=0.5, tax=29.0, minority_interest=0.5),
         "LSE.L": company("London Goods plc", 48.98, 105.5, 2.153,
                          years((60.0, 51.7, 52.5, 50.5), (5.6, 8.0, 7.9, 6.8), (0.2, 0.2, 0.3, 0.3)),
                          currency="GBP", beta=0.5, pe=16.7, industry="Household & Personal Products",
@@ -83,6 +89,7 @@ world = {
     "peers": {"ACME": ["NOVA", "ORBT", "KSTL", "LMND"], "RICH": ["NOVA", "ORBT", "KSTL", "LMND"], "CHEAP": ["NOVA", "ORBT", "KSTL", "LMND"], "SAP.DE": ["ACME"], "BANK": ["ACME"],
               "LOSS": ["ACME"], "LSE.L": ["ACME"], "ADR": ["ACME"], "STALE": ["NOVA"], "PART": ["NOVA"], "THIN": ["NOVA"], "WILD": ["NOVA"]},
     "errors": ["DOWN"],
+    "risk_free": {"JPY": 1.5},
 }
 
 out = Path(__file__).resolve().parents[1] / "tests" / "fixtures" / "fake_world.json"

@@ -585,7 +585,16 @@ function renderFlags(a, m) {
       li('ok', 'Share count has been roughly stable, so there is little ', term('dilution', 'dilution'), '.');
     }
   }
-  li('mid-c', 'Analyst growth estimates are not available on free sources, so growth here is history-based.');
+  if (a.base.other_claims_per_share > 0) {
+    li('ok', `${money(a.base.minority_interest + a.base.preferred_stock, cur, { compact: true })} of minority interest and preferred stock (about ${money(a.base.other_claims_per_share, cur)} a share) is subtracted, because it belongs to other owners, not to the shares you would buy.`);
+  }
+  if (a.notes.includes('interest_estimated')) {
+    li('mid-c', "The latest interest expense was not reported, so it is estimated from the last reported interest rate and today's debt. The interest add-back is approximate.");
+  }
+  if (a.notes.includes('growth_uneven') && a.growth_range) {
+    li('mid-c', `Revenue growth has been uneven: yearly changes ranged from ${pct(a.growth_range.min)} to ${pct(a.growth_range.max)}, so the suggested growth averages very different years. Check for acquisitions, demergers or one-off events.`);
+  }
+  li('mid-c', 'Analyst growth estimates are not used yet, so growth here is history-based.');
   li('muted', 'Banks, insurers and companies with negative cash flow show a "DCF is a poor fit" message instead of a number.');
   fill($('flags'), items);
 }
