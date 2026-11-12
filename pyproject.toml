@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dcf"
+version = "0.1.0"
+description = "DCF analysis tool for retail investors"
+requires-python = ">=3.12"
+dependencies = ["fastapi", "uvicorn", "yfinance", "requests"]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx", "playwright"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+dcf = ["web/*", "data/*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-m 'not e2e and not network'"
+markers = [
+    "e2e: browser tests (need playwright + chromium)",
+    "network: tests that call real services",
+]
