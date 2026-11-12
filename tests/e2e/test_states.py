@@ -136,11 +136,13 @@ def test_phone_has_no_horizontal_page_scroll(phone):
     assert phone.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
 
 
-def test_phone_slider_rows_stack(phone):
-    row = phone.locator("#assumpCard .sl").first
-    label = row.locator("label").bounding_box()
-    slider = row.locator("input").bounding_box()
-    assert slider["y"] >= label["y"] + label["height"] - 1
+def test_phone_assumption_rows_stack_controls_above_explanations(phone):
+    row = phone.locator("#assumpCard .arow").first
+    ctl = row.locator(".ctl").bounding_box()
+    facts = row.locator(".facts").bounding_box()
+    assert facts["y"] >= ctl["y"] + ctl["height"] - 1          # explanations sit below the slider, not beside it
+    assert row.locator("input[type=range]").bounding_box()["width"] > 250
+    assert phone.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
 
 
 def test_phone_sources_table_stacks_each_input_into_a_block(phone):

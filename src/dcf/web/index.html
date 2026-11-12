@@ -20,8 +20,55 @@
   <div id="banners"></div>
 
   <div id="main" hidden>
-    <div class="card" id="company"></div>
+    <div class="strip" id="company"></div>
     <div id="statePanel"></div>
+
+    <div class="card" id="assumpCard">
+      <div class="head">
+        <h2>Assumptions used</h2>
+        <div><span class="tag" id="edited" hidden></span><button type="button" class="mb" id="reset" disabled>Reset to suggested</button></div>
+      </div>
+      <p class="intro" id="assumpIntro"></p>
+      <div class="live" id="live" role="status"></div>
+
+      <div class="arow" data-k="g">
+        <div class="ctl"><label for="g">Revenue growth per year</label><span class="big2" id="gv"></span>
+          <input type="range" id="g" min="-10" max="30" step="0.5" value="7"><div class="was" id="gw"></div></div>
+        <div class="facts" id="facts-g"></div>
+      </div>
+
+      <div class="arow" data-k="m">
+        <div class="ctl"><label for="m"><span data-g="fcfm">Cash margin</span> (free cash flow ÷ revenue)</label><span class="big2" id="mv"></span>
+          <input type="range" id="m" min="1" max="60" step="0.5" value="20"><div class="was" id="mw"></div><div class="small muted" id="mEff"></div></div>
+        <div class="facts" id="facts-m"></div>
+      </div>
+
+      <div class="arow" data-k="w">
+        <div class="ctl"><label for="w"><span data-g="wacc">Discount rate</span> (the return you demand)</label><span class="big2" id="wv"></span>
+          <input type="range" id="w" min="5" max="16" step="0.1" value="8.6"><div class="was" id="ww"></div></div>
+        <div class="facts" id="facts-w"></div>
+      </div>
+
+      <div class="arow" data-k="t">
+        <div class="ctl"><label for="t"><span data-g="ltg">Long-term growth</span> (after the forecast)</label><span class="big2" id="tv"></span>
+          <input type="range" id="t" min="0" max="4" step="0.25" value="2.5"><div class="was" id="tw"></div></div>
+        <div class="facts" id="facts-t"></div>
+      </div>
+
+      <div class="arow" data-k="s">
+        <div class="ctl"><label><span data-g="sbc">Stock-based pay</span></label>
+          <div class="pills" id="sbcSeg"><button type="button" data-v="1" class="on">Count as a cost</button><button type="button" data-v="0">Ignore</button></div>
+          <div class="was" id="sw"></div></div>
+        <div class="facts" id="facts-s"></div>
+      </div>
+
+      <div class="accepted"><b>About the limits.</b> The sliders only accept the values shown. That is deliberate: it keeps the maths meaningful (a discount rate too close to long-term growth would give an infinite value) and stops one typo from producing a nonsense result.</div>
+      <ol class="howto">
+        <li>Start with the defaults and read the result.</li>
+        <li>Ask <i>"what would I have to believe?"</i> The card "What is the market already assuming?" answers that.</li>
+        <li>Move one slider at a time. The result line at the top of this card shows what changed.</li>
+      </ol>
+    </div>
     <div class="card takeaway" id="takeaway"></div>
 
     <div class="card" id="scenCard">
@@ -66,28 +113,10 @@
       </div>
     </div>
 
-    <div class="row" id="assumpRow">
-      <div class="card" id="assumpCard">
-        <div class="head">
-          <h2>Your assumptions (base case)</h2>
-          <div><span class="tag" id="edited" hidden>Edited</span><button type="button" class="mb" id="reset" disabled>Reset to suggested</button></div>
-        </div>
-        <div class="sl"><label for="g">Revenue growth / yr</label><input type="range" id="g" min="-10" max="30" step="0.5" value="7"><span class="val" id="gv"></span></div>
-        <div class="sl"><label for="m"><span data-g="fcfm">FCF margin</span> (reported)</label><input type="range" id="m" min="1" max="60" step="0.5" value="20"><span class="val" id="mv"></span></div>
-        <div class="sl"><label for="w"><span data-g="wacc">Discount rate</span></label><input type="range" id="w" min="5" max="16" step="0.1" value="8.6"><span class="val" id="wv"></span></div>
-        <div class="sl"><label for="t"><span data-g="ltg">Long-term growth</span></label><input type="range" id="t" min="0" max="4" step="0.25" value="2.5"><span class="val" id="tv"></span></div>
-        <div class="sbc">
-          <div><span data-g="sbc">Stock-based pay</span><span class="hint" id="sbcHint"></span></div>
-          <div class="pills" id="sbcSeg"><button type="button" data-v="1" class="on">Count as a cost</button><button type="button" data-v="0">Ignore</button></div>
-        </div>
-        <div class="small muted" id="mEff"></div>
-        <p class="small muted" style="margin:10px 0 0">Starting points come from history: growth = revenue growth over the years shown, margin = latest reported FCF margin, discount rate = risk-free rate + beta × equity risk premium. Bear and bull cases are the base plus or minus a spread.</p>
-      </div>
-      <div class="card" id="torCard">
-        <h2>What moves the answer most</h2>
-        <div class="tor" id="tor"></div>
-        <p class="small muted" style="margin:10px 0 0">Each bar shows the fair value when that one assumption is nudged down and up while the rest stay at base. Wider means more sensitive. The black line is the base value.</p>
-      </div>
+    <div class="card" id="torCard">
+      <h2>What moves the answer most</h2>
+      <div class="tor" id="tor"></div>
+      <p class="small muted" style="margin:10px 0 0">Each bar shows the fair value when that one assumption is nudged down and up while the rest stay at base. Wider means more sensitive. The black line is the base value.</p>
     </div>
 
     <div class="card" id="waccCard">

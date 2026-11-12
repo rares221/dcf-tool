@@ -51,6 +51,8 @@ Retail investors, mostly not finance professionals. They may not know what WACC,
 
 ## 6. What the page contains
 
+**Page order updated 2026-11-12** (approved mockup: `docs/mockups/assumptions-first-mockup.html`): below the search bar the page shows a slim company strip (name, price, freshness; no longer a card), then the **Assumptions used** card (item 5, expanded: for each assumption it states our default and how it was derived, the accepted values and why, and when and why to change it, plus a live result line, "you changed this" markers and a short how-to), then the headline sentence, the scenarios, "why the range looks like this", the market-assumptions card, the sensitivity card, the WACC explainer, peers, track record and flags, and sources. The numbering below is the original order.
+
 The mockup is the visual source of truth. In order, the results page has:
 
 1. **Company header:** name, ticker, sector, market cap, current price, where each kind of data came from.
