@@ -1,0 +1,655 @@
+{
+ "companies": {
+  "ACME": {
+   "name": "ACME Corp",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 168.0,
+   "market_cap": 453600000000.0,
+   "shares": 2700000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 82000000000.0,
+     "fcf": 13940000000.0,
+     "sbc": 1970000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 88000000000.0,
+     "fcf": 16719999999.999998,
+     "sbc": 2380000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 94000000000.0,
+     "fcf": 16920000000.000002,
+     "sbc": 2730000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 20000000000.0,
+     "sbc": 3000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "NOVA": {
+   "name": "Nova Systems",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 100.0,
+   "market_cap": 380000000000.0,
+   "shares": 3800000000.0,
+   "beta": 1.2,
+   "forward_pe": 31,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 46393688955.67241,
+     "fcf": 11134485349.361378,
+     "sbc": 927873779.1134483
+    },
+    {
+     "year": 2023,
+     "revenue": 51033057851.23966,
+     "fcf": 12247933884.297516,
+     "sbc": 1020661157.0247933
+    },
+    {
+     "year": 2024,
+     "revenue": 56136363636.36363,
+     "fcf": 13472727272.727272,
+     "sbc": 1122727272.7272727
+    },
+    {
+     "year": 2025,
+     "revenue": 61750000000.0,
+     "fcf": 14820000000.0,
+     "sbc": 1235000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "ORBT": {
+   "name": "Orbit Labs",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 100.0,
+   "market_cap": 520000000000.0,
+   "shares": 5200000000.0,
+   "beta": 1.3,
+   "forward_pe": 36,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 63743875526.401024,
+     "fcf": 11473897594.752184,
+     "sbc": 1274877510.5280206
+    },
+    {
+     "year": 2023,
+     "revenue": 71393140589.56915,
+     "fcf": 12850765306.122448,
+     "sbc": 1427862811.7913833
+    },
+    {
+     "year": 2024,
+     "revenue": 79960317460.31747,
+     "fcf": 14392857142.857143,
+     "sbc": 1599206349.2063496
+    },
+    {
+     "year": 2025,
+     "revenue": 89555555555.55557,
+     "fcf": 16120000000.000002,
+     "sbc": 1791111111.1111116
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "KSTL": {
+   "name": "Kestrel Soft",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 100.0,
+   "market_cap": 210000000000.0,
+   "shares": 2100000000.0,
+   "beta": 0.9,
+   "forward_pe": 22,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 44881467129.36304,
+     "fcf": 9873922768.45987,
+     "sbc": 897629342.5872608
+    },
+    {
+     "year": 2023,
+     "revenue": 47574355157.12482,
+     "fcf": 10466358134.567461,
+     "sbc": 951487103.1424963
+    },
+    {
+     "year": 2024,
+     "revenue": 50428816466.552315,
+     "fcf": 11094339622.64151,
+     "sbc": 1008576329.3310463
+    },
+    {
+     "year": 2025,
+     "revenue": 53454545454.545456,
+     "fcf": 11760000000.0,
+     "sbc": 1069090909.0909091
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "LMND": {
+   "name": "Lumen Data",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 100.0,
+   "market_cap": 95000000000.0,
+   "shares": 950000000.0,
+   "beta": 1.1,
+   "forward_pe": 25,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 23474377793.85635,
+     "fcf": 3521156669.0784526,
+     "sbc": 469487555.877127
+    },
+    {
+     "year": 2023,
+     "revenue": 25587071795.30342,
+     "fcf": 3838060769.295513,
+     "sbc": 511741435.9060683
+    },
+    {
+     "year": 2024,
+     "revenue": 27889908256.88073,
+     "fcf": 4183486238.532109,
+     "sbc": 557798165.1376146
+    },
+    {
+     "year": 2025,
+     "revenue": 30400000000.0,
+     "fcf": 4560000000.0,
+     "sbc": 608000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "SAP.DE": {
+   "name": "Sample Software AG",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "EUR",
+   "statement_currency": "EUR",
+   "price": 210.75,
+   "market_cap": 243200000000.0,
+   "shares": 1154000000.0,
+   "beta": 0.7,
+   "forward_pe": 24.8,
+   "cash": 9800000000.0,
+   "debt": 7500000000.0,
+   "interest_expense": 500000000.0,
+   "tax_rate": 29.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 29500000000.0,
+     "fcf": 4800000000.0,
+     "sbc": 1400000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 31200000000.0,
+     "fcf": 5500000000.0,
+     "sbc": 2200000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 34200000000.000004,
+     "fcf": 4400000000.0,
+     "sbc": 2400000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 36800000000.0,
+     "fcf": 8400000000.0,
+     "sbc": 1700000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "LSE.L": {
+   "name": "London Goods plc",
+   "sector": "Consumer Defensive",
+   "industry": "Household & Personal Products",
+   "trading_currency": "GBP",
+   "statement_currency": "GBP",
+   "price": 48.98,
+   "market_cap": 105500000000.0,
+   "shares": 2153000000.0,
+   "beta": 0.5,
+   "forward_pe": 16.7,
+   "cash": 5000000000.0,
+   "debt": 27600000000.0,
+   "interest_expense": 1100000000.0,
+   "tax_rate": 28.5,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 60000000000.0,
+     "fcf": 5600000000.0,
+     "sbc": 200000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 51700000000.0,
+     "fcf": 8000000000.0,
+     "sbc": 200000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 52500000000.0,
+     "fcf": 7900000000.0,
+     "sbc": 300000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 50500000000.0,
+     "fcf": 6800000000.0,
+     "sbc": 300000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "ADR": {
+   "name": "Taiwan Chips ADR",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "TWD",
+   "price": 413.35,
+   "market_cap": 2143800000000.0002,
+   "shares": 5186000000.0,
+   "beta": 1.2,
+   "forward_pe": 17.7,
+   "cash": 3128000000000.0,
+   "debt": 1065000000000.0,
+   "interest_expense": 12400000000.0,
+   "tax_rate": 17.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 2264000000000.0,
+     "fcf": 521000000000.0,
+     "sbc": 300000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 2162000000000.0,
+     "fcf": 287000000000.0,
+     "sbc": 500000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 2894000000000.0,
+     "fcf": 861000000000.0,
+     "sbc": 1200000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 3809000000000.0,
+     "fcf": 992000000000.0,
+     "sbc": 1300000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "NOFX": {
+   "name": "Unconvertible ADR",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "JPY",
+   "price": 50.0,
+   "market_cap": 20000000000.0,
+   "shares": 400000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 100000000000.0,
+     "fcf": 10000000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 110000000000.0,
+     "fcf": 11000000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 120000000000.0,
+     "fcf": 12000000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 130000000000.0,
+     "fcf": 13000000000.0,
+     "sbc": 1000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "BANK": {
+   "name": "Sample Bank Corp",
+   "sector": "Financial Services",
+   "industry": "Banks - Diversified",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 343.39,
+   "market_cap": 911900000000.0,
+   "shares": 2656000000.0,
+   "beta": 1.0,
+   "forward_pe": 13.4,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 127000000000.0,
+     "fcf": 107000000000.0,
+     "sbc": 0.0
+    },
+    {
+     "year": 2023,
+     "revenue": 155000000000.0,
+     "fcf": 13000000000.0,
+     "sbc": 0.0
+    },
+    {
+     "year": 2024,
+     "revenue": 169000000000.0,
+     "fcf": -42000000000.0,
+     "sbc": 0.0
+    },
+    {
+     "year": 2025,
+     "revenue": 182000000000.0,
+     "fcf": -148000000000.0,
+     "sbc": 0.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "LOSS": {
+   "name": "Burn Rate Inc",
+   "sector": "Technology",
+   "industry": "Auto Manufacturers",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 13.54,
+   "market_cap": 19800000000.0,
+   "shares": 1456000000.0,
+   "beta": 1.6,
+   "forward_pe": null,
+   "cash": 3600000000.0,
+   "debt": 5200000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 1700000000.0,
+     "fcf": -6400000000.0,
+     "sbc": 1000000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 4400000000.0,
+     "fcf": -5900000000.0,
+     "sbc": 800000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 5000000000.0,
+     "fcf": -2900000000.0,
+     "sbc": 700000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 5400000000.0,
+     "fcf": -2500000000.0,
+     "sbc": 700000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "STALE": {
+   "name": "Stale Data Co",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 168.0,
+   "market_cap": 453600000000.0,
+   "shares": 2700000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 82000000000.0,
+     "fcf": 13940000000.0,
+     "sbc": 1970000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 88000000000.0,
+     "fcf": 16719999999.999998,
+     "sbc": 2380000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 94000000000.0,
+     "fcf": 16920000000.000002,
+     "sbc": 2730000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 20000000000.0,
+     "sbc": 3000000000.0
+    }
+   ],
+   "data_age_seconds": 200000.0,
+   "stale": true
+  },
+  "PART": {
+   "name": "Partial Data Co",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 168.0,
+   "market_cap": 453600000000.0,
+   "shares": 2700000000.0,
+   "beta": null,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": null,
+   "tax_rate": null,
+   "years": [
+    {
+     "year": 2023,
+     "revenue": 88000000000.0,
+     "fcf": 16719999999.999998,
+     "sbc": 2380000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 94000000000.0,
+     "fcf": 16920000000.000002,
+     "sbc": 2730000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 20000000000.0,
+     "sbc": 3000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  },
+  "DOWN": {
+   "name": "Outage Co",
+   "sector": "Technology",
+   "industry": "Software - Application",
+   "trading_currency": "USD",
+   "statement_currency": "USD",
+   "price": 10.0,
+   "market_cap": 10000000000.0,
+   "shares": 1000000000.0,
+   "beta": 1.0,
+   "forward_pe": 28.0,
+   "cash": 30000000000.0,
+   "debt": 20000000000.0,
+   "interest_expense": 1000000000.0,
+   "tax_rate": 21.0,
+   "years": [
+    {
+     "year": 2022,
+     "revenue": 82000000000.0,
+     "fcf": 13940000000.0,
+     "sbc": 1970000000.0
+    },
+    {
+     "year": 2023,
+     "revenue": 88000000000.0,
+     "fcf": 16719999999.999998,
+     "sbc": 2380000000.0
+    },
+    {
+     "year": 2024,
+     "revenue": 94000000000.0,
+     "fcf": 16920000000.000002,
+     "sbc": 2730000000.0
+    },
+    {
+     "year": 2025,
+     "revenue": 100000000000.0,
+     "fcf": 20000000000.0,
+     "sbc": 3000000000.0
+    }
+   ],
+   "data_age_seconds": 0.0,
+   "stale": false
+  }
+ },
+ "fx": {
+  "TWDUSD": 0.031,
+  "EURUSD": 1.08,
+  "GBPUSD": 1.27,
+  "USDEUR": 0.93,
+  "USDGBP": 0.79,
+  "EURGBP": 0.85,
+  "GBPEUR": 1.17
+ },
+ "peers": {
+  "ACME": [
+   "NOVA",
+   "ORBT",
+   "KSTL",
+   "LMND"
+  ],
+  "SAP.DE": [
+   "ACME"
+  ],
+  "BANK": [
+   "ACME"
+  ],
+  "LOSS": [
+   "ACME"
+  ],
+  "LSE.L": [
+   "ACME"
+  ],
+  "ADR": [
+   "ACME"
+  ],
+  "STALE": [
+   "NOVA"
+  ],
+  "PART": [
+   "NOVA"
+  ]
+ },
+ "errors": [
+  "DOWN"
+ ]
+}

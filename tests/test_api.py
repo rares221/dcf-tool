@@ -98,3 +98,10 @@ def test_settings_from_env_and_fake_provider(tmp_path):
     path.write_text(json.dumps({"companies": {"ACME": d}}), encoding="utf-8")
     p = build_provider(Settings(None, None, ":memory:", "fake", str(path)))
     assert p.fetch_company("ACME").price == 168.0
+
+
+@pytest.mark.parametrize("path,expected", [("/static/app.js", "javascript"), ("/static/styles.css", "text/css")])
+def test_static_assets_have_browser_safe_content_types(path, expected):
+    # Windows registries can map .js to text/plain, which browsers refuse for module scripts.
+    r = client().get(path)
+    assert r.status_code == 200 and expected in r.headers["content-type"]

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import mimetypes
 from pathlib import Path
 
 from fastapi import FastAPI, Query
@@ -16,6 +17,10 @@ from .settings import build_provider, load_settings
 from .types import Assumptions
 
 log = logging.getLogger("dcf")
+
+# Some Windows registries map .js to text/plain, which browsers reject for module scripts.
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
 WEB_DIR = Path(__file__).parent / "web"
 
 

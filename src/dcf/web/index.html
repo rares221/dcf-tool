@@ -1,2 +1,43 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>DCF tool</title></head><body></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCF fair value tool</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <form id="search" class="search" role="search">
+    <label class="visually-hidden" for="ticker">Ticker</label>
+    <input id="ticker" name="ticker" placeholder="Enter a ticker, for example AAPL" autocomplete="off" spellcheck="false" maxlength="16">
+    <button type="submit">Analyze</button>
+  </form>
+
+  <div id="banners"></div>
+
+  <div id="main" hidden>
+    <div class="card" id="company"></div>
+    <div class="card takeaway" id="takeaway"></div>
+
+    <div class="card" id="scenCard">
+      <div class="head">
+        <h2>Forecast horizon</h2>
+        <div class="pills" id="pills">
+          <button type="button" data-n="3">3 yr</button>
+          <button type="button" data-n="5" class="on">5 yr</button>
+          <button type="button" data-n="10">10 yr</button>
+        </div>
+      </div>
+      <div class="scen" id="scen"></div>
+      <div class="bar" id="bar"><div class="rng" id="rng"></div><div class="mid" id="mid"></div><div class="px" id="px"><span id="pxLabel"></span></div></div>
+      <div class="scale"><span id="sMin"></span><span id="sRange"></span><span id="sMax"></span></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+
+</div>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

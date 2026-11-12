@@ -33,3 +33,6 @@ Visual mockup: `docs/mockups/dcf-results-page-mockup.html`.
 
 Then open http://127.0.0.1:8000. Environment variables (all optional): `FRED_API_KEY`, `FINNHUB_API_KEY`,
 `DCF_CACHE_PATH` (default `./dcf-cache.sqlite`), `DCF_PROVIDER` (`live` or `fake`), `DCF_FAKE_WORLD` (JSON file for `fake`).
+
+Browser tests use your installed Microsoft Edge through Playwright (no download); if Edge is missing they fall back to
+Playwright's Chromium (`python -m playwright install chromium`).
