@@ -73,8 +73,7 @@ def test_use_implied_growth_sets_slider(acme):
 def test_reverse_dcf_card_content(acme):
     acme.wait_for_selector("#impCmp .t")
     rows = acme.locator("#impCmp > span:nth-child(3n+1)").all_inner_texts()
-    assert [r.split(",")[0] for r in rows] == ["Implied by price", "Your base assumption", "ACME Corp, last 3 years", "Peer median"] \
-        or len(rows) == 4
+    assert rows == ["Implied by price", "Your base assumption", "ACME Corp, last 3 years", "Peer median"]
     assert "faster than it has recently" in acme.inner_text("#impNote")
 
 

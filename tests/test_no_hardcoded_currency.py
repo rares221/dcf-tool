@@ -8,6 +8,8 @@ FORBIDDEN = [
     (re.compile(r"\$\$\{"), "template literal starting with a dollar sign"),
     (re.compile(r"""['"`]\$['"`]"""), "quoted dollar sign"),
     (re.compile(r"""\+\s*['"]\$"""), "string concatenation with a dollar sign"),
+    (re.compile(r"[€£¥₹₩₽]"), "literal currency symbol"),
+    (re.compile(r"""['"`](USD|EUR|GBP|JPY|CHF|CAD|AUD|CNY|INR|TWD)['"`]"""), "quoted currency code"),
 ]
 
 
@@ -27,3 +29,5 @@ def test_guard_actually_detects_violations():
     assert FORBIDDEN[0][0].search("price: $5")
     assert FORBIDDEN[1][0].search("`$${x}`")
     assert FORBIDDEN[3][0].search("'a' + '$'")
+    assert FORBIDDEN[4][0].search("const label = '€' + x")
+    assert FORBIDDEN[5][0].search("money(x, 'USD')") and FORBIDDEN[5][0].search('money(x, "EUR")')

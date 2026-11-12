@@ -546,10 +546,7 @@ for (const [id, key] of SLIDERS) {
   $(id).addEventListener('input', () => {
     if (!state.a) return;
     state.a[key] = Number($(id).value);
-    if (state.a.wacc < state.a.terminal_growth + GAP) { // keep the discount rate above long-term growth
-      if (key === 't') state.a.wacc = state.a.terminal_growth + GAP;
-      else state.a.wacc = Math.max(state.a.wacc, state.a.terminal_growth + GAP);
-    }
+    state.a.wacc = Math.max(state.a.wacc, state.a.terminal_growth + GAP); // keep the discount rate above long-term growth
     $('w').min = Math.max(state.analysis.limits.wacc[0], state.a.terminal_growth + GAP);
     $('w').value = state.a.wacc;
     render();
